@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# VERA Data (NICHT committen!)
+data/
+*.db
+*.db-journal
+logs/
+hotfolder/
+documents/
+backups/
+
+# Config mit Secrets
+.env
+config/secrets.yaml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Updates
+updates/
+
+# Test/Temp
+test_*.py
+tmp/
+temp/
