@@ -1,0 +1,86 @@
+# VERA Office — Branchenerweiterung: Steuerberater / Rechtsanwalt
+
+industry_names:
+  - "Steuerberater"
+  - "Rechtsanwalt"
+  - "Kanzlei"
+  - "steuerberater"
+  - "rechtsanwalt"
+  - "kanzlei"
+  - "Steuerberater/RA"
+
+folders:
+  - id: "12"
+    name: "12_Kanzlei"
+    display_name: "Kanzlei"
+    children:
+      - id: "12.01"
+        name: "12.01_Mandantenakten"
+        display_name: "Mandantenakten"
+        per_entity: true
+        retention_years: 10  # § 66 StBerG
+        doc_types:
+          - vollmacht
+          - mandatsvereinbarung
+          - identifikationsnachweis
+          - mandanten_jahresabschluss
+          - mandanten_steuererklaerung
+          - mandanten_korrespondenz_fa
+          - mandanten_lohnbuchhaltung
+          - mandanten_fibu
+      - id: "12.02"
+        name: "12.02_Handakten"
+        display_name: "Handakten (RA)"
+        per_entity: true
+        retention_years: 6  # § 50 BRAO
+        doc_types:
+          - klageschrift
+          - schriftsatz
+          - gerichtsentscheidung
+          - korrespondenz_gegenseite
+          - fristennotiz
+      - id: "12.03"
+        name: "12.03_Fristen_Termine"
+        display_name: "Fristen & Termine"
+        retention_years: 6
+        doc_types:
+          - fristenkalender
+          - wiedervorlage
+      - id: "12.04"
+        name: "12.04_Geldwaesche_GwG"
+        display_name: "Geldwäsche / GwG"
+        retention_years: 5  # § 8 GwG
+        doc_types:
+          - kyc_dokumentation
+          - verdachtsmeldung
+          - risikoanalyse_gwg
+      - id: "12.05"
+        name: "12.05_Berufshaftpflicht"
+        display_name: "Berufshaftpflicht"
+        retention_years: null
+        doc_types:
+          - berufshaftpflicht_nachweis
+      - id: "12.06"
+        name: "12.06_Kammermitgliedschaft"
+        display_name: "Kammermitgliedschaft"
+        retention_years: null
+        doc_types:
+          - kammermitgliedschaft
+          - fortbildungsnachweis_kammer
+
+extra_categories:
+  - name: "mandantenakte"
+    display_name: "Mandantenakte"
+    storage_path: "12_Kanzlei/12.01_Mandantenakten"
+    retention_years: 10
+    keywords: "Mandant,Vollmacht,Mandat,Steuererkl"
+  - name: "handakte"
+    display_name: "Handakte (RA)"
+    storage_path: "12_Kanzlei/12.02_Handakten"
+    retention_years: 6
+    keywords: "Akte,Klage,Schriftsatz,Gericht,Aktenzeichen"
+  - name: "gwg"
+    display_name: "GwG-Dokumentation"
+    storage_path: "12_Kanzlei/12.04_Geldwaesche_GwG"
+    retention_years: 5
+    keywords: "Geldwäsche,KYC,Identifizierung,GwG"

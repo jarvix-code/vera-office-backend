@@ -1,0 +1,47 @@
+# VERA Office — Branchenerweiterung: Allgemeines KMU / Dienstleistung
+# Minimale Erweiterung für Unternehmen ohne spezifische Branche
+
+industry_names:
+  - "Allgemein"
+  - "KMU"
+  - "Dienstleistung"
+  - "allgemein"
+  - "default"
+  - "sonstiges"
+  - "Sonstiges"
+
+folders:
+  - id: "12"
+    name: "12_Dienstleistung"
+    display_name: "Dienstleistung"
+    children:
+      - id: "12.01"
+        name: "12.01_Leistungsdokumentation"
+        display_name: "Leistungsdokumentation"
+        retention_years: 6
+        doc_types:
+          - leistungsnachweis
+          - taetigkeitsbericht
+      - id: "12.02"
+        name: "12.02_Subunternehmer"
+        display_name: "Subunternehmer"
+        per_entity: true
+        retention_years: 6
+        doc_types:
+          - subunternehmer_vertrag
+          - paragraph_13b_bescheinigung
+          - leistungsnachweis_sub
+      - id: "12.03"
+        name: "12.03_Referenzen"
+        display_name: "Referenzen"
+        retention_years: null
+        doc_types:
+          - referenzprojekt
+          - case_study
+
+extra_categories:
+  - name: "leistungsdoku"
+    display_name: "Leistungsdokumentation"
+    storage_path: "12_Dienstleistung/12.01_Leistungsdokumentation"
+    retention_years: 6
+    keywords: "Leistung,Nachweis,Tätigkeitsbericht,Dokumentation"

@@ -1,0 +1,80 @@
+# VERA Office — Branchenerweiterung: IT-Dienstleister / Agentur
+
+industry_names:
+  - "IT-Dienstleister"
+  - "Agentur"
+  - "IT"
+  - "Webentwicklung"
+  - "Softwareentwicklung"
+  - "it_agentur"
+  - "IT/Agentur"
+
+folders:
+  - id: "12"
+    name: "12_IT_Agentur"
+    display_name: "IT & Agentur"
+    children:
+      - id: "12.01"
+        name: "12.01_Kundenprojekte"
+        display_name: "Kundenprojekte"
+        per_entity: true
+        retention_years: 6
+        doc_types:
+          - lastenheft
+          - pflichtenheft
+          - user_story
+          - projektvertrag
+          - sla
+          - wartungsvertrag
+          - avv_kunde
+          - technische_doku
+          - betriebshandbuch
+          - release_notes
+          - meeting_protokoll
+          - change_request
+          - zeiterfassung
+      - id: "12.02"
+        name: "12.02_Hosting_Infrastructure"
+        display_name: "Hosting & Infrastruktur"
+        retention_years: null
+        doc_types:
+          - server_dokumentation
+          - ssl_zertifikat
+          - domain_verwaltung
+          - sla_hosting
+      - id: "12.03"
+        name: "12.03_Softwarelizenzen"
+        display_name: "Software-Lizenzen"
+        retention_years: null
+        doc_types:
+          - eigenentwicklung_ip
+          - drittanbieter_lizenz
+          - open_source_compliance
+      - id: "12.04"
+        name: "12.04_Datenschutz_Kunden"
+        display_name: "Datenschutz (Kunden)"
+        retention_years: 6
+        doc_types:
+          - avv_datenschutz
+          - tom
+          - datenschutzvorfall_kunde
+      - id: "12.05"
+        name: "12.05_Wissensdatenbank"
+        display_name: "Wissensdatenbank"
+        retention_years: null
+        doc_types:
+          - coding_standards
+          - architektur_entscheidung
+          - lessons_learned
+
+extra_categories:
+  - name: "kundenprojekt"
+    display_name: "Kundenprojekt-Dokumente"
+    storage_path: "12_IT_Agentur/12.01_Kundenprojekte"
+    retention_years: 6
+    keywords: "Projekt,Lastenheft,Pflichtenheft,SLA,Sprint"
+  - name: "hosting"
+    display_name: "Hosting & Infrastruktur"
+    storage_path: "12_IT_Agentur/12.02_Hosting_Infrastructure"
+    retention_years: null
+    keywords: "Server,Hosting,SSL,Domain,Infrastruktur"

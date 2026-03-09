@@ -1,0 +1,44 @@
+# VERA Office — Branchenerweiterung: Arztpraxis / Zahnarztpraxis
+# Patientenakten, Röntgen, KV-Abrechnung → Praxissoftware (PVS)
+# Hygiene → QM (10.05 in base.yaml)
+# Fortbildung → Personalakten (03.01 in base.yaml, pro Person)
+# VERA = kaufmännische/administrative Praxis-Dokumente
+
+industry_names:
+  - "Arztpraxis"
+  - "Zahnarztpraxis"
+  - "Praxis"
+  - "arztpraxis"
+  - "zahnarztpraxis"
+
+folders:
+  - id: "12"
+    name: "12_Praxis"
+    display_name: "Praxis"
+    children:
+      - id: "12.01"
+        name: "12.01_Labor"
+        display_name: "Labor"
+        retention_years: 10
+        doc_types:
+          - laborauftrag
+          - laborabrechnung
+          - qualitaetskontrolle_labor
+          - gebrauchsanweisung
+      - id: "12.02"
+        name: "12.02_Praxisgenehmigungen"
+        display_name: "Praxisgenehmigungen"
+        retention_years: null  # Dauerhaft
+        doc_types:
+          - approbation
+          - kv_zulassung
+          - fachkundenachweis_strahlenschutz
+          - betriebserlaubnis
+
+# Zusätzliche Kategorien für die DB
+extra_categories:
+  - name: "labor"
+    display_name: "Laboraufträge"
+    storage_path: "12_Praxis/12.01_Labor"
+    retention_years: 10
+    keywords: "Labor,Laborauftrag,Laborabrechnung,Gebrauchsanweisung"

@@ -1,43 +1,33 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+*.pyc
+*.pyo
 venv/
-env/
-ENV/
-*.egg-info/
-dist/
-build/
+.venv/
 
-# VERA Data (NICHT committen!)
-data/
-*.db
-*.db-journal
-logs/
-hotfolder/
-documents/
-backups/
+# Installer embedded Python (huge)
+installer/python-embed/
 
-# Config mit Secrets
-.env
-config/secrets.yaml
+# Node modules
+node_modules/
+frontend/node_modules/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# Build artifacts
+frontend/dist/
+backend/static/
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Updates
-updates/
+# IDE
+.vscode/
+.idea/
 
-# Test/Temp
-test_*.py
-tmp/
-temp/
+# Logs & data
+*.log
+*.db
+*.sqlite3
+
+# Temp
+*.tmp

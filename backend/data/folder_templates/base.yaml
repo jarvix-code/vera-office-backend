@@ -1,0 +1,432 @@
+# VERA Office — Universelle Basis-Ordnerstruktur
+# GoBD-konform, dezimales Nummerierungsschema nach DIN 6862
+# Gilt für ALLE KMU unabhängig von der Branche
+
+folders:
+  - id: "01"
+    name: "01_Unternehmensfuehrung"
+    display_name: "Unternehmensführung & Organisation"
+    always: true
+    children:
+      - id: "01.01"
+        name: "01.01_Gesellschaftsdokumente"
+        display_name: "Gesellschaftsdokumente"
+        retention_years: null  # Dauerhaft
+        doc_types:
+          - gesellschaftsvertrag
+          - handelsregisterauszug
+          - gewerbeanmeldung
+          - gesellschafterbeschluss
+      - id: "01.02"
+        name: "01.02_Geschaeftsleitung"
+        display_name: "Geschäftsleitung"
+        retention_years: 10
+        doc_types:
+          - protokoll
+          - strategiepapier
+          - jahresplanung
+      - id: "01.03"
+        name: "01.03_Organisation"
+        display_name: "Organisation"
+        retention_years: 10
+        doc_types:
+          - organigramm
+          - prozessdokumentation
+          - verfahrensdokumentation
+          - qm_handbuch
+      - id: "01.04"
+        name: "01.04_Versicherungen"
+        display_name: "Versicherungen"
+        retention_years: 6
+        doc_types:
+          - versicherungspolice
+          - schadenmeldung
+
+  - id: "02"
+    name: "02_Finanzen_Buchhaltung"
+    display_name: "Finanzen & Buchhaltung"
+    always: true
+    children:
+      - id: "02.01"
+        name: "02.01_Jahresabschluesse"
+        display_name: "Jahresabschlüsse"
+        yearly: true
+        retention_years: 10
+        doc_types:
+          - bilanz
+          - euer
+          - guv
+          - anhang
+          - lagebericht
+      - id: "02.02"
+        name: "02.02_Eingangsrechnungen"
+        display_name: "Eingangsrechnungen"
+        yearly: true
+        monthly: true
+        retention_years: 10
+        doc_types:
+          - rechnung_eingang
+      - id: "02.03"
+        name: "02.03_Ausgangsrechnungen"
+        display_name: "Ausgangsrechnungen"
+        yearly: true
+        monthly: true
+        retention_years: 10
+        doc_types:
+          - rechnung_ausgang
+      - id: "02.04"
+        name: "02.04_Bankunterlagen"
+        display_name: "Bankunterlagen"
+        retention_years: 10
+        doc_types:
+          - kontoauszug
+          - kreditvertrag
+          - buergschaft
+      - id: "02.05"
+        name: "02.05_Steuern"
+        display_name: "Steuern"
+        yearly: true
+        retention_years: 10
+        doc_types:
+          - umsatzsteuervoranmeldung
+          - steuererklaerung
+          - steuerbescheid
+          - finanzamt_korrespondenz
+      - id: "02.06"
+        name: "02.06_Lohnbuchhaltung"
+        display_name: "Lohnbuchhaltung"
+        yearly: true
+        retention_years: 6
+        doc_types:
+          - lohnabrechnung
+          - sozialversicherungsmeldung
+          - lohnsteueranmeldung
+      - id: "02.07"
+        name: "02.07_Mahnwesen"
+        display_name: "Mahnwesen"
+        retention_years: 6
+        doc_types:
+          - mahnung_ausgang
+          - mahnung_eingang
+      - id: "02.08"
+        name: "02.08_Kasse"
+        display_name: "Kasse"
+        yearly: true
+        retention_years: 10
+        doc_types:
+          - kassenbericht
+          - kassenbuch
+          - z_bon
+      - id: "02.09"
+        name: "02.09_DATEV_Export"
+        display_name: "DATEV Export"
+        retention_years: 10
+        doc_types:
+          - datev_export
+
+  - id: "03"
+    name: "03_Personal"
+    display_name: "Personal & HR"
+    always: true
+    children:
+      - id: "03.01"
+        name: "03.01_Personalakten"
+        display_name: "Personalakten"
+        per_entity: true
+        retention_years: 6  # nach Austritt
+        doc_types:
+          - arbeitsvertrag
+          - zeugnis
+          - arbeitszeugnis
+          - abmahnung
+          - kuendigung
+          - urlaubsantrag
+          - fortbildungsnachweis
+          - zertifikat
+          - cme_punkte
+          - impfnachweis
+          - gesundheitszeugnis
+          - abmahnung
+          - kuendigung
+          - arbeitszeugnis
+      - id: "03.02"
+        name: "03.02_Bewerbungen"
+        display_name: "Bewerbungen"
+        yearly: true
+        retention_years: 1  # 6 Monate AGG, 1 Jahr Sicherheit
+        doc_types:
+          - bewerbung
+      - id: "03.03"
+        name: "03.03_Arbeitssicherheit"
+        display_name: "Arbeitssicherheit"
+        retention_years: 10
+        doc_types:
+          - gefaehrdungsbeurteilung
+          - unterweisung
+          - unfallbericht
+      - id: "03.04"
+        name: "03.04_Schulungen_Weiterbildung"
+        display_name: "Schulungen & Weiterbildung"
+        retention_years: 6
+        doc_types:
+          - schulungsnachweis
+          - zertifikat
+      - id: "03.05"
+        name: "03.05_Allgemein"
+        display_name: "Personal Allgemein"
+        retention_years: 6
+        doc_types:
+          - urlaubsplanung
+          - betriebsvereinbarung
+          - arbeitszeitregelung
+
+  - id: "04"
+    name: "04_Kunden_Vertrieb"
+    display_name: "Kunden & Vertrieb"
+    always: true
+    children:
+      - id: "04.01"
+        name: "04.01_Kundenstammdaten"
+        display_name: "Kundenstammdaten"
+        per_entity: true
+        retention_years: 6
+        doc_types:
+          - kundenstammdaten
+          - kundenkorrespondenz
+      - id: "04.02"
+        name: "04.02_Angebote"
+        display_name: "Angebote"
+        yearly: true
+        retention_years: 6
+        doc_types:
+          - angebot
+      - id: "04.03"
+        name: "04.03_Auftraege"
+        display_name: "Aufträge"
+        yearly: true
+        retention_years: 6
+        doc_types:
+          - auftragsbestaetigung
+          - lieferschein
+      - id: "04.04"
+        name: "04.04_Reklamationen"
+        display_name: "Reklamationen"
+        yearly: true
+        retention_years: 6
+        doc_types:
+          - reklamation
+
+  - id: "05"
+    name: "05_Lieferanten_Einkauf"
+    display_name: "Lieferanten & Einkauf"
+    always: true
+    children:
+      - id: "05.01"
+        name: "05.01_Lieferantenstammdaten"
+        display_name: "Lieferantenstammdaten"
+        per_entity: true
+        retention_years: 6
+        doc_types:
+          - lieferantenstammdaten
+      - id: "05.02"
+        name: "05.02_Bestellungen"
+        display_name: "Bestellungen"
+        yearly: true
+        retention_years: 6
+        doc_types:
+          - bestellung
+      - id: "05.03"
+        name: "05.03_Wareneingangspruefung"
+        display_name: "Wareneingangsprüfung"
+        retention_years: 6
+        doc_types:
+          - wareneingang
+
+  - id: "06"
+    name: "06_Projekte_Auftraege"
+    display_name: "Projekte & Aufträge"
+    always: false
+    children:
+      - id: "06.00"
+        name: "_template"
+        display_name: "Projektvorlage"
+        is_template: true
+        children:
+          - { id: "06.00.01", name: "01_Planung", display_name: "Planung" }
+          - { id: "06.00.02", name: "02_Durchfuehrung", display_name: "Durchführung" }
+          - { id: "06.00.03", name: "03_Abnahme", display_name: "Abnahme" }
+          - { id: "06.00.04", name: "04_Dokumentation", display_name: "Dokumentation" }
+          - { id: "06.00.05", name: "05_Abrechnung", display_name: "Abrechnung" }
+
+  - id: "07"
+    name: "07_Vertraege_Recht"
+    display_name: "Verträge & Recht"
+    always: true
+    children:
+      - id: "07.01"
+        name: "07.01_Mietvertraege"
+        display_name: "Mietverträge"
+        retention_years: 6  # nach Vertragsende
+        doc_types:
+          - mietvertrag
+      - id: "07.02"
+        name: "07.02_Leasingvertraege"
+        display_name: "Leasingverträge"
+        retention_years: 6
+        doc_types:
+          - leasingvertrag
+      - id: "07.03"
+        name: "07.03_Dienstleistungsvertraege"
+        display_name: "Dienstleistungsverträge"
+        retention_years: 6
+        doc_types:
+          - dienstleistungsvertrag
+      - id: "07.04"
+        name: "07.04_Lizenzvertraege"
+        display_name: "Lizenzverträge"
+        retention_years: 6
+        doc_types:
+          - lizenzvertrag
+      - id: "07.05"
+        name: "07.05_AGB_Datenschutz"
+        display_name: "AGB & Datenschutz"
+        retention_years: null
+        doc_types:
+          - agb
+          - datenschutzerklaerung
+          - avv
+          - verarbeitungsverzeichnis
+      - id: "07.06"
+        name: "07.06_Rechtsstreitigkeiten"
+        display_name: "Rechtsstreitigkeiten"
+        per_entity: true
+        retention_years: 10
+        doc_types:
+          - rechtsstreitigkeit
+
+  - id: "08"
+    name: "08_Marketing_Kommunikation"
+    display_name: "Marketing & Kommunikation"
+    always: false
+    children:
+      - id: "08.01"
+        name: "08.01_Corporate_Design"
+        display_name: "Corporate Design"
+        retention_years: null
+        doc_types:
+          - logo
+          - briefpapier
+          - styleguide
+      - id: "08.02"
+        name: "08.02_Website"
+        display_name: "Website"
+        retention_years: null
+        doc_types:
+          - website_content
+      - id: "08.03"
+        name: "08.03_Social_Media"
+        display_name: "Social Media"
+        retention_years: null
+      - id: "08.04"
+        name: "08.04_Werbematerial"
+        display_name: "Werbematerial"
+        retention_years: null
+      - id: "08.05"
+        name: "08.05_Pressemitteilungen"
+        display_name: "Pressemitteilungen"
+        retention_years: null
+
+  - id: "09"
+    name: "09_IT_Technik"
+    display_name: "IT & Technik"
+    always: true
+    children:
+      - id: "09.01"
+        name: "09.01_Lizenzen"
+        display_name: "Software-Lizenzen"
+        retention_years: null
+        doc_types:
+          - softwarelizenz
+      - id: "09.02"
+        name: "09.02_Dokumentation"
+        display_name: "IT-Dokumentation"
+        retention_years: null
+        doc_types:
+          - netzwerkplan
+          - it_dokumentation
+      - id: "09.03"
+        name: "09.03_Datensicherung"
+        display_name: "Datensicherung"
+        retention_years: null
+        doc_types:
+          - backup_konzept
+      - id: "09.04"
+        name: "09.04_IT_Sicherheit"
+        display_name: "IT-Sicherheit"
+        retention_years: null
+        doc_types:
+          - it_sicherheitskonzept
+          - notfallplan
+
+  - id: "10"
+    name: "10_Compliance_Qualitaet"
+    display_name: "Compliance & Qualität"
+    always: true
+    children:
+      - id: "10.01"
+        name: "10.01_Verfahrensdokumentation"
+        display_name: "Verfahrensdokumentation"
+        retention_years: 10
+        doc_types:
+          - verfahrensdokumentation
+      - id: "10.02"
+        name: "10.02_Datenschutz_DSGVO"
+        display_name: "Datenschutz & DSGVO"
+        retention_years: null
+        doc_types:
+          - datenschutz_folgenabschaetzung
+          - datenschutzvorfall
+          - verarbeitungsverzeichnis
+      - id: "10.03"
+        name: "10.03_Betriebspruefungen"
+        display_name: "Betriebsprüfungen"
+        yearly: true
+        retention_years: 10
+        doc_types:
+          - betriebspruefung
+      - id: "10.04"
+        name: "10.04_Zertifizierungen"
+        display_name: "Zertifizierungen"
+        retention_years: null
+        doc_types:
+          - zertifizierung
+      - id: "10.05"
+        name: "10.05_Hygiene"
+        display_name: "Hygiene"
+        retention_years: 10
+        doc_types:
+          - hygieneplan
+          - sterilisationsprotokoll
+          - begehungsprotokoll
+          - mpg_dokumentation
+
+  - id: "11"
+    name: "11_Vorlagen_Templates"
+    display_name: "Vorlagen & Templates"
+    always: true
+    children:
+      - id: "11.01"
+        name: "11.01_Rechnungsvorlagen"
+        display_name: "Rechnungsvorlagen"
+      - id: "11.02"
+        name: "11.02_Angebotsvorlagen"
+        display_name: "Angebotsvorlagen"
+      - id: "11.03"
+        name: "11.03_Vertragsvorlagen"
+        display_name: "Vertragsvorlagen"
+      - id: "11.04"
+        name: "11.04_Briefvorlagen"
+        display_name: "Briefvorlagen"
+      - id: "11.05"
+        name: "11.05_Protokollvorlagen"
+        display_name: "Protokollvorlagen"

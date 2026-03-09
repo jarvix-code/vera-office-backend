@@ -224,12 +224,24 @@ async def get_update_status():
             last_check=None
         )
     
+    # GitHub Update Client
+    if hasattr(update_client, 'get_status'):
+        status = update_client.get_status()
+        return UpdateStatusResponse(
+            current_version=status["current_version"],
+            update_available=status["update_available"],
+            latest_version=status.get("latest_version"),
+            auto_update_enabled=False,  # GitHub mode = manual updates
+            last_check=status.get("last_check")
+        )
+    
+    # Legacy Server Update Client
     return UpdateStatusResponse(
         current_version=update_client.current_version,
-        update_available=False,  # TODO: Cache last check result
+        update_available=False,
         latest_version=None,
-        auto_update_enabled=update_client.auto_update,
-        last_check=update_client._last_check
+        auto_update_enabled=getattr(update_client, 'auto_update', False),
+        last_check=getattr(update_client, '_last_check', None)
     )
 
 

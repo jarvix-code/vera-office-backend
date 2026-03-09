@@ -1,0 +1,85 @@
+# VERA Office — Branchenerweiterung: Handwerksbetrieb
+
+industry_names:
+  - "Handwerksbetrieb"
+  - "Handwerk"
+  - "handwerk"
+  - "handwerksbetrieb"
+
+folders:
+  - id: "12"
+    name: "12_Handwerk"
+    display_name: "Handwerk"
+    children:
+      - id: "12.01"
+        name: "12.01_Auftraege_Baustellen"
+        display_name: "Aufträge & Baustellen"
+        per_entity: true
+        retention_years: 6
+        doc_types:
+          - leistungsverzeichnis
+          - aufmass
+          - stundenzettel
+          - rapportzettel
+          - materialverbrauch
+          - abnahmeprotokoll
+          - maengelprotokoll
+          - schlussrechnung
+          - gewaehrleistungsdoku
+      - id: "12.02"
+        name: "12.02_Meisterpruefung_Qualifikationen"
+        display_name: "Meisterprüfung & Qualifikationen"
+        retention_years: null
+        doc_types:
+          - meisterbrief
+          - gesellenbrief
+          - handwerkskammer_mitgliedschaft
+          - handwerksrolle
+      - id: "12.03"
+        name: "12.03_Fahrzeuge_Fuhrpark"
+        display_name: "Fahrzeuge & Fuhrpark"
+        per_entity: true
+        retention_years: 6
+        doc_types:
+          - fahrzeugbrief
+          - fahrzeug_versicherung
+          - tuev_hu
+          - wartungsnachweis_fahrzeug
+      - id: "12.04"
+        name: "12.04_Werkzeuge_Maschinen"
+        display_name: "Werkzeuge & Maschinen"
+        retention_years: 6
+        doc_types:
+          - inventarliste
+          - pruefprotokoll_dguv
+          - wartungsnachweis_maschine
+      - id: "12.05"
+        name: "12.05_Materiallager"
+        display_name: "Materiallager"
+        retention_years: 6
+        doc_types:
+          - bestandsliste
+      - id: "12.06"
+        name: "12.06_Gewaehrleistung"
+        display_name: "Gewährleistung"
+        retention_years: 5
+        doc_types:
+          - gewaehrleistungsanspruch
+          - nachbesserungsdoku
+
+extra_categories:
+  - name: "bauauftrag"
+    display_name: "Bauaufträge"
+    storage_path: "12_Handwerk/12.01_Auftraege_Baustellen"
+    retention_years: 6
+    keywords: "Auftrag,Baustelle,Aufmaß,Abnahme,Leistungsverzeichnis"
+  - name: "fuhrpark"
+    display_name: "Fuhrpark-Dokumente"
+    storage_path: "12_Handwerk/12.03_Fahrzeuge_Fuhrpark"
+    retention_years: 6
+    keywords: "Fahrzeug,TÜV,HU,Wartung,Kennzeichen"
+  - name: "gewaehrleistung"
+    display_name: "Gewährleistung"
+    storage_path: "12_Handwerk/12.06_Gewaehrleistung"
+    retention_years: 5
+    keywords: "Gewährleistung,Mangel,Nachbesserung,Reklamation"

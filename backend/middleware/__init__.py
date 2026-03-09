@@ -1,0 +1,1 @@
+"""VERA Office Middleware"""

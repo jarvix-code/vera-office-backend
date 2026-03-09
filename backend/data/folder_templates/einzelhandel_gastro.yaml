@@ -1,0 +1,87 @@
+# VERA Office — Branchenerweiterung: Einzelhandel / Gastronomie
+
+industry_names:
+  - "Einzelhandel"
+  - "Gastronomie"
+  - "Handel"
+  - "Gastro"
+  - "einzelhandel"
+  - "gastronomie"
+  - "Restaurant"
+  - "Café"
+
+folders:
+  - id: "12"
+    name: "12_Handel_Gastro"
+    display_name: "Handel & Gastronomie"
+    children:
+      - id: "12.01"
+        name: "12.01_Kasse"
+        display_name: "Kasse"
+        yearly: true
+        retention_years: 10  # KassenSichV, § 147 AO
+        doc_types:
+          - tagesabschluss
+          - z_bon
+          - kassenbuch
+          - kassenprotokoll
+          - tse_protokoll
+      - id: "12.02"
+        name: "12.02_Warenwirtschaft"
+        display_name: "Warenwirtschaft"
+        retention_years: 10
+        doc_types:
+          - inventurliste
+          - wareneingang
+          - lieferschein_ware
+          - bestandsfuehrung
+      - id: "12.03"
+        name: "12.03_Lebensmittelsicherheit"
+        display_name: "Lebensmittelsicherheit (HACCP)"
+        retention_years: 2
+        doc_types:
+          - haccp_dokumentation
+          - temperaturprotokoll
+          - reinigungsplan
+          - schaedlingsbekaempfung
+          - schulungsnachweis_ifsg
+      - id: "12.04"
+        name: "12.04_Genehmigungen"
+        display_name: "Genehmigungen"
+        retention_years: null
+        doc_types:
+          - gaststaettenerlaubnis
+          - gesundheitszeugnis
+          - sperrzeitgenehmigung
+          - schanklizenz
+      - id: "12.05"
+        name: "12.05_Filialen"
+        display_name: "Filialstruktur"
+        per_entity: true
+        retention_years: 6
+        doc_types:
+          - filial_mietvertrag
+          - filial_umsatzbericht
+      - id: "12.06"
+        name: "12.06_Trinkgeld"
+        display_name: "Trinkgeld-Abrechnung"
+        retention_years: 6
+        doc_types:
+          - trinkgeldabrechnung
+
+extra_categories:
+  - name: "kasse"
+    display_name: "Kassen-Dokumente"
+    storage_path: "12_Handel_Gastro/12.01_Kasse"
+    retention_years: 10
+    keywords: "Kasse,Z-Bon,Tagesabschluss,TSE,Kassenbuch"
+  - name: "warenwirtschaft"
+    display_name: "Warenwirtschaft"
+    storage_path: "12_Handel_Gastro/12.02_Warenwirtschaft"
+    retention_years: 10
+    keywords: "Inventur,Wareneingang,Bestand,Lager"
+  - name: "haccp"
+    display_name: "HACCP / Lebensmittelsicherheit"
+    storage_path: "12_Handel_Gastro/12.03_Lebensmittelsicherheit"
+    retention_years: 2
+    keywords: "HACCP,Temperatur,Hygiene,Reinigung,Lebensmittel"

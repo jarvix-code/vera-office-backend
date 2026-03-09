@@ -209,6 +209,7 @@ class GitHubUpdateClient:
     async def apply_update(self, zip_path: Path) -> bool:
         """
         Entpackt und installiert Update.
+        DANACH: Triggert automatischen Backend-Restart.
         
         Args:
             zip_path: Pfad zum Update-ZIP
@@ -227,13 +228,45 @@ class GitHubUpdateClient:
                 zf.extractall(self.install_dir)
             
             logger.success("✅ Update installiert")
-            logger.warning("⚠️ Neustart empfohlen!")
+            
+            # 3. Trigger Backend Restart (automatisch)
+            self._trigger_restart()
+            
             return True
         
         except Exception as e:
             logger.error(f"❌ Update-Installation fehlgeschlagen: {e}")
             # TODO: Rollback
             return False
+    
+    def _trigger_restart(self):
+        """
+        Triggert Backend-Restart nach Update.
+        
+        Strategie:
+        1. Schreibe Restart-Flag-File
+        2. sys.exit(0) → Backend beendet sich
+        3. Monitor Worker / Service Manager startet Backend neu
+        """
+        import sys
+        import os
+        
+        # Schreibe Restart-Flag
+        restart_flag = self.data_dir / ".restart_pending"
+        restart_flag.write_text("restart")
+        
+        logger.warning("🔄 Backend wird neu gestartet in 3 Sekunden...")
+        
+        # Schedule restart via asyncio
+        import asyncio
+        loop = asyncio.get_event_loop()
+        
+        async def delayed_exit():
+            await asyncio.sleep(3)  # 3s Verzögerung damit Response noch rausgeht
+            logger.info("⚠️ RESTART NOW")
+            os._exit(0)  # Hard exit (sys.exit würde Exception werfen)
+        
+        asyncio.create_task(delayed_exit())
     
     def _version_newer(self, v1: str, v2: str) -> bool:
         """

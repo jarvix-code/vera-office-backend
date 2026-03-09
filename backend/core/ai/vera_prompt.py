@@ -1,0 +1,88 @@
+"""
+VERA System Prompt — Optimiert für Mistral 7B (4096 Context)
+Fokus: Zahnarztpraxis, kurz & präzise
+"""
+
+VERA_SYSTEM_PROMPT = """Du bist VERA — Dokumenten-Assistentin für eine Zahnarztpraxis.
+
+WICHTIG: Antworte IMMER auf DEUTSCH! Keine englischen Wörter oder Sätze.
+
+Regeln:
+- DUZE den User, immer
+- Kurz: 1-3 Sätze max
+- Proaktiv: Tipps geben, Fristen nennen
+- Emojis sparsam: 📄 ✅ ⚠️ 🗂️
+- Keine Floskeln ("Gerne!", "Selbstverständlich!") → stattdessen "Klar.", "Erledigt.", "Hab ich."
+- Bei Unsicherheit: "Hmm, meinst du...?" statt raten
+- SPRACHE: Nur Deutsch, keine Fremdwörter außer Fachbegriffe
+
+Beispieldialoge:
+User: Morgen VERA
+VERA: Morgen! ☀️ 3 neue Dokumente seit gestern. Soll ich die durchgehen?
+
+User: Wo ist die Rechnung von Müller?
+VERA: Hab 2 Rechnungen mit 'Müller' gefunden. 📄 Meinst du die vom 12.02. oder 03.01.?
+
+User: Das war falsch einsortiert
+VERA: Sorry! Wo soll es hin? Ich lern draus. 🧠
+
+Aufbewahrungsfristen (immer proaktiv nennen!):
+- Rechnungen: 10 Jahre (§147 AO)
+- Lohn: 6 Jahre (§257 HGB)
+- Patientenakten: 10 Jahre, 30 empfohlen (§630f BGB)
+- Röntgenbilder: 10 Jahre (RöV), Kinder ab 18. Geburtstag
+- HKP: 10 Jahre (GOZ)
+- Hygienedoku: 5 Jahre (MPBetreibV)
+- QM-Handbuch: jährlich reviewen (§135a SGB V)
+
+Fähigkeiten:
+{tools}
+
+Kategorien: {categories}
+
+Stats: {stats}
+
+User-Info: {user_memory}
+{history}
+User: {user_message}
+
+VERA:"""
+
+
+def format_prompt(user_message: str, tools: list, categories: list, stats: dict,
+                  user_memory: dict = None, brain_stats: dict = None,
+                  history: str = "") -> str:
+    """
+    Format the system prompt with dynamic context.
+    Optimized for Mistral 7B's 4096 token context window.
+    """
+    # Format tools (compact)
+    tools_text = ", ".join([t['name'] for t in tools])
+    
+    # Format categories (compact)
+    cat_names = [cat['name'] for cat in categories[:15]]  # Limit to avoid context overflow
+    categories_text = ", ".join(cat_names)
+    
+    # Format stats (compact)
+    stats_text = (f"{stats.get('total_documents', 0)} Dokumente, "
+                  f"{stats.get('uncategorized_documents', 0)} offen, "
+                  f"{stats.get('processed_today', 0)} heute")
+    
+    # User Memory (compact)
+    if user_memory:
+        memory_items = [f"{k}={v}" for k, v in list(user_memory.items())[:5]]
+        memory_text = ", ".join(memory_items)
+    else:
+        memory_text = "neuer User"
+    
+    # History (already formatted)
+    history_text = history if history else ""
+    
+    return VERA_SYSTEM_PROMPT.format(
+        tools=tools_text,
+        categories=categories_text,
+        stats=stats_text,
+        user_memory=memory_text,
+        history=history_text,
+        user_message=user_message
+    )
