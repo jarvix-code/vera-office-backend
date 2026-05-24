@@ -176,3 +176,76 @@ class FastLLMProvider(BaseLLMProvider):
         except Exception as e:
             logger.warning(f"Failed to convert Mistral->Qwen format: {e}")
             return mistral_prompt
+
+
+class OllamaProvider(BaseLLMProvider):
+    """Ollama API provider for fast chat (mistral:7b running locally via GPU)."""
+
+    DEFAULT_URL = "http://localhost:11434"
+    DEFAULT_MODEL = "mistral:7b"
+
+    def __init__(self, base_url: str = DEFAULT_URL, model: str = DEFAULT_MODEL):
+        self._base_url = base_url
+        self._model = model
+        self._available: Optional[bool] = None  # Lazy check
+
+    def _check_available(self) -> bool:
+        """Ping Ollama API to verify it's running."""
+        try:
+            import urllib.request
+            req = urllib.request.Request(f"{self._base_url}/api/tags", method="GET")
+            with urllib.request.urlopen(req, timeout=2) as resp:
+                import json
+                data = json.loads(resp.read())
+                models = [m["name"] for m in data.get("models", [])]
+                return any(self._model.split(":")[0] in m for m in models)
+        except Exception as e:
+            logger.warning(f"Ollama not available: {e}")
+            return False
+
+    def is_available(self) -> bool:
+        if self._available is None:
+            self._available = self._check_available()
+        return self._available
+
+    def get_provider_name(self) -> str:
+        return f"Ollama ({self._model}, GPU)"
+
+    def generate(
+        self,
+        prompt: str,
+        max_tokens: int = 500,
+        temperature: Optional[float] = None,
+        stop: Optional[List[str]] = None,
+    ) -> Optional[str]:
+        """Generate text via Ollama /api/generate endpoint."""
+        if not self.is_available():
+            return None
+        try:
+            import urllib.request
+            import json
+            payload = {
+                "model": self._model,
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "temperature": temperature if temperature is not None else 0.7,
+                    "num_predict": max_tokens,
+                },
+            }
+            if stop:
+                payload["options"]["stop"] = stop
+            data = json.dumps(payload).encode("utf-8")
+            req = urllib.request.Request(
+                f"{self._base_url}/api/generate",
+                data=data,
+                method="POST",
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                result = json.loads(resp.read())
+                return result.get("response", "").strip() or None
+        except Exception as e:
+            logger.error(f"Ollama generation failed: {e}")
+            self._available = False  # Mark unavailable for this session
+            return None

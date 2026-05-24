@@ -330,6 +330,11 @@ class VERAAgent:
                 return f"Morgen!  {pending} Dokument{'e' if pending != 1 else ''} warten auf dich."
             return "Morgen!  Alles aufgeräumt — was steht heute an?"
         
+        # Präsenzfragen: "Bist du da?", etc.
+        if any(w in msg_lower for w in ["bist du da", "bist du hier", "hörst du mich", "bist du online",
+                                         "bist du wach", "bist du bereit", "bist du noch da"]):
+            return "Ja, ich bin da!  Was kann ich für dich tun?"
+
         # Grüße allgemein
         if any(w in msg_lower for w in ["hallo", "hi", "hey", "servus", "guten tag", "tag!"]):
             return "Hey!  Was kann ich für dich tun?"

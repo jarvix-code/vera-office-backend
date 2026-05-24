@@ -94,23 +94,37 @@ class LLMRouter:
         self._local_initialized = False
     
     def _init_fast_llm(self):
-        """Initialize Fast Local LLM (Qwen2.5-1.5B with proper chat format)."""
+        """Initialize Fast LLM: try Ollama first, then Qwen GGUF, else None."""
         if self._fast_initialized:
             return
-        
+
         self._fast_initialized = True
-        
+
+        # 1. Try Ollama (mistral:7b via GPU — preferred, no GGUF file needed)
+        try:
+            from backend.core.ai.local_llm_provider import OllamaProvider
+            ollama = OllamaProvider()
+            if ollama.is_available():
+                self._fast_llm = ollama
+                logger.info(f"[OK] Fast LLM initialized: {ollama.get_provider_name()}")
+                return
+            else:
+                logger.warning("[WARNING] Ollama not available — falling back to Qwen GGUF")
+        except Exception as e:
+            logger.warning(f"Ollama init failed: {e}")
+
+        # 2. Fallback: Qwen GGUF via llama-cpp
         try:
             from backend.core.ai.local_llm_provider import FastLLMProvider
             self._fast_llm = FastLLMProvider()
-            
+
             if self._fast_llm.is_available():
                 logger.info(f"[OK] Fast LLM initialized: {self._fast_llm.get_provider_name()}")
                 logger.info(" Using Qwen chat format with <|im_start|>/<|im_end|> tokens")
             else:
                 logger.warning("[WARNING] Fast LLM not available (model not found)")
                 self._fast_llm = None
-        
+
         except ImportError as e:
             logger.warning(f"Fast LLM provider not available: {e}")
             self._fast_llm = None
