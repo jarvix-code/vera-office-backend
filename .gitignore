@@ -35,3 +35,13 @@ docker/
 fix_git_sudo.sh
 .claude/worktrees/
 .claude/
+
+# Cache-Dateien (Binärdaten, nie committen)
+*.pkl
+*.pickle
+backend/cache/
+backend/cache/qm_parsed/
+*.bin
+*.model
+*.onnx
+*.safetensors
