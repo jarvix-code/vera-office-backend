@@ -6,7 +6,18 @@ import logging
 from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
 import httpx
-from zeroconf import ServiceBrowser, ServiceListener, Zeroconf
+try:
+    from zeroconf import ServiceBrowser, ServiceListener, Zeroconf
+    _ZEROCONF_AVAILABLE = True
+except ImportError:
+    _ZEROCONF_AVAILABLE = False
+    class ServiceListener:  # type: ignore
+        pass
+    class ServiceBrowser:  # type: ignore
+        def __init__(self, *a, **kw): pass
+    class Zeroconf:  # type: ignore
+        def __init__(self, *a, **kw): pass
+        def close(self): pass
 import time
 import base64
 from lxml import etree
@@ -81,6 +92,10 @@ class ScannerDiscovery:
     
     async def discover_scanners(self) -> List[Scanner]:
         """Discover available scanners on the network using mDNS"""
+        if not _ZEROCONF_AVAILABLE:
+            logger.warning("Bug #1067: zeroconf not installed — scanner discovery unavailable. "
+                           "Install with: pip install zeroconf")
+            return []
         logger.info("Starting scanner discovery...")
         
         zeroconf = Zeroconf()

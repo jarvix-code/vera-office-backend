@@ -47,6 +47,24 @@ class AgentResponse:
         }
 
 
+
+def _strip_icon_tokens(text: str) -> str:
+    """Bug #1069: Remove/replace frontend icon tokens that render as raw text."""
+    import re as _re
+    _TOKEN_MAP = [
+        ('[SEARCH] ', ''), ('[SEARCH]', ''),
+        ('[STATS] ', ''), ('[STATS]', ''),
+        ('[WARNING] ', 'Achtung: '), ('[WARNING]', 'Achtung'),
+        ('[DOC] ', ''), ('[DOC]', ''),
+        ('[OK] ', ''), ('[OK]', ''),
+        ('[ERROR] ', 'Fehler: '), ('[ERROR]', 'Fehler'),
+        ('[BRAIN] ', ''), ('[BRAIN]', ''),
+    ]
+    for token, repl in _TOKEN_MAP:
+        text = text.replace(token, repl)
+    text = _re.sub(r'  +', ' ', text).strip()
+    return text
+
 class VERAAgent:
     """VERA conversational agent with tool calling."""
     
@@ -237,22 +255,33 @@ class VERAAgent:
                     if nickname and len(nickname) < 30:
                         brain.remember("nickname", nickname, context=user_message)
     
-    def _build_history_context(self, session_id: str, max_turns: int = 4) -> str:
-        """Build conversation history string for LLM context."""
+    def _build_history_context(self, session_id: str, max_turns: int = 4,
+                               fmt: str = "mistral") -> str:
+        """Build conversation history string for LLM context.
+        Bug #1068 fix: fmt="qwen" returns proper <|im_start|> chat turn blocks
+        so Qwen 2.5 correctly identifies its own role (assistant) vs user.
+        """
         history = self._get_conversation_history(session_id)
         if not history:
             return ""
-        
-        recent = history[-(max_turns * 2):]  # Last N turns (user+assistant pairs)
-        lines = []
+
+        recent = history[-(max_turns * 2):]
+
+        if fmt == "qwen":
+            qlines = []
+            for msg in recent:
+                role_tag = "user" if msg["role"] == "user" else "assistant"
+                qlines.append("<|im_start|>" + role_tag + "\n" + msg["content"].strip() + "<|im_end|>")
+            return "\n".join(qlines) + "\n" if qlines else ""
+
+        # Mistral / default: plain labeled text
+        mlines = []
         for msg in recent:
             role = "User" if msg["role"] == "user" else "VERA"
-            lines.append(f"{role}: {msg['content']}")
-        
-        if lines:
-            return "\n\nLetzte Nachrichten:\n" + "\n".join(lines)
+            mlines.append(role + ": " + msg["content"])
+        if mlines:
+            return "\n\nLetzte Nachrichten:\n" + "\n".join(mlines)
         return ""
-    
     def _generate_response(self, user_message: str, session_id: str) -> str:
         """Generate response using LLMRouter (Qwen -> Mistral fallback) or templates."""
         categories = self._get_categories()
@@ -270,13 +299,15 @@ class VERAAgent:
                 if routed_llm and routed_llm.is_available():
                     provider = routed_llm.get_provider_name()
                     if "Qwen" in provider:
+                        # Bug #1068: use Qwen-formatted history turns
+                        _qwen_history = self._build_history_context(session_id, fmt="qwen")
                         prompt = format_qwen_prompt(
                             user_message=user_message,
                             tools=self.tools,
                             categories=categories,
                             stats=stats,
                             user_memory=brain.recall_all(),
-                            history=history_context,
+                            history=_qwen_history,
                         )
                         stop = get_qwen_stop_sequences()
                     else:
@@ -377,7 +408,7 @@ class VERAAgent:
                                 lines.append(f"  • {r['filename']} ({r.get('category', 'unkategorisiert')})")
                             return "\n".join(lines)
                         return f"Nichts gefunden für '{query}'. Versuch mal andere Stichwörter?"
-            return "Klar! Wonach suchst du? Gib mir ein Stichwort [SEARCH]"
+            return "Klar! Wonach suchst du? Gib mir ein Stichwort:"
         
         # Ablage
         if any(w in msg_lower for w in ["leg ab", "sortier", "ordne ein", "verschieb", "einsortiern", "ablegen"]):
@@ -385,7 +416,7 @@ class VERAAgent:
         
         # Löschung
         if any(w in msg_lower for w in ["lösch", "entfern", "weg damit", "wegmachen"]):
-            return "[WARNING] Vorsicht! Aufbewahrungsfristen beachten. Welches Dokument meinst du?"
+            return "Vorsicht! Aufbewahrungsfristen beachten. Welches Dokument meinst du?"
         
         # Status / Statistik
         if any(w in msg_lower for w in ["statistik", "übersicht", "wie viele", "was gibt's neues", "status", "was gibt es neues"]):
@@ -395,7 +426,7 @@ class VERAAgent:
             lines = [f"[STATS] Übersicht:"]
             lines.append(f"  • {t} Dokumente gesamt, {stats['categorized_documents']} kategorisiert")
             if u > 0:
-                lines.append(f"  • [WARNING] {u} noch unkategorisiert")
+                lines.append(f"  • {u} noch unkategorisiert")
             if p > 0:
                 lines.append(f"  • {p} heute verarbeitet")
             if u == 0 and t > 0:
@@ -404,8 +435,7 @@ class VERAAgent:
         
         # Hilfe
         if any(w in msg_lower for w in ["hilfe", "help", "was kannst du", "wie geht", "was machst du"]):
-            return ("Ich kann: [SEARCH] Dokumente suchen,  Ablegen & sortieren, "
-                    "[STATS] Statistiken zeigen, [WARNING] An Fristen erinnern. Was brauchst du?")
+            return "Ich kann: Dokumente suchen, ablegen & sortieren, Statistiken zeigen, Fristen prüfen. Was brauchst du?"
         
         # Aufbewahrung
         if any(w in msg_lower for w in ["aufbewahr", "wie lang", "frist", "wann löschen", "aufheben"]):
@@ -426,7 +456,7 @@ class VERAAgent:
         
         # Fehler / Korrekturen
         if any(w in msg_lower for w in ["falsch", "korrigier", "stimmt nicht", "nein das ist", "verkehrt"]):
-            return "Sorry! Was stimmt nicht? Ich lern draus. [BRAIN]"
+            return "Sorry! Was stimmt nicht? Ich lern draus."
         
         # Persönliche Info erkennen (Name)
         if any(w in msg_lower for w in ["ich bin ", "ich heiße ", "mein name ist "]):
@@ -656,6 +686,8 @@ class VERAAgent:
             # Generate contextual suggestions
             suggestions = self._generate_suggestions(user_message)
             
+            # Bug #1069: strip icon tokens from LLM-generated response
+            response_text = _strip_icon_tokens(response_text)
             return AgentResponse(
                 message=response_text,
                 suggestions=suggestions
