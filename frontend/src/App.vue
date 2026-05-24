@@ -107,7 +107,7 @@
           <q-separator class="q-my-sm" />
           <q-expansion-item
             icon="account_balance"
-            :label="erpAccessible ? 'ERP' : 'ERP 🔒'"
+            :label="erpAccessible ? 'ERP' : 'ERP (gesperrt)'"
             :header-inset-level="0"
             :header-class="erpAccessible ? '' : 'text-grey-5'"
             :disable="!erpAccessible"
@@ -134,7 +134,7 @@
           <q-separator class="q-my-sm" />
           <q-expansion-item
             icon="checklist"
-            :label="qmAccessible ? 'QM' : 'QM 🔒'"
+            :label="qmAccessible ? 'QM' : 'QM (gesperrt)'"
             :header-inset-level="0"
             :header-class="qmAccessible ? '' : 'text-grey-5'"
             :disable="!qmAccessible"
