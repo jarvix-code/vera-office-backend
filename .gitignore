@@ -12,7 +12,7 @@ dist/
 *.egg-info/
 .pytest_cache/
 paddleocr-models/
-models/
+/models/
 certs/
 keys/
 *.key

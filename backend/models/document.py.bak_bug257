@@ -1,0 +1,111 @@
+"""
+VERA Office - Document Model
+Repraesentiert ein verarbeitetes Dokument in der Datenbank
+"""
+import re
+from datetime import datetime
+from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean, Text, ForeignKey
+from sqlalchemy.orm import relationship, validates
+from backend.db.database import Base
+
+
+def _parse_date_value(value):
+    """Parse a date value, supporting ISO and German DD.MM.YYYY format."""
+    if value is None or isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        value = value.strip()
+        if not value:
+            return None
+        # ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS[.ffffff]
+        if re.match(r'^\d{4}-\d{2}-\d{2}', value):
+            try:
+                return datetime.fromisoformat(value[:26] if len(value) > 26 else value)
+            except ValueError:
+                return None
+        # German format: DD.MM.YYYY
+        m = re.match(r'^(\d{1,2})\.(\d{1,2})\.(\d{4})$', value)
+        if m:
+            day, month, year = m.groups()
+            try:
+                return datetime(int(year), int(month), int(day))
+            except ValueError:
+                return None
+        return None
+    return value
+
+
+class Document(Base):
+    """
+    Dokument-Tabelle
+    Speichert Metadaten ueber verarbeitete Dokumente
+    """
+    __tablename__ = "documents"
+
+    # Primary Key
+    id = Column(Integer, primary_key=True, index=True)
+
+    # Dateiinformationen
+    filename = Column(String(512), nullable=False, index=True)
+    original_filename = Column(String(512), nullable=True)
+    file_path = Column(String(1024), nullable=False, unique=True)
+    file_size = Column(Integer, nullable=False)  # Bytes
+    file_hash = Column(String(64), nullable=True, index=True)  # SHA256 fuer Duplikaterkennung
+
+    # Dokumenttyp & Klassifikation
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+    category = relationship("Category", back_populates="documents")
+    classification_confidence = Column(Float, nullable=True)  # 0.0 - 1.0
+
+    # OCR & Inhalt
+    ocr_text = Column(Text, nullable=True)  # Volltext aus OCR
+    ocr_language = Column(String(10), nullable=True, default="de")
+    ocr_corrected = Column(Boolean, default=False)  # Wurde KI-Korrektur angewendet?
+
+    # Intelligente Metadaten (aus Klassifikation extrahiert)
+    document_date = Column(DateTime, nullable=True, index=True)  # Rechnungsdatum, Vertragsdatum etc.
+    sender = Column(String(256), nullable=True, index=True)  # Absender/Firma
+    reference_number = Column(String(128), nullable=True, index=True)  # Rechnungsnr., Vertragsnr. etc.
+    amount = Column(Float, nullable=True)  # Rechnungsbetrag (falls Rechnung)
+
+    # Verarbeitung
+    page_count = Column(Integer, default=1)
+    processed = Column(Boolean, default=False)
+    processing_error = Column(Text, nullable=True)
+
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # Klassifikations-Reasoning & Status
+    classification_reasoning = Column(Text, nullable=True)
+    classification_status = Column(String(50), nullable=True, default="pending", index=True)
+
+    # Active Learning Fields
+    user_explanation = Column(Text, nullable=True)
+    classified_at = Column(DateTime, nullable=True)
+    confidence = Column(Float, nullable=True)
+
+    # Escalation Fields
+    user_comment = Column(Text, nullable=True)
+    escalated_at = Column(DateTime, nullable=True)
+    escalated_by = Column(String(128), nullable=True)
+    reviewed_at = Column(DateTime, nullable=True)
+    dev_notes = Column(Text, nullable=True)
+
+    # Sprint 1: Originalbild + Qualitaetspruefung
+    original_image_path = Column(String(1024), nullable=True)
+    quality_score = Column(Float, nullable=True)
+    quality_issues = Column(Text, nullable=True)
+
+    # Soft Delete
+    deleted = Column(Boolean, default=False, index=True)
+    deleted_at = Column(DateTime, nullable=True)
+
+    @validates("document_date", "classified_at", "escalated_at", "reviewed_at", "deleted_at")
+    def _coerce_date(self, key, value):
+        """Convert German DD.MM.YYYY strings to datetime before persisting."""
+        return _parse_date_value(value)
+
+    def __repr__(self):
+        return f"<Document(id={self.id}, filename='{self.filename}', category='{self.category}')>"
