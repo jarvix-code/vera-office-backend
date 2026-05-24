@@ -10,8 +10,8 @@
           aria-label="Menu"
           @click="drawer = !drawer"
         />
-        <q-toolbar-title class="text-weight-bold" style="font-size: 1.1rem;">
-          <img src="/vera-logo.svg" style="height: 28px; vertical-align: middle; margin-right: 8px; margin-bottom: 2px;" alt="VERA" />VERA Office
+        <q-toolbar-title class="text-weight-bold vera-app-title" style="font-size: 1.1rem;">
+          <img src="/vera-logo.svg" style="height: 28px; vertical-align: middle; margin-right: 8px; margin-bottom: 2px;" alt="VERA" /><span class="vera-title-gradient">VERA Office</span>
         </q-toolbar-title>
         <q-space />
         <q-btn flat round dense icon="dark_mode" @click="toggleDark" />
@@ -294,27 +294,43 @@ function markAllRead() {
 
 /* Aktiver Menu-Item: Deutlich hervorgehoben */
 .q-router-link--active {
-  background: rgba(124, 58, 237, 0.25) !important;
-  border-left: 4px solid #A78BFA !important; /* Helleres Lila für besseren Kontrast */
+  background: rgba(26, 82, 118, 0.25) !important;
+  border-left: 4px solid #1abc9c !important; /* Boris-Teal Akzent */
 }
 
 .q-router-link--active .q-item__label {
-  color: #FFFFFF !important; /* Weiß für aktiven Item */
+  color: #FFFFFF !important;
   font-weight: 600;
 }
 
 .q-router-link--active .q-icon {
-  color: #A78BFA !important; /* Lila-Icon für aktiven Item */
+  color: #1abc9c !important; /* Boris-Teal Icon */
 }
 
 /* Header-Styles */
 .vera-header {
   background: #FFFFFF;
   color: #1E293B;
+  border-bottom: 2px solid rgba(26, 82, 118, 0.08);
+}
+
+/* Boris-Branding Gradient auf "VERA Office" im App-Header */
+.vera-title-gradient {
+  background: linear-gradient(135deg, #1a5276 0%, #2980b9 50%, #1abc9c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
 }
 
 body.body--dark .vera-header {
   background: #1E293B;
   color: #FFFFFF;
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+
+body.body--dark .vera-title-gradient {
+  -webkit-text-fill-color: #FFFFFF;
+  background: none;
 }
 </style>
