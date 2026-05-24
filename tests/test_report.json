@@ -1,0 +1,144 @@
+{
+  "timestamp": "2026-04-08T13:33:32.339880",
+  "target": "http://localhost:8081",
+  "summary": {
+    "total": 22,
+    "passed": 22,
+    "failed": 0
+  },
+  "results": [
+    {
+      "test": "api_health",
+      "status": "PASS",
+      "detail": "version=1.0.0-alpha status=healthy"
+    },
+    {
+      "test": "promo_VERA-DEMO-2026",
+      "status": "PASS",
+      "detail": "modules=['qm', 'erp', 'datev'] remaining=92"
+    },
+    {
+      "test": "promo_SENZIVO-PRO",
+      "status": "PASS",
+      "detail": "modules=['qm', 'erp', 'datev'] remaining=4"
+    },
+    {
+      "test": "promo_BASIC-FREE",
+      "status": "PASS",
+      "detail": "modules=['dms'] remaining=993"
+    },
+    {
+      "test": "promo_FAKE-INVALID-CODE_rejected",
+      "status": "PASS",
+      "detail": "Korrekt 404"
+    },
+    {
+      "test": "feedback_submit",
+      "status": "PASS",
+      "detail": "message=Feedback erfolgreich gesendet! Danke für deine Hilfe."
+    },
+    {
+      "test": "homepage_loads",
+      "status": "PASS",
+      "detail": "title='VERA Office - Dokumentenmanagement'"
+    },
+    {
+      "test": "homepage_no_error",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "logo_visible",
+      "status": "PASS",
+      "detail": "Echtes Logo-Bild: /vera-logo.png"
+    },
+    {
+      "test": "no_purple_bullet",
+      "status": "PASS",
+      "detail": "Kein '●' gefunden"
+    },
+    {
+      "test": "chat_input_exists",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "chat_vera_responds",
+      "status": "PASS",
+      "detail": "Antwort: 'edit'"
+    },
+    {
+      "test": "nav_Home",
+      "status": "PASS",
+      "detail": "http://localhost:8081/"
+    },
+    {
+      "test": "nav_Dokumente",
+      "status": "PASS",
+      "detail": "http://localhost:8081/documents"
+    },
+    {
+      "test": "nav_Erfassung",
+      "status": "PASS",
+      "detail": "http://localhost:8081/capture"
+    },
+    {
+      "test": "nav_Suche",
+      "status": "PASS",
+      "detail": "http://localhost:8081/search"
+    },
+    {
+      "test": "nav_Einstellungen",
+      "status": "PASS",
+      "detail": "http://localhost:8081/settings"
+    },
+    {
+      "test": "ERP_loads",
+      "status": "PASS",
+      "detail": "Inhalt direkt sichtbar (lizenziert)"
+    },
+    {
+      "test": "QM_loads",
+      "status": "PASS",
+      "detail": "Inhalt direkt sichtbar (lizenziert)"
+    },
+    {
+      "test": "dark_mode_toggle",
+      "status": "PASS",
+      "detail": "class ändert sich: 'desktop no-touch body--dark '"
+    },
+    {
+      "test": "console_errors_few",
+      "status": "PASS",
+      "detail": "2 Errors (akzeptabel): Failed to load dashboard data: ReferenceError: dashboardApi is not defined\n    a"
+    },
+    {
+      "test": "onboarding_loads",
+      "status": "PASS",
+      "detail": "Onboarding-Inhalt sichtbar"
+    }
+  ],
+  "bugs": [],
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Suggestions error: AxiosError: Request failed with status code 401\n    at um (http://localhost:8081/assets/index-B-EpTpg8.js:4:1087)\n    at XMLHttpRequest.x (http://localhost:8081/assets/index-B-EpTpg8.js:4:5927)\n    at ao.request (http://localhost:8081/assets/index-B-EpTpg8.js:6:2094)\n    at async Object.suggestions (http://localhost:8081/assets/index-B-EpTpg8.js:7:8969)\n    at async Proxy.k (http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:362)\n    at async http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:2624",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Suggestions error: AxiosError: Request failed with status code 401\n    at um (http://localhost:8081/assets/index-B-EpTpg8.js:4:1087)\n    at XMLHttpRequest.x (http://localhost:8081/assets/index-B-EpTpg8.js:4:5927)\n    at ao.request (http://localhost:8081/assets/index-B-EpTpg8.js:6:2094)\n    at async Object.suggestions (http://localhost:8081/assets/index-B-EpTpg8.js:7:8969)\n    at async Proxy.k (http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:362)\n    at async http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:2624",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Suggestions error: AxiosError: Request failed with status code 401\n    at um (http://localhost:8081/assets/index-B-EpTpg8.js:4:1087)\n    at XMLHttpRequest.x (http://localhost:8081/assets/index-B-EpTpg8.js:4:5927)\n    at ao.request (http://localhost:8081/assets/index-B-EpTpg8.js:6:2094)\n    at async Object.suggestions (http://localhost:8081/assets/index-B-EpTpg8.js:7:8969)\n    at async Proxy.k (http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:362)\n    at async http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:2624",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Suggestions error: AxiosError: Request failed with status code 401\n    at um (http://localhost:8081/assets/index-B-EpTpg8.js:4:1087)\n    at XMLHttpRequest.x (http://localhost:8081/assets/index-B-EpTpg8.js:4:5927)\n    at ao.request (http://localhost:8081/assets/index-B-EpTpg8.js:6:2094)\n    at async Object.suggestions (http://localhost:8081/assets/index-B-EpTpg8.js:7:8969)\n    at async Proxy.k (http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:362)\n    at async http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:2624",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Suggestions error: AxiosError: Request failed with status code 401\n    at um (http://localhost:8081/assets/index-B-EpTpg8.js:4:1087)\n    at XMLHttpRequest.x (http://localhost:8081/assets/index-B-EpTpg8.js:4:5927)\n    at ao.request (http://localhost:8081/assets/index-B-EpTpg8.js:6:2094)\n    at async Object.suggestions (http://localhost:8081/assets/index-B-EpTpg8.js:7:8969)\n    at async Proxy.k (http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:362)\n    at async http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:2624",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Suggestions error: AxiosError: Request failed with status code 401\n    at um (http://localhost:8081/assets/index-B-EpTpg8.js:4:1087)\n    at XMLHttpRequest.x (http://localhost:8081/assets/index-B-EpTpg8.js:4:5927)\n    at ao.request (http://localhost:8081/assets/index-B-EpTpg8.js:6:2094)\n    at async Object.suggestions (http://localhost:8081/assets/index-B-EpTpg8.js:7:8969)\n    at async Proxy.k (http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:362)\n    at async http://localhost:8081/assets/ChatView-gR4pa6Da.js:3:2624",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ]
+}

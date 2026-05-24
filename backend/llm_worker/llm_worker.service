@@ -1,0 +1,45 @@
+# VERA LLM Worker - Systemd Service
+# Auto-start on boot, auto-restart on crash
+#
+# Installation:
+#   sudo cp llm_worker.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable llm_worker
+#   sudo systemctl start llm_worker
+#
+# Management:
+#   sudo systemctl status llm_worker
+#   sudo systemctl restart llm_worker
+#   sudo systemctl stop llm_worker
+#   sudo journalctl -u llm_worker -f  (view logs)
+
+[Unit]
+Description=VERA LLM Worker (Mistral 7B Backend)
+After=network.target
+
+[Service]
+Type=simple
+User=vera
+Group=vera
+WorkingDirectory=/opt/vera-office/backend/llm_worker
+Environment="PATH=/opt/vera-office/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/opt/vera-office/venv/bin/python server.py
+
+# Auto-restart on crash
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=llm_worker
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/vera-office/backend/llm_worker
+
+[Install]
+WantedBy=multi-user.target

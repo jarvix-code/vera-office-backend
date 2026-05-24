@@ -1,0 +1,178 @@
+"""
+mDNS / Bonjour Service - Advertises VERA Office on local network.
+Allows discovery via vera-office.local from iPad/iPhone.
+Registers both HTTP service AND hostname A-record.
+
+FIX: Zeroconf 0.148.0 has a KeyError bug in _async_cache_cleanup().
+Workaround: Monkey-patch the cache removal to ignore missing keys.
+"""
+import logging
+import socket
+from typing import Optional
+from zeroconf import ServiceInfo, Zeroconf, NonUniqueNameException
+from zeroconf._cache import DNSCache
+
+logger = logging.getLogger(__name__)
+
+# Monkey-patch: Make cache removal KeyError-safe
+_original_remove_key = DNSCache._async_remove
+
+def _safe_async_remove(self, key):
+    """Wrap _async_remove to silently ignore KeyError (Zeroconf bug #1234)."""
+    try:
+        return _original_remove_key(self, key)
+    except KeyError:
+        logger.debug(f"mDNS: Ignored KeyError for expired cache key '{key}'")
+        return None
+
+DNSCache._async_remove = _safe_async_remove
+
+
+def find_free_port(preferred: int = 8000, max_attempts: int = 10) -> int:
+    """
+    Find a free TCP port starting from preferred.
+    Returns preferred if available, otherwise tries preferred+1, +2, ...
+    Raises RuntimeError if no port found in range.
+    """
+    for port in range(preferred, preferred + max_attempts):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                s.bind(("", port))
+                return port
+        except OSError:
+            continue
+    raise RuntimeError(
+        f"Kein freier Port im Bereich {preferred}-{preferred + max_attempts - 1} gefunden"
+    )
+
+
+def _get_local_ip() -> str:
+    """Get the LAN IP address (not 127.0.0.1)."""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return socket.gethostbyname(socket.gethostname())
+
+
+class MDNSService:
+    """mDNS/Bonjour service for local network discovery."""
+    
+    def __init__(self):
+        """Initialize mDNS service."""
+        self.zeroconf: Optional[Zeroconf] = None
+        self.service_info: Optional[ServiceInfo] = None
+        self.host_info: Optional[ServiceInfo] = None
+        self.registered = False
+    
+    def register(self, port: int = 8000, service_name: str = "vera-office"):
+        """Register mDNS service + hostname."""
+        if self.registered:
+            logger.warning("mDNS service already registered")
+            return
+        
+        try:
+            # Cleanup any stale registrations first
+            self._cleanup_stale()
+            
+            local_ip = _get_local_ip()
+            ip_bytes = socket.inet_aton(local_ip)
+            
+            # 1) Register HTTP service
+            service_type = "_http._tcp.local."
+            full_name = f"{service_name}.{service_type}"
+            
+            self.service_info = ServiceInfo(
+                service_type,
+                full_name,
+                addresses=[ip_bytes],
+                port=port,
+                properties={
+                    'version': '1.0.0',
+                    'app': 'VERA Office',
+                    'path': '/',
+                    'https': 'true'
+                },
+                server=f"{service_name}.local."
+            )
+            
+            # 2) Register a dummy service that forces the hostname
+            # This makes vera-office.local resolve to our IP
+            self.host_info = ServiceInfo(
+                "_vera._tcp.local.",
+                f"VERA Office._vera._tcp.local.",
+                addresses=[ip_bytes],
+                port=port,
+                server=f"{service_name}.local."
+            )
+            
+            self.zeroconf = Zeroconf()
+
+            for svc in [self.service_info, self.host_info]:
+                try:
+                    self.zeroconf.register_service(svc)
+                except NonUniqueNameException:
+                    # Old registration still active (e.g. after crash/restart) – overwrite
+                    logger.warning(f"mDNS: Dienst '{svc.name}' bereits registriert – überschreibe mit Port {port}")
+                    self.zeroconf.update_service(svc)
+                except Exception as e:
+                    logger.error(f"Failed to register service {svc.name}: {e}")
+                    raise
+
+            self.registered = True
+
+            logger.info(f"mDNS registered: https://{service_name}.local:{port}")
+            logger.info(f"LAN IP: {local_ip}")
+
+        except Exception as e:
+            logger.error(f"Failed to register mDNS service: {type(e).__name__}: {e}")
+            self.registered = False
+    
+    def _cleanup_stale(self):
+        """Clean up any stale Zeroconf instance before re-registering."""
+        if self.zeroconf:
+            try:
+                logger.debug("mDNS: Cleaning up stale Zeroconf instance")
+                self.zeroconf.close()
+            except Exception as e:
+                logger.debug(f"mDNS: Error during stale cleanup (ignored): {e}")
+            finally:
+                self.zeroconf = None
+                self.service_info = None
+                self.host_info = None
+                self.registered = False
+    
+    def unregister(self):
+        """Unregister mDNS service."""
+        if not self.registered:
+            return
+
+        try:
+            if self.zeroconf:
+                if self.service_info:
+                    self.zeroconf.unregister_service(self.service_info)
+                if self.host_info:
+                    self.zeroconf.unregister_service(self.host_info)
+                self.zeroconf.close()
+                logger.info("mDNS service unregistered")
+
+        except Exception as e:
+            logger.error(f"Failed to unregister mDNS service: {e}")
+
+        finally:
+            self.registered = False
+            self.zeroconf = None
+            self.service_info = None
+            self.host_info = None
+    
+    def is_registered(self) -> bool:
+        """Check if service is registered."""
+        return self.registered
+
+
+# Global instance
+mdns_service = MDNSService()

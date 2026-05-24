@@ -1,0 +1,55 @@
+# VERA Office - Python Requirements
+
+# Core Framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-multipart==0.0.19
+
+# Database
+sqlalchemy==2.0.35
+alembic==1.14.0
+
+# Image Processing
+opencv-python==4.10.0.84
+pillow==11.1.0
+numpy==1.26.4
+
+# OCR
+pytesseract==0.3.13
+
+# PDF
+reportlab==4.2.5
+pypdf==5.1.0
+PyMuPDF
+
+# Configuration
+pyyaml==6.0.2
+python-dotenv==1.0.1
+
+# Logging
+loguru==0.7.3
+
+# AI / LLM
+llama-cpp-python==0.3.5
+scikit-learn==1.8.0
+
+# Network
+zeroconf==0.148.0
+httpx==0.28.1
+aiohttp
+beautifulsoup4
+
+# Auth
+bcrypt
+pyjwt
+cryptography
+
+# System
+psutil
+watchdog
+lxml
+
+# Utils
+pydantic==2.10.5
+pydantic-settings==2.7.0
+qrcode[pil]

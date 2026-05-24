@@ -1,0 +1,417 @@
+<template>
+  <!-- Login & Onboarding: No Layout (standalone views) -->
+  <template v-if="isStandalonePage">
+    <router-view />
+  </template>
+
+  <!-- Main App: Chat-First, Slim Icon Sidebar -->
+  <q-layout v-else view="lHh Lpr lff" class="vera-layout">
+    <!-- Slim Icon Sidebar -->
+    <q-drawer
+      v-model="drawer"
+      :width="isMobile ? 280 : 72"
+      :breakpoint="768"
+      bordered
+      class="vera-sidebar"
+      :mini="!isMobile && !sidebarExpanded"
+      @mouseover="!isMobile && (sidebarExpanded = true)"
+      @mouseleave="!isMobile && (sidebarExpanded = false)"
+    >
+      <!-- Logo/Brand -->
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <q-icon name="auto_awesome" size="28px" />
+        </div>
+        <transition name="fade">
+          <div v-if="isMobile || sidebarExpanded" class="brand-text">
+            <div class="brand-title">VERA</div>
+            <div class="brand-subtitle">Office</div>
+          </div>
+        </transition>
+      </div>
+
+      <q-separator class="sidebar-separator" />
+
+      <!-- Navigation -->
+      <q-scroll-area class="fit sidebar-scroll">
+        <q-list padding class="sidebar-nav">
+
+          <!-- 📄 Dokumente / Chat (Hauptansicht) -->
+          <q-item
+            to="/"
+            v-ripple
+            clickable
+            class="nav-item"
+            active-class="nav-item-active"
+            exact
+          >
+            <q-item-section avatar>
+              <q-icon name="forum" size="24px" />
+            </q-item-section>
+            <q-item-section v-if="isMobile || sidebarExpanded">
+              <q-item-label>Dokumente</q-item-label>
+            </q-item-section>
+            <q-tooltip
+              v-if="!isMobile && !sidebarExpanded"
+              anchor="center right"
+              self="center left"
+              :offset="[10, 0]"
+            >Dokumente / Chat</q-tooltip>
+          </q-item>
+
+          <q-separator class="q-my-sm sidebar-separator" />
+
+          <!-- 💰 ERP (aufklappbar) -->
+          <template v-if="erpEnabled">
+            <q-expansion-item
+              v-model="erpExpanded"
+              icon="account_balance"
+              label="ERP / Finanzen"
+              class="nav-expansion"
+              :hide-expand-icon="!isMobile && !sidebarExpanded"
+              header-class="nav-expansion-header"
+            >
+              <q-item
+                v-for="item in erpSubItems"
+                :key="item.to"
+                :to="item.to"
+                v-ripple
+                clickable
+                class="nav-item nav-sub-item"
+                active-class="nav-item-active"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="item.icon" size="20px" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ item.label }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-expansion-item>
+            <q-tooltip
+              v-if="!isMobile && !sidebarExpanded"
+              anchor="center right"
+              self="center left"
+              :offset="[10, 0]"
+            >ERP / Finanzen</q-tooltip>
+          </template>
+
+          <!-- 📋 QM (aufklappbar) -->
+          <template v-if="qmEnabled">
+            <q-expansion-item
+              v-model="qmExpanded"
+              icon="verified"
+              label="QM-System"
+              class="nav-expansion"
+              :hide-expand-icon="!isMobile && !sidebarExpanded"
+              header-class="nav-expansion-header"
+            >
+              <q-item
+                v-for="item in qmSubItems"
+                :key="item.to"
+                :to="item.to"
+                v-ripple
+                clickable
+                class="nav-item nav-sub-item"
+                active-class="nav-item-active"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="item.icon" size="20px" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ item.label }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-expansion-item>
+            <q-tooltip
+              v-if="!isMobile && !sidebarExpanded"
+              anchor="center right"
+              self="center left"
+              :offset="[10, 0]"
+            >QM-System</q-tooltip>
+          </template>
+
+          <q-separator class="q-my-sm sidebar-separator" />
+
+          <!-- ⚙️ Einstellungen -->
+          <q-item
+            to="/settings"
+            v-ripple
+            clickable
+            class="nav-item"
+            active-class="nav-item-active"
+          >
+            <q-item-section avatar>
+              <q-icon name="settings" size="24px" />
+            </q-item-section>
+            <q-item-section v-if="isMobile || sidebarExpanded">
+              <q-item-label>Einstellungen</q-item-label>
+            </q-item-section>
+            <q-tooltip
+              v-if="!isMobile && !sidebarExpanded"
+              anchor="center right"
+              self="center left"
+              :offset="[10, 0]"
+            >Einstellungen</q-tooltip>
+          </q-item>
+
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
+
+    <!-- Top Header (Mobile only) -->
+    <q-header v-if="isMobile" elevated class="vera-header">
+      <q-toolbar>
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          @click="drawer = !drawer"
+        />
+        <q-toolbar-title class="header-title">
+          <q-icon name="auto_awesome" color="primary" class="q-mr-sm" />
+          VERA Office
+        </q-toolbar-title>
+        <UserMenu />
+      </q-toolbar>
+    </q-header>
+
+    <!-- Page Container -->
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+  </q-layout>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+import UserMenu from './components/UserMenu.vue'
+
+const route = useRoute()
+const drawer = ref(true)
+const sidebarExpanded = ref(false)
+const windowWidth = ref(window.innerWidth)
+
+const isMobile = computed(() => windowWidth.value < 768)
+
+const isStandalonePage = computed(() => {
+  return route.path === '/login' || route.path === '/onboarding'
+})
+
+// Expansion state — öffnet automatisch wenn aktive Route im Bereich liegt
+const erpExpanded = ref(route.path.startsWith('/finanzen'))
+const qmExpanded = ref(route.path.startsWith('/qm'))
+
+// ERP Sub-Navigation
+const erpSubItems = [
+  { label: 'Dashboard',    icon: 'account_balance', to: '/finanzen' },
+  { label: 'Rechnungen',   icon: 'receipt',         to: '/finanzen/rechnungen' },
+  { label: 'Offene Posten',icon: 'payments',         to: '/finanzen/offene-posten' },
+  { label: 'BWA',          icon: 'assessment',       to: '/finanzen/bwa' },
+  { label: 'USt-VA',       icon: 'receipt_long',     to: '/finanzen/ust' },
+  { label: 'DATEV Export', icon: 'download',         to: '/finanzen/datev' },
+]
+
+// QM Sub-Navigation
+const qmSubItems = [
+  { label: 'QM-Handbuch',        icon: 'menu_book',         to: '/qm/handbook' },
+  { label: 'Audits',             icon: 'fact_check',        to: '/qm/audits' },
+  { label: 'Hygiene-Protokolle', icon: 'cleaning_services', to: '/qm/hygiene' },
+  { label: 'Compliance',         icon: 'verified',          to: '/qm/compliance' },
+  { label: 'Schulungen',         icon: 'school',            to: '/qm/schulungen' },
+]
+
+// Module visibility
+const qmEnabled = ref(true)
+const erpEnabled = ref(true)
+
+async function checkModules() {
+  try {
+    const response = await fetch('/api/modules')
+    if (response.ok) {
+      const modules: Array<{ name: string; licensed: boolean }> = await response.json()
+      const qmModule = modules.find(m => m.name === 'qm')
+      const erpModule = modules.find(m => m.name === 'erp')
+      qmEnabled.value = qmModule?.licensed !== false
+      erpEnabled.value = erpModule?.licensed !== false
+    }
+  } catch {
+    // Default: show all modules
+  }
+}
+
+function handleResize() {
+  windowWidth.value = window.innerWidth
+  if (isMobile.value) {
+    drawer.value = false
+  }
+}
+
+onMounted(() => {
+  checkModules()
+  window.addEventListener('resize', handleResize)
+  drawer.value = !isMobile.value
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
+</script>
+
+<style lang="scss">
+$primary: #8B5CF6;
+$primary-dark: #7C3AED;
+$secondary: #EC4899;
+$background: #F9FAFB;
+$sidebar-bg: #FFFFFF;
+$sidebar-item: #6B7280;
+$sidebar-active: #8B5CF6;
+$border-color: #E5E7EB;
+
+.vera-layout {
+  background: $background;
+}
+
+// Sidebar
+.vera-sidebar {
+  background: $sidebar-bg;
+  border-right: 1px solid $border-color;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-brand {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.brand-text { flex: 1; min-width: 0; }
+
+.brand-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1F2937;
+  letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: #6B7280;
+  margin-top: 2px;
+}
+
+.sidebar-separator {
+  background: $border-color;
+  opacity: 0.5;
+}
+
+.sidebar-scroll {
+  height: calc(100vh - 72px);
+}
+
+.sidebar-nav {
+  padding: 8px;
+}
+
+// Normale Navigation-Items
+.nav-item {
+  border-radius: 12px;
+  margin-bottom: 4px;
+  min-height: 48px;
+  color: $sidebar-item;
+  transition: all 0.2s ease;
+
+  .q-icon { color: $sidebar-item; }
+
+  &:hover { background: rgba($primary, 0.08); }
+
+  &.nav-item-active {
+    background: linear-gradient(135deg, rgba($primary, 0.15) 0%, rgba($secondary, 0.1) 100%);
+    color: $primary-dark;
+    font-weight: 600;
+    .q-icon { color: $primary; }
+  }
+
+  @media (max-width: 768px) { min-height: 52px; }
+}
+
+// Sub-Items (eingerückt)
+.nav-sub-item {
+  padding-left: 8px !important;
+  min-height: 40px;
+  border-radius: 8px;
+  margin-bottom: 2px;
+
+  .q-icon { font-size: 18px !important; }
+}
+
+// Expansion-Items (ERP, QM Gruppen)
+.nav-expansion {
+  border-radius: 12px;
+  margin-bottom: 4px;
+  overflow: hidden;
+
+  .nav-expansion-header {
+    border-radius: 12px;
+    min-height: 48px;
+    color: $sidebar-item;
+    font-size: 14px;
+
+    .q-icon { color: $sidebar-item; }
+
+    &:hover { background: rgba($primary, 0.08); }
+  }
+
+  // Wenn eine Sub-Route aktiv ist, Header hervorheben
+  &.nav-expansion-active .nav-expansion-header {
+    color: $primary-dark;
+    .q-icon { color: $primary; }
+  }
+
+  :deep(.q-expansion-item__content) {
+    padding: 0 0 4px 8px;
+  }
+}
+
+// Header (Mobile)
+.vera-header {
+  background: white;
+  color: #1F2937;
+  border-bottom: 1px solid $border-color;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+// Transitions
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+@media (max-width: 768px) {
+  .vera-sidebar { box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1); }
+}
+
+.q-page-container {
+  min-height: 100vh;
+}
+</style>

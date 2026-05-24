@@ -1,0 +1,21 @@
+# VERA LLM Worker Dependencies
+# Install: py -3.11 -m pip install -r requirements.txt
+
+# LLM Engine (llama.cpp Python bindings)
+llama-cpp-python>=0.2.0
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# Data Validation
+pydantic>=2.0.0
+
+# Logging
+loguru>=0.7.0
+
+# HTTP Client (for integration testing)
+requests>=2.31.0
+
+# Terminal Colors (for test output)
+colorama>=0.4.6

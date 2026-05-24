@@ -1,0 +1,51 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="veraGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Dokument Frame -->
+  <path d="M 40 30 L 140 30 L 140 50 L 160 70 L 160 170 L 40 170 Z" 
+        fill="none" stroke="url(#veraGradient)" stroke-width="6" 
+        stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Ecken-Knick -->
+  <path d="M 140 30 L 140 50 L 160 70" 
+        fill="none" stroke="url(#veraGradient)" stroke-width="4"/>
+  
+  <!-- Zauberstab (DIAGONAL bottom-left → top-right) -->
+  <line x1="50" y1="150" x2="150" y2="50" 
+        stroke="url(#veraGradient)" stroke-width="8" 
+        stroke-linecap="round"/>
+  
+  <!-- Partikel-Trail entlang Zauberstab -->
+  <circle cx="70" cy="130" r="2" fill="url(#veraGradient)"/>
+  <circle cx="90" cy="110" r="2.5" fill="url(#veraGradient)"/>
+  <circle cx="110" cy="90" r="2" fill="url(#veraGradient)"/>
+  <circle cx="130" cy="70" r="2.5" fill="url(#veraGradient)"/>
+  
+  <!-- Checkmark 1 (hintere, größer) -->
+  <path d="M 70 100 L 90 120 L 140 70" 
+        stroke="url(#veraGradient)" stroke-width="12" 
+        stroke-linecap="round" stroke-linejoin="round" 
+        fill="none" opacity="0.7"/>
+  
+  <!-- Checkmark 2 (vordere, kleiner offset) -->
+  <path d="M 75 105 L 95 125 L 145 75" 
+        stroke="url(#veraGradient)" stroke-width="12" 
+        stroke-linecap="round" stroke-linejoin="round" 
+        fill="none"/>
+  
+  <!-- Sparkles (upper-right, bei Wand-Spitze) -->
+  <!-- Größerer Sparkle -->
+  <path d="M 155 45 L 157 49 L 161 51 L 157 53 L 155 57 L 153 53 L 149 51 L 153 49 Z" 
+        fill="url(#veraGradient)"/>
+  <!-- Mittlerer Sparkle -->
+  <path d="M 165 30 L 166.5 33 L 169.5 34.5 L 166.5 36 L 165 39 L 163.5 36 L 160.5 34.5 L 163.5 33 Z" 
+        fill="url(#veraGradient)"/>
+  <!-- Kleiner Sparkle -->
+  <path d="M 170 55 L 171 57 L 173 58 L 171 59 L 170 61 L 169 59 L 167 58 L 169 57 Z" 
+        fill="url(#veraGradient)"/>
+</svg>

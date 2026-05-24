@@ -1,0 +1,25 @@
+services:
+  vera-office:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vera-office
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config:/app/config
+      - ./models:/app/models
+      - ./paddleocr-models:/app/paddleocr-models
+    environment:
+      - PYTHONIOENCODING=utf-8
+      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
+      - PADDLEOCR_HOME=/app/paddleocr-models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

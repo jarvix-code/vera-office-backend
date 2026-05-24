@@ -1,0 +1,115 @@
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | [CONFIG] Modul-System wird initialisiert...
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | Public Key geladen: C:\Jarvix\vera-office\backend\config\vera_license.pub
+2026-03-29 00:42:44 | INFO     | backend.modules.license:_load | Lizenzen geladen: ['erp', 'qm']
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | LicenseStore initialisiert: C:\Jarvix\vera-office\data\licenses.json
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:__init__ | ModuleRegistry initialisiert
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | Meta-API gemountet: /api/modules, /api/modules/license
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul registriert: VERA ERP (1.0.0)
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul 'erp' ist lizenziert -> on_activate()
+2026-03-29 00:42:44 | INFO     | backend.modules.erp:on_activate | ERP-Modul aktiviert -> Erstelle DB-Tabellen
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.erp:on_activate | ERP-Tabellen erstellt: erp_financial_records
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.setup:setup_modules | [OK] ERP-Modul registriert
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul registriert: VERA QM (1.0.0)
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul 'qm' ist lizenziert -> on_activate()
+2026-03-29 00:42:44 | INFO     | backend.modules.qm:on_activate | QM-Modul aktiviert -> Erstelle DB-Tabellen
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.qm:on_activate | QM-Tabellen erstellt: qm_documents, qm_audits, qm_hygiene_protocols, qm_compliance_checks
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.setup:setup_modules | [OK] QM-Modul registriert
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | Module registriert: 2
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:mount_all | Routes gemountet: /api/modules/erp (VERA ERP)
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:mount_all | Routes gemountet: /api/modules/qm (VERA QM)
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.setup:setup_modules | [OK] Modul-System initialisiert
+2026-03-29 00:42:44 | INFO     | __main__:<module> | Modul-System geladen: 2 Module
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | [CONFIG] Modul-System wird initialisiert...
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | Public Key geladen: C:\Jarvix\vera-office\backend\config\vera_license.pub
+2026-03-29 00:42:44 | INFO     | backend.modules.license:_load | Lizenzen geladen: ['erp', 'qm']
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | LicenseStore initialisiert: C:\Jarvix\vera-office\data\licenses.json
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:__init__ | ModuleRegistry initialisiert
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | Meta-API gemountet: /api/modules, /api/modules/license
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul registriert: VERA ERP (1.0.0)
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul 'erp' ist lizenziert -> on_activate()
+2026-03-29 00:42:44 | INFO     | backend.modules.erp:on_activate | ERP-Modul aktiviert -> Erstelle DB-Tabellen
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.erp:on_activate | ERP-Tabellen erstellt: erp_financial_records
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.setup:setup_modules | [OK] ERP-Modul registriert
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul registriert: VERA QM (1.0.0)
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:register | Modul 'qm' ist lizenziert -> on_activate()
+2026-03-29 00:42:44 | INFO     | backend.modules.qm:on_activate | QM-Modul aktiviert -> Erstelle DB-Tabellen
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.qm:on_activate | QM-Tabellen erstellt: qm_documents, qm_audits, qm_hygiene_protocols, qm_compliance_checks
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.setup:setup_modules | [OK] QM-Modul registriert
+2026-03-29 00:42:44 | INFO     | backend.modules.setup:setup_modules | Module registriert: 2
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:mount_all | Routes gemountet: /api/modules/erp (VERA ERP)
+2026-03-29 00:42:44 | INFO     | backend.modules.registry:mount_all | Routes gemountet: /api/modules/qm (VERA QM)
+2026-03-29 00:42:44 | SUCCESS  | backend.modules.setup:setup_modules | [OK] Modul-System initialisiert
+2026-03-29 00:42:44 | INFO     | backend.main:<module> | Modul-System geladen: 2 Module
+2026-03-29 00:42:44 | INFO     | backend.modules.middleware:__init__ | ModuleLicenseMiddleware aktiviert
+2026-03-29 00:42:44 | INFO     | backend.main:lifespan | VERA Office Backend startet...
+2026-03-29 00:42:44 | INFO     | backend.core.ssl_setup:ensure_ssl_certs | SSL certificates found: C:\Jarvix\vera-office\keys\ssl
+2026-03-29 00:42:44 | INFO     | backend.modules.license:_load | Lizenzen geladen: ['erp', 'qm']
+2026-03-29 00:42:44 | WARNING  | backend.core.license_check:check_license_on_startup |  Lizenz ungültig: erp
+2026-03-29 00:42:44 | WARNING  | backend.core.license_check:check_license_on_startup |  Lizenz ungültig: qm
+2026-03-29 00:42:44 | INFO     | backend.core.license_check:check_license_on_startup | Lizenzen geladen: 0/2 gültig
+2026-03-29 00:42:44 | INFO     | backend.core.diagnostics:__init__ | Auto-Diagnostics aktiviert
+2026-03-29 00:42:44 | INFO     | backend.db.database:init_db | Initialisiere Datenbank...
+2026-03-29 00:42:44 | SUCCESS  | backend.db.database:init_db | Datenbank bereit
+2026-03-29 00:42:44 | INFO     | backend.main:lifespan | [OK] Shared HTTP Client initialisiert (Connection Pooling)
+2026-03-29 00:42:44 | INFO     | backend.core.scanner:start |  Starte Hotfolder-Überwachung: C:\Jarvix\vera-office\data\inbox
+2026-03-29 00:42:44 | SUCCESS  | backend.core.scanner:start | [OK] Hotfolder-Scanner aktiv
+2026-03-29 00:42:45 | INFO     | backend.core.mdns:register | [OK] mDNS registered: https://vera-office.local:8443
+2026-03-29 00:42:45 | INFO     | backend.core.mdns:register | LAN IP: 192.168.178.44
+2026-03-29 00:42:45 | INFO     | backend.main:lifespan | [OK] mDNS Service registriert: vera-office.local:8443
+2026-03-29 00:42:45 | INFO     | backend.main:lifespan | [OK] Update-Client gestartet (DEAKT IVIERT - DEBUG)
+2026-03-29 00:42:45 | INFO     | backend.main:lifespan | [OK] Telemetrie-Client gestartet (DEAKTIVIERT - DEBUG)
+2026-03-29 00:42:45 | SUCCESS  | backend.main:lifespan | VERA Office Backend bereit auf 0.0.0.0:8081
+INFO:     192.168.178.44:54335 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:51084 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:53704 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.44:53704 - "GET /assets/index-DoacHxI9.js HTTP/1.1" 200 OK
+INFO:     192.168.178.44:51864 - "GET /assets/index-DajWVhmB.css HTTP/1.1" 200 OK
+INFO:     192.168.178.44:57394 - "GET /manifest.json HTTP/1.1" 404 Not Found
+INFO:     192.168.178.44:53704 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:51864 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     192.168.178.44:60891 - "GET /api/onboarding/admin/exists HTTP/1.1" 200 OK
+INFO:     192.168.178.44:58300 - "GET /assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ-D-x-0Q06.woff2 HTTP/1.1" 200 OK
+INFO:     192.168.178.44:51864 - "GET /assets/ChatView-Kl0WGlBC.css HTTP/1.1" 200 OK
+INFO:     192.168.178.44:58300 - "GET /assets/ChatView-DVhzRlAQ.js HTTP/1.1" 200 OK
+INFO:     192.168.178.44:60891 - "GET /assets/QPage-BgdtFR_E.js HTTP/1.1" 200 OK
+INFO:     192.168.178.44:58300 - "GET /vera-logo.svg HTTP/1.1" 404 Not Found
+INFO:     192.168.178.44:60891 - "GET /vera-icon.svg?v=3 HTTP/1.1" 404 Not Found
+INFO:     192.168.178.44:51864 - "GET /api/onboarding/status HTTP/1.1" 200 OK
+INFO:     192.168.178.44:51864 - "GET /api/agent/suggestions?_silent=true HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:65146 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:59291 - "POST /api/agent/chat HTTP/1.1" 200 OK
+INFO:     192.168.178.44:51850 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:51060 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:64373 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:62570 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:63335 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:59153 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:50898 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:63362 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:56244 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:59123 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:58553 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:61149 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:59402 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:59678 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.44:59678 - "GET /assets/index-DoacHxI9.js HTTP/1.1" 200 OK
+INFO:     192.168.178.44:55116 - "GET /manifest.json HTTP/1.1" 404 Not Found
+INFO:     192.168.178.44:58249 - "GET /assets/index-DajWVhmB.css HTTP/1.1" 200 OK
+INFO:     192.168.178.44:58249 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:59678 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     192.168.178.44:59678 - "GET /api/onboarding/admin/exists HTTP/1.1" 200 OK
+INFO:     192.168.178.44:59678 - "GET /assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ-D-x-0Q06.woff2 HTTP/1.1" 200 OK
+INFO:     192.168.178.44:60460 - "GET /assets/ChatView-DVhzRlAQ.js HTTP/1.1" 200 OK
+INFO:     192.168.178.44:60922 - "GET /assets/ChatView-Kl0WGlBC.css HTTP/1.1" 200 OK
+INFO:     192.168.178.44:54764 - "GET /assets/QPage-BgdtFR_E.js HTTP/1.1" 200 OK
+INFO:     192.168.178.44:54764 - "GET /vera-logo.svg HTTP/1.1" 404 Not Found
+INFO:     192.168.178.44:60922 - "GET /vera-icon.svg?v=3 HTTP/1.1" 404 Not Found
+INFO:     192.168.178.44:60460 - "GET /api/onboarding/status HTTP/1.1" 200 OK
+INFO:     192.168.178.44:60460 - "GET /api/agent/suggestions?_silent=true HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:57347 - "POST /api/agent/chat HTTP/1.1" 200 OK
+INFO:     192.168.178.44:56039 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:61786 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:56930 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:58236 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:61752 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.178.44:65057 - "GET /api/active-learning/unclear-documents/count HTTP/1.1" 500 Internal Server Error

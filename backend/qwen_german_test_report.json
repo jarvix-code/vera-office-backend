@@ -1,0 +1,136 @@
+{
+  "test_date": "2026-03-28",
+  "model": "Qwen 2.5 1.5B Instruct (Q4_K_M)",
+  "objective": "Vergleich zu Mistral 7B für deutsche QM-Dokumente",
+  "tests": {
+    "samples": {
+      "test_name": "qwen_samples",
+      "samples": [
+        {
+          "description": "Simple Checkliste mit Checkbox",
+          "text_preview": "□ Datenschutzbeauftragter benannt? [Ja/Nein]\nVerantwortlich: Praxisinhaber",
+          "expected": "checkliste",
+          "raw": "checkliste",
+          "normalized": "checkliste",
+          "correct": true
+        },
+        {
+          "description": "Arbeitsanweisung mit nummerierten Schritten",
+          "text_preview": "1. Vorbereitung\n■ Patient aufklären\n■ Schutzkleidung anlegen\n2. Durchführung",
+          "expected": "arbeitsanweisung",
+          "raw": "arbeitsanweisung",
+          "normalized": "arbeitsanweisung",
+          "correct": true
+        },
+        {
+          "description": "Newsletter/Info-Dokument",
+          "text_preview": "BLZK Newsletter 02/2024 - Wichtige Infos zur GOZ...",
+          "expected": "sonstige",
+          "raw": "sonstige",
+          "normalized": "sonstige",
+          "correct": true
+        },
+        {
+          "description": "Prozess-Beschreibung mit Schritten",
+          "text_preview": "Hygieneplan Desinfektion\n1. Händedesinfektion durchführen\n2. Flächen desinfizieren\n3. Dokumentation",
+          "expected": "arbeitsanweisung",
+          "raw": "checkliste",
+          "normalized": "checkliste",
+          "correct": false
+        },
+        {
+          "description": "Mehrere Checkboxen mit Verantwortlichem",
+          "text_preview": "□ Erste-Hilfe-Material vollständig? [Ja/Nein]\n□ Ablaufdatum geprüft? [Ja/Nein]\nVerantwortlich: ZMF",
+          "expected": "checkliste",
+          "raw": "checkliste",
+          "normalized": "checkliste",
+          "correct": true
+        },
+        {
+          "description": "Protokoll/Meeting-Notes",
+          "text_preview": "Qualitätszirkel Protokoll 03/2024\nTeilnehmer: Dr. Müller, ZMF Schmidt\nThemen: Hygienekonzept, Geräte",
+          "expected": "sonstige",
+          "raw": "arbeitsanweisung",
+          "normalized": "arbeitsanweisung",
+          "correct": false
+        }
+      ],
+      "accuracy": {
+        "correct": 4,
+        "total": 6,
+        "accuracy": 66.7
+      }
+    },
+    "fachbegriffe": {
+      "test_name": "qwen_fachbegriffe",
+      "terms": [
+        {
+          "term": "Hygieneplan",
+          "explanation": "Ein Hygieneplan ist eine spezifische Planung, die zur Verwaltung von Hygieneproblemen im Alltag verwendet wird. Er wird verwendet, um die Sicherheit und Gesundheit von Menschen und Organismen zu gew",
+          "is_relevant": true
+        },
+        {
+          "term": "Medizinprodukteaufbereitung",
+          "explanation": "Medizinprodukteaufbereitung ist der Prozess, bei dem Medikamente oder andere Medizinprodukte in einem bestimmten Zustand und Form hergestellt werden. Dies kann durch verschiedene Prozesse, wie z.B. Z",
+          "is_relevant": true
+        },
+        {
+          "term": "Qualitätszirkel",
+          "explanation": "Qualitätszirkel ist eine Methode zur Qualitätssicherung und -erhöhung in Unternehmen. Sie umfasst die Analyse von Faktoren, die zur Qualität der Produkte oder Dienstleistungen beitragen",
+          "is_relevant": true
+        },
+        {
+          "term": "Arbeitsschutzgesetz",
+          "explanation": "Das Arbeitsschutzgesetz ist ein Gesetz, das die Rechte und Pflichten von Arbeitnehmern und Arbeitgebern in Bezug auf Arbeitsbedingungen und Arbeitsverhältnisse festlegt. Es schüt",
+          "is_relevant": true
+        },
+        {
+          "term": "DSGVO-Compliance",
+          "explanation": "Die DSGVO-Compliance ist der Begriff für die Compliance mit der Datenschutz-Gesetze (DSGVO) in der IT-Sektion. Sie ist eine wichtige Bestandteilung für Unternehmen, die sich",
+          "is_relevant": true
+        },
+        {
+          "term": "Sterilisation",
+          "explanation": "Sterilisation ist der Prozess zur Eliminierung von allgemeiner Lebensformen in einer Umgebung oder einem System. Es wird oft in der Medizin, der Hygiene und der Industrie verwendet. Es kann durch verschiedene Methoden",
+          "is_relevant": true
+        },
+        {
+          "term": "Dokumentationspflicht",
+          "explanation": "Dokumentationspflicht ist ein Recht, das in der Regel für alle Personen und Unternehmen gilt. Es bedeutet, dass sie sich aufgrund von Gesetzen und Richtlinien in der Regel auf eine bestimmte Weise dokumentieren müssen",
+          "is_relevant": true
+        },
+        {
+          "term": "Geräteeinweisung",
+          "explanation": "Die Geräteeinweisung ist die Vorgehensweise, die für die Installation und Betrieb von Geräten vorgeschrieben wird. Sie enthält Informationen über die Anforderungen an die Geräte, die Konfig",
+          "is_relevant": false
+        },
+        {
+          "term": "Notfallmanagement",
+          "explanation": "Notfallmanagement ist ein System, das in einer Organisation verwendet wird, um in Notfällfällen oder schwerwiegenden Problemen effektiv und schnell zu handeln. Es umfasst die Identifizierung, Priorisierung und",
+          "is_relevant": false
+        },
+        {
+          "term": "Praxishygiene",
+          "explanation": "Praxishygiene ist die praktische Anwendung der Hygieneprinzipien in der täglichen Lebensweise. Es bezieht sich auf die Verwendung von Hygienevorgängen, um die Gesundheit und die",
+          "is_relevant": true
+        }
+      ],
+      "relevance_rate": 80.0
+    }
+  },
+  "comparison": {
+    "classification_accuracy": {
+      "qwen": 66.7,
+      "mistral": 83.3,
+      "winner": "Mistral",
+      "delta": -16.6
+    },
+    "fachbegriffe_relevance": {
+      "qwen": 80.0,
+      "mistral": 50.0,
+      "winner": "Qwen",
+      "delta": 30.0
+    }
+  },
+  "recommendation": "⚠️ Qwen 2.5 erreicht nicht 85% Accuracy. EMPFEHLUNG: Mistral 7B oder Fine-Tuning."
+}

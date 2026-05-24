@@ -1,0 +1,29 @@
+═══════════════════════════════════════════════════════════════
+  VERA OFFICE - ICON ERSTELLEN (Optional)
+═══════════════════════════════════════════════════════════════
+
+📍 Falls du ein Icon für die Desktop-Verknüpfung möchtest:
+
+1. Icon-Datei erstellen/herunterladen
+   - Format: .ico (Windows Icon)
+   - Größe: 256x256 oder 512x512 empfohlen
+   - Name: vera-icon.ico
+
+2. Datei speichern in:
+   C:\VERA-Office\vera-icon.ico
+
+3. create-shortcut.ps1 erkennt Icon automatisch
+
+═══════════════════════════════════════════════════════════════
+
+🎨 Icon-Quellen:
+
+  - Selbst erstellen: https://convertio.co/de/png-ico/
+  - Icon-Libraries: 
+    * https://icons8.com
+    * https://flaticon.com
+    * https://iconmonstr.com
+
+═══════════════════════════════════════════════════════════════
+
+Aktuell: Standard Windows .bat Icon wird verwendet

@@ -1,0 +1,67 @@
+[
+  {
+    "file": "dokument_103.pdf",
+    "text_length": 382,
+    "text_preview": "Hygiene\nArbeitsanweisung Aufbereitung von Medizinprodukten\nsemikritisch B / rotierende und oszillierende Instrumente\nEine zu individualisierende Vorlage für die Erstellung einer Arbeitsanweisung ist als Word-Datei\nabrufbar unter:\nhttp://www.blzk.de/blzk/site.nsf/gfx/c02b15.doc/$file/c02b15.doc\nC02 b15\nArbeitsplatz\nArbeitssicherheit\nSeite 1 / 1\nArbeitssicherheit\nStand: 02.12.2019\n",
+    "llm_response": "",
+    "manual_guess": "arbeitsanweisung",
+    "features": {
+      "checkboxes": false,
+      "numbered_steps": true,
+      "bullet_points": false,
+      "questions": false
+    }
+  },
+  {
+    "file": "Aufklärungspflichten.pdf",
+    "text_length": 3000,
+    "text_preview": "Übersicht zur Aufklärung \n \nAufklärungspflichten \n \n \n \nRisikoaufklärung  \n(Eingriffsaufklärung) \n \nIst \ndie \nInformation, \nwelche \nRisiken \nmit \ndem \nEingriff \nverbunden sind. Sie ist die \nwesentliche Voraussetzung für \ndie Einwilligung des Patienten in \nden \nHeileingriff. \nFehlt \ndiese \nAufklärung, \nliegt \neine \nschadensersatzauslösende und \nunter \nUmständen \nsogar \nstrafbare Körperverletzung vor, \nda die medizinische Behandlung \nohne \ndie \nnotwendige \nEinwilligung stets rechtswidrig \nist. Die",
+    "llm_response": "",
+    "manual_guess": "sonstige",
+    "features": {
+      "checkboxes": false,
+      "numbered_steps": false,
+      "bullet_points": false,
+      "questions": false
+    }
+  },
+  {
+    "file": "Datenschutz  IT-Sicherheit in der Zahnarztpraxis.pdf",
+    "text_length": 3000,
+    "text_preview": "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor inci-\ndunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud \nexercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute \niure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \nExcepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia de-\nserunt mollit anim id est laborum.Duis autem vel eum iriure dolor in hendre-\nrit in vulputate veli",
+    "llm_response": "",
+    "manual_guess": "arbeitsanweisung",
+    "features": {
+      "checkboxes": false,
+      "numbered_steps": true,
+      "bullet_points": false,
+      "questions": false
+    }
+  },
+  {
+    "file": "Ablaufdiagramm für die Zahnarztpraxis.pdf",
+    "text_length": 1842,
+    "text_preview": "Patientin/Patient stellt sich in Zahnarztpraxis vor\nAnamnese/Untersuchung\nGibt es Hinweise auf Verletzungen im Kopf-, Gesichts-, \nHals- und Mundbereich?\nERKENNEN\nBefragung\n> Routinemäßiges Erfragen der Ursachen der Verletzung\n> Untersuchung weist auf Gewalterfahrung hin?\n> Psychisch auffälliges Verhalten der Patientin?\nANSPRECHEN\n> Fachärztin/\nFacharzt \n(z. B. Hausarzt/-\närztin, MKG,\nHNO, Augen,\nGynäkologe/in) \n> Polizei \n> Frauenhaus\n> Beratungs-\nstellen\nOpferentschädi-\ngungsgesetz\n(OEG)\nPrinzi",
+    "llm_response": "",
+    "manual_guess": "arbeitsanweisung",
+    "features": {
+      "checkboxes": false,
+      "numbered_steps": false,
+      "bullet_points": true,
+      "questions": true
+    }
+  },
+  {
+    "file": "09102023GOZ ON TOUR-Materialien  Protesttag  F.pdf",
+    "text_length": 3000,
+    "text_preview": "Seite 1\nLiebe Kolleginnen und Kollegen, \nmit diesem Rundschreiben wollen wir Sie über eine Reihe wichtiger Themen und Termine informieren, \ndie uns derzeit in der zahnärztlichen Selbstverwaltung beschäftigen:\nGOZ ON TOUR-Materialien – Protesttag – Fachkräfteinitiative – \nBayerischer Zahnärztetag – Personengesellschaften – Online-\nZahnärztinnen-Netzwerkstammtisch – Digitales Rundschreiben\n9. Oktober 2023\nRundschreiben \n\t\nder BLZK\nAn alle bayerischen Zahnärztinnen und Zahnärzte\n2/2023\nGOZ ON TOUR:",
+    "llm_response": "",
+    "manual_guess": "arbeitsanweisung",
+    "features": {
+      "checkboxes": false,
+      "numbered_steps": true,
+      "bullet_points": false,
+      "questions": false
+    }
+  }
+]

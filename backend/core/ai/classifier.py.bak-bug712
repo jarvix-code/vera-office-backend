@@ -1,0 +1,284 @@
+"""
+Document Classifier - Uses Mistral 7B for classification with dynamic few-shot learning.
+Integrates YAML template knowledge for category awareness.
+"""
+import json
+import logging
+from typing import Dict, List, Optional
+from .llm_manager import llm
+from .feedback_store import feedback_store
+from .template_knowledge import get_all_categories, get_categories_prompt_text
+from .brain import brain
+from .few_shot_examples import get_examples_by_keywords, format_example_for_prompt
+
+logger = logging.getLogger(__name__)
+
+
+class DocumentClassifier:
+    """Classifies documents using LLM with few-shot examples and template knowledge."""
+    
+    def __init__(self):
+        self.llm = llm
+        self.feedback = feedback_store
+        self._industry = "allgemein"
+    
+    def set_industry(self, industry: str):
+        """Set industry for template-aware classification."""
+        self._industry = industry
+    
+    def classify(
+        self, 
+        ocr_text: str, 
+        categories: Optional[List[Dict[str, str]]] = None,
+        use_few_shot: bool = True
+    ) -> Dict:
+        """
+        Classify document based on OCR text.
+        
+        Args:
+            ocr_text: OCR extracted text
+            categories: List of category dicts (auto-loaded from YAML if None)
+            use_few_shot: Include similar examples in prompt
+        
+        Returns:
+            {
+                'category': str,
+                'confidence': float,
+                'reasoning': str,
+                'available': bool
+            }
+        """
+        # [BRAIN] Brain-Hints: Prüfe ob VERA das schon kennt
+        brain_hints = brain.get_all_hints_for_document(
+            keywords=[w.lower() for w in ocr_text[:500].split()[:20] if len(w) > 3]
+        )
+        if brain_hints and brain_hints[0]["confidence"] >= 0.85:
+            hint = brain_hints[0]
+            logger.info(f"[BRAIN] Brain-Hint: {hint['source']} -> {hint['category']} ({hint['confidence']:.0%})")
+            return {
+                'category': hint['category'],
+                'confidence': hint['confidence'],
+                'reasoning': f"Aus Erfahrung gelernt ({hint['source']}, {hint['times_confirmed']}x bestätigt)",
+                'available': True,
+                'brain_hint': True
+            }
+        
+        if not self.llm.is_available():
+            logger.warning("LLM not available - trying keyword fallback")
+            return self._keyword_fallback(ocr_text, categories)
+        
+        # Auto-load categories from YAML templates if not provided
+        if categories is None:
+            categories = get_all_categories(self._industry)
+        
+        # Build prompt
+        prompt = self._build_prompt(ocr_text, categories, use_few_shot)
+        
+        # Generate response
+        response = self.llm.generate(
+            prompt,
+            max_tokens=300,
+            temperature=0.1,
+            stop=["</s>", "\n\n"]
+        )
+        
+        if not response:
+            return {
+                'category': 'unknown',
+                'confidence': 0.0,
+                'reasoning': 'LLM generation failed',
+                'available': True
+            }
+        
+        result = self._parse_response(response, categories)
+        result['available'] = True
+        return result
+    
+    def _build_prompt(
+        self,
+        ocr_text: str,
+        categories: List[Dict[str, str]],
+        use_few_shot: bool
+    ) -> str:
+        """Build classification prompt."""
+
+        cat_list = "\n".join(
+            f"- {c['name']}: {c.get('description', c.get('folder_display', ''))}"
+            for c in categories
+        )
+
+        prompt = f"""<s>[INST] Du bist ein Dokumenten-Klassifizierer. Du bekommst OCR-Text eines deutschen Dokuments.
+Antworte NUR mit JSON – kein erklärender Text davor oder danach.
+
+Verfügbare Kategorien:
+{cat_list}
+
+Confidence:
+- 0.95+: eindeutig (klare Keywords wie "Rechnung Nr.", "Kontoauszug", "Lohnabrechnung")
+- 0.80–0.94: wahrscheinlich (mehrere schwache Hinweise)
+- 0.60–0.79: möglich (ein schwacher Hinweis)
+- <0.60: verwende "unknown"
+
+Beispiele:
+Text: "Rechnung Nr. 2024-0815 ... Nettobetrag 450,00 EUR ... MwSt 19% ... Müller GmbH"
+{{"category": "rechnung_eingang", "confidence": 0.97, "sender": "Müller GmbH", "date": "2024-01-01", "amount": 450.00, "reasoning": "Rechnung Nr. + Nettobetrag + MwSt eindeutig"}}
+
+Text: "Gehaltsabrechnung März 2026 ... Bruttolohn 3.200,00 EUR ... Sozialversicherung"
+{{"category": "lohnabrechnung", "confidence": 0.96, "sender": null, "date": "2026-03-01", "amount": 3200.00, "reasoning": "Gehaltsabrechnung + Bruttolohn eindeutig"}}
+
+Text: "Kontoauszug Nr. 003 ... Saldo 1.240,50 EUR ... IBAN DE89..."
+{{"category": "kontoauszug", "confidence": 0.97, "sender": null, "date": null, "amount": 1240.50, "reasoning": "Kontoauszug + Saldo + IBAN eindeutig"}}
+
+Text: "Steuerbescheid 2025 ... Finanzamt München ... Einkommensteuer 1.850,00 EUR"
+{{"category": "steuerbescheid", "confidence": 0.96, "sender": "Finanzamt München", "date": "2025-01-01", "amount": 1850.00, "reasoning": "Steuerbescheid + Finanzamt eindeutig"}}
+
+Text: "Versicherungspolice Nr. 4711 ... Allianz ... Haftpflichtversicherung ... Jahresbeitrag"
+{{"category": "versicherungspolice", "confidence": 0.95, "sender": "Allianz", "date": null, "amount": null, "reasoning": "Police + Versicherungsgesellschaft eindeutig"}}
+
+Text: "Sehr geehrter Patient ... Befund ... Diagnose: ... Dr. med. Schmidt"
+{{"category": "arztbrief", "confidence": 0.94, "sender": "Dr. med. Schmidt", "date": null, "amount": null, "reasoning": "Befund + Diagnose + Arztname"}}
+
+Text: "MAHNUNG ... offene Rechnung ... fällig seit ... Mahngebühr"
+{{"category": "mahnung_eingang", "confidence": 0.95, "sender": null, "date": null, "amount": null, "reasoning": "MAHNUNG + fällig eindeutig"}}
+
+Text: "Mietvertrag ... Mietzins monatlich ... Vermieter ... Mieter ... §535 BGB"
+{{"category": "mietvertrag", "confidence": 0.96, "sender": null, "date": null, "amount": null, "reasoning": "Mietvertrag + §535 BGB eindeutig"}}
+"""
+
+        if use_few_shot:
+            keywords = [w.lower() for w in ocr_text[:500].split() if len(w) > 3]
+            static_examples = get_examples_by_keywords(keywords, limit=2)
+            similar_examples = self.feedback.get_similar_examples(ocr_text[:2000], n=2)
+
+            if static_examples or similar_examples:
+                prompt += "\nGelernte Muster:\n"
+                for ex in static_examples:
+                    prompt += format_example_for_prompt(ex) + "\n"
+                for ex in similar_examples:
+                    snippet = ex['ocr_snippet'][:150].replace('\n', ' ')
+                    prompt += f"Text: {snippet}...\n{{\"category\": \"{ex['category']}\", ...}}\n"
+
+        prompt += f"""
+Dokument:
+{ocr_text[:1500]}
+
+Antworte NUR mit diesem JSON (keine Erklärung):
+{{"category": "...", "confidence": 0.0, "sender": "..." , "date": "YYYY-MM-DD", "amount": null, "reasoning": "..."}}
+[/INST]"""
+
+        return prompt
+    
+    def _parse_response(self, response: str, categories: List[Dict[str, str]]) -> Dict:
+        """Parse LLM response into structured result."""
+        try:
+            start = response.find('{')
+            end = response.rfind('}') + 1
+            
+            if start >= 0 and end > start:
+                data = json.loads(response[start:end])
+                
+                category = data.get('category', 'unknown')
+                confidence = float(data.get('confidence', 0.0))
+                reasoning = data.get('reasoning', 'No reasoning provided')
+                
+                # Validate category exists
+                category_names = [c['name'] for c in categories]
+                if category not in category_names:
+                    # Try fuzzy match
+                    for cn in category_names:
+                        if cn.lower() == category.lower() or cn in category.lower() or category in cn.lower():
+                            category = cn
+                            break
+                    else:
+                        logger.warning(f"Invalid category '{category}' - defaulting to unknown")
+                        category = 'unknown'
+                        confidence = 0.0
+                
+                confidence = max(0.0, min(1.0, confidence))
+                
+                return {
+                    'category': category,
+                    'confidence': confidence,
+                    'reasoning': reasoning,
+                    'sender': data.get('sender'),
+                    'date': data.get('date'),
+                    'amount': data.get('amount'),
+                }
+        
+        except Exception as e:
+            logger.error(f"Failed to parse LLM response: {e}")
+        
+        # Fallback: extract category name from text
+        for cat in categories:
+            if cat['name'].lower() in response.lower():
+                return {
+                    'category': cat['name'],
+                    'confidence': 0.5,
+                    'reasoning': 'Extracted from unstructured response'
+                }
+        
+        return {
+            'category': 'unknown',
+            'confidence': 0.0,
+            'reasoning': 'Could not parse classification result'
+        }
+    
+    def _keyword_fallback(self, ocr_text: str, categories: Optional[List[Dict]] = None) -> Dict:
+        """Simple keyword-based classification when LLM is unavailable."""
+        if categories is None:
+            categories = get_all_categories(self._industry)
+        
+        text_lower = ocr_text.lower()
+        
+        # Simple keyword matching
+        keyword_map = {
+            'rechnung_eingang': ['rechnung', 'invoice', 'rechnungsnummer', 'rechnungsdatum', 'netto', 'brutto', 'mwst'],
+            'rechnung_ausgang': ['ausgangsrechnung'],
+            'kontoauszug': ['kontoauszug', 'saldo', 'bankverbindung', 'iban'],
+            'arbeitsvertrag': ['arbeitsvertrag', 'anstellungsvertrag', 'arbeitsverhältnis'],
+            'mietvertrag': ['mietvertrag', 'miete', 'vermieter', 'mieter'],
+            'steuerbescheid': ['steuerbescheid', 'finanzamt', 'einkommensteuer'],
+            'mahnung_eingang': ['mahnung', 'zahlungserinnerung', 'fällig'],
+            'versicherungspolice': ['versicherung', 'police', 'versicherungsnummer'],
+            'lohnabrechnung': ['lohnabrechnung', 'gehaltsabrechnung', 'bruttolohn'],
+            'angebot': ['angebot', 'kostenvoranschlag'],
+        }
+        
+        best_match = None
+        best_score = 0
+        
+        for cat_name, keywords in keyword_map.items():
+            score = sum(1 for kw in keywords if kw in text_lower)
+            if score > best_score:
+                best_score = score
+                best_match = cat_name
+        
+        if best_match and best_score >= 2:
+            confidence = min(0.7, 0.3 + best_score * 0.1)
+            return {
+                'category': best_match,
+                'confidence': confidence,
+                'reasoning': f'Keyword-Fallback: {best_score} keywords matched',
+                'available': False
+            }
+        
+        return {
+            'category': 'unknown',
+            'confidence': 0.0,
+            'reasoning': 'LLM unavailable and no keyword match',
+            'available': False
+        }
+    
+    def should_auto_file(self, confidence: float) -> bool:
+        """Check if confidence is high enough for automatic filing."""
+        threshold = self.llm.get_config('confidence_threshold') or 0.80
+        return confidence >= threshold
+    
+    def should_auto_confirm(self, confidence: float) -> bool:
+        """Check if confidence is high enough for auto-confirmation."""
+        threshold = self.llm.get_config('auto_confirm_threshold') or 0.95
+        return confidence >= threshold
+
+
+# Global instance
+classifier = DocumentClassifier()

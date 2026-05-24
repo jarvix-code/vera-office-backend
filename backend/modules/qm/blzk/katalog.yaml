@@ -1,0 +1,338 @@
+﻿# BLZK Dokumentenkatalog für VERA QM
+# Basiert auf der offiziellen BLZK QM-Struktur
+# Typ A = Einmalig erstellen, Typ B = Laufend/periodisch, Typ C = Nachweis
+
+kapitel:
+  B:
+    name: "Arbeitssicherheit"
+    dokumente:
+      B01:
+        name: "Gefährdungsbeurteilung"
+        typ: A
+        turnus: "einmalig, bei Änderungen aktualisieren"
+        stammdaten: ["praxis"]
+        beschreibung: "Arbeitsplatz-Gefährdungsbeurteilung nach ArbSchG"
+      B02:
+        name: "Betriebsanweisungen Gefahrstoffe"
+        typ: A
+        turnus: "einmalig, bei Änderungen aktualisieren"
+        stammdaten: ["praxis"]
+      B03:
+        name: "Gefahrstoffverzeichnis"
+        typ: A
+        turnus: "einmalig, jährlich prüfen"
+        stammdaten: ["praxis"]
+      B04:
+        name: "Unterweisungsnachweis Arbeitssicherheit"
+        typ: B
+        turnus: "jährlich"
+        stammdaten: ["praxis", "personal"]
+      B05:
+        name: "Brandschutzunterweisung"
+        typ: B
+        turnus: "jährlich"
+        stammdaten: ["praxis", "personal"]
+      B06:
+        name: "Notfallplan"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis"]
+      B07:
+        name: "Erste-Hilfe-Material Prüfprotokoll"
+        typ: B
+        turnus: "halbjährlich"
+        stammdaten: ["praxis"]
+      B08:
+        name: "Arbeitsmedizinische Vorsorge"
+        typ: B
+        turnus: "nach Anlass"
+        stammdaten: ["personal"]
+      B09:
+        name: "Mutterschutzbeurteilung"
+        typ: A
+        turnus: "bei Bedarf"
+        stammdaten: ["praxis"]
+      B10:
+        name: "Sicherheitsbeauftragter Bestellung"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis", "personal"]
+
+  C01:
+    name: "Praxisorganisation"
+    dokumente:
+      C01a01:
+        name: "QM-Handbuch Deckblatt"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis"]
+      C01a02:
+        name: "Organigramm"
+        typ: A
+        turnus: "einmalig, bei Änderungen"
+        stammdaten: ["praxis", "personal"]
+      C01a03:
+        name: "Stellenbeschreibungen"
+        typ: A
+        turnus: "einmalig, bei Änderungen"
+        stammdaten: ["personal"]
+      C01a04:
+        name: "Praxisablaufplan"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis"]
+      C01a05:
+        name: "Dokumentenlenkung"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis"]
+      C01a06:
+        name: "Datenschutzkonzept"
+        typ: A
+        turnus: "einmalig, bei Änderungen"
+        stammdaten: ["praxis"]
+
+  C02:
+    name: "Hygiene"
+    dokumente:
+      C02a01:
+        name: "Hygieneplan"
+        typ: A
+        turnus: "einmalig, jährlich prüfen"
+        stammdaten: ["praxis"]
+      C02b01:
+        name: "Hygiene-Unterweisung"
+        typ: B
+        turnus: "jährlich"
+        stammdaten: ["praxis", "personal"]
+      C02b02:
+        name: "Hygieneprüfliste"
+        typ: B
+        turnus: "halbjährlich"
+        stammdaten: ["praxis"]
+      C02b03:
+        name: "Desinfektionsplan"
+        typ: A
+        turnus: "einmalig, bei Änderungen"
+        stammdaten: ["praxis"]
+      C02b04:
+        name: "Aufbereitung Medizinprodukte SOP"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis", "geraete"]
+      C02b05:
+        name: "Validierungsbericht Autoklav"
+        typ: C
+        turnus: "jährlich"
+        stammdaten: ["geraete"]
+      C02b06:
+        name: "Chargenprotokoll Sterilisation"
+        typ: B
+        turnus: "täglich"
+        stammdaten: ["geraete"]
+      C02b07:
+        name: "Validierungsbericht RDG"
+        typ: C
+        turnus: "jährlich"
+        stammdaten: ["geraete"]
+      C02b08:
+        name: "RDG-Prüfprotokoll"
+        typ: B
+        turnus: "täglich"
+        stammdaten: ["geraete"]
+      C02b09:
+        name: "Helixtest-Dokumentation"
+        typ: B
+        turnus: "täglich"
+        stammdaten: ["geraete"]
+      C02b10:
+        name: "Wasserqualität Dentaleinheiten"
+        typ: B
+        turnus: "halbjährlich"
+        stammdaten: ["geraete"]
+      C02c01:
+        name: "Nadelstichverletzung Protokoll"
+        typ: C
+        turnus: "bei Vorfall"
+        stammdaten: ["personal"]
+      C02c02:
+        name: "Abfallentsorgungsnachweis"
+        typ: C
+        turnus: "jährlich"
+        stammdaten: ["praxis"]
+
+  C03:
+    name: "Patientenorientierung"
+    dokumente:
+      C03a01:
+        name: "Patienteninformation Praxis"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis"]
+      C03a02:
+        name: "Aufklärungsformulare"
+        typ: A
+        turnus: "einmalig, bei Änderungen"
+        stammdaten: ["praxis"]
+      C03b01:
+        name: "Patientenbefragung"
+        typ: B
+        turnus: "jährlich"
+        stammdaten: ["praxis"]
+      C03b02:
+        name: "Beschwerdemanagement Protokoll"
+        typ: B
+        turnus: "bei Vorfall"
+        stammdaten: ["praxis"]
+      C03c01:
+        name: "Patientenzufriedenheit Auswertung"
+        typ: C
+        turnus: "jährlich"
+        stammdaten: ["praxis"]
+
+  C04:
+    name: "Mitarbeiterorientierung"
+    dokumente:
+      C04a01:
+        name: "Einarbeitungskonzept"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis"]
+      C04b01:
+        name: "Fortbildungsnachweis"
+        typ: B
+        turnus: "jährlich"
+        stammdaten: ["personal"]
+      C04b02:
+        name: "Mitarbeitergespräch Protokoll"
+        typ: B
+        turnus: "jährlich"
+        stammdaten: ["personal"]
+      C04c01:
+        name: "CME-Punkte Nachweis Zahnarzt"
+        typ: C
+        turnus: "5-jährlich"
+        stammdaten: ["personal"]
+      C04c02:
+        name: "Sachkunde-Nachweis Aufbereitung"
+        typ: C
+        turnus: "einmalig"
+        stammdaten: ["personal"]
+
+  C05:
+    name: "Fehlermanagement"
+    dokumente:
+      C05a01:
+        name: "Fehlermanagement Konzept"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis"]
+      C05b01:
+        name: "Fehlerprotokoll"
+        typ: B
+        turnus: "bei Vorfall"
+        stammdaten: ["praxis"]
+      C05b02:
+        name: "CIRS-Meldung"
+        typ: B
+        turnus: "bei Vorfall"
+        stammdaten: ["praxis"]
+      C05b03:
+        name: "Korrekturmaßnahmen Protokoll"
+        typ: B
+        turnus: "bei Bedarf"
+        stammdaten: ["praxis"]
+
+  C06:
+    name: "Röntgen"
+    dokumente:
+      C06a01:
+        name: "Strahlenschutzanweisung"
+        typ: A
+        turnus: "einmalig"
+        stammdaten: ["praxis", "geraete"]
+      C06b01:
+        name: "Konstanzprüfung Röntgen"
+        typ: B
+        turnus: "halbjährlich"
+        stammdaten: ["geraete"]
+      C06b02:
+        name: "Strahlenschutzunterweisung"
+        typ: B
+        turnus: "jährlich"
+        stammdaten: ["praxis", "personal"]
+      C06c01:
+        name: "TÜV-Prüfbericht Röntgen"
+        typ: C
+        turnus: "5-jährlich"
+        stammdaten: ["geraete"]
+      C06c02:
+        name: "Fachkunde Strahlenschutz"
+        typ: C
+        turnus: "5-jährlich"
+        stammdaten: ["personal"]
+
+  KZVB:
+    name: "KZVB Stichprobenprüfung"
+    dokumente:
+      KZVB01:
+        name: "KZVB Berichtsbogen"
+        typ: C
+        turnus: "bei Aufforderung (ca. 2-jährlich)"
+        stammdaten: ["praxis"]
+
+# Fristen-Kalender
+fristen:
+  taeglich:
+    - code: C02b06
+      name: "Chargenprotokoll Sterilisation"
+    - code: C02b08
+      name: "RDG-Prüfprotokoll"
+    - code: C02b09
+      name: "Helixtest-Dokumentation"
+
+  halbjaehrlich:
+    - code: C02b02
+      name: "Hygieneprüfliste"
+    - code: B07
+      name: "Erste-Hilfe-Material Prüfprotokoll"
+    - code: C06b01
+      name: "Konstanzprüfung Röntgen"
+    - code: C02b10
+      name: "Wasserqualität Dentaleinheiten"
+
+  jaehrlich:
+    - code: B04
+      name: "Unterweisungsnachweis Arbeitssicherheit"
+    - code: B05
+      name: "Brandschutzunterweisung"
+    - code: C02b01
+      name: "Hygiene-Unterweisung"
+    - code: C02b05
+      name: "Validierungsbericht Autoklav"
+    - code: C02b07
+      name: "Validierungsbericht RDG"
+    - code: C03b01
+      name: "Patientenbefragung"
+    - code: C04b01
+      name: "Fortbildungsnachweis"
+    - code: C04b02
+      name: "Mitarbeitergespräch Protokoll"
+    - code: C06b02
+      name: "Strahlenschutzunterweisung"
+    - code: C02c02
+      name: "Abfallentsorgungsnachweis"
+
+  mehrjaehrlich:
+    - code: C04c01
+      name: "CME-Punkte Nachweis"
+      turnus_jahre: 5
+    - code: C06c01
+      name: "TÜV-Prüfbericht Röntgen"
+      turnus_jahre: 5
+    - code: C06c02
+      name: "Fachkunde Strahlenschutz"
+      turnus_jahre: 5
+    - code: KZVB01
+      name: "KZVB Stichprobenprüfung"
+      turnus_jahre: 2

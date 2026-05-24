@@ -1,0 +1,12 @@
+{
+    admin localhost:2019
+}
+
+https://127.0.0.1:8443 {
+    tls internal
+    reverse_proxy localhost:8080
+}
+
+http://127.0.0.1:8001 {
+    redir https://127.0.0.1:8443{uri} permanent
+}

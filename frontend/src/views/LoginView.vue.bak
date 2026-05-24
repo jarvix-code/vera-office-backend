@@ -1,0 +1,15 @@
+<template>
+  <!-- Login wird nicht mehr benötigt — kein Login-Zwang in VERA. -->
+  <!-- Redirect zu / -->
+</template>
+
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+onMounted(() => {
+  router.replace('/')
+})
+</script>

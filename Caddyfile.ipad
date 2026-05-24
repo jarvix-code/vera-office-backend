@@ -1,0 +1,24 @@
+{
+    admin localhost:2019
+}
+
+# Listen on ALL network interfaces (0.0.0.0)
+# Accessible from iPad via https://192.168.178.44:8443
+# Also works for localhost via https://127.0.0.1:8443
+:8443 {
+    bind 0.0.0.0
+    
+    # Use our self-signed cert with IP SANs
+    tls certs/vera.crt certs/vera.key
+    
+    # Proxy to backend
+    reverse_proxy localhost:8080
+    
+    log {
+        output file logs/caddy-access.log {
+            roll_size 10MB
+            roll_keep 5
+        }
+        format json
+    }
+}

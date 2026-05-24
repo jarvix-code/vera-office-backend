@@ -1,0 +1,101 @@
+<svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="docGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00C4D4;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#00A5C4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0068A8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="checkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0068A8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0090B8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00C4D4;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="wandGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00A5C4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00C4D4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Document shape with rounded corners and folded corner -->
+  <path d="M 20 15 
+           C 20 10, 20 10, 25 10
+           L 95 10
+           L 95 25
+           C 95 25, 108 25, 108 38
+           L 108 105
+           C 108 110, 108 115, 103 115
+           L 25 115
+           C 20 115, 20 115, 20 110
+           Z" 
+        fill="url(#docGradient)" stroke="none"/>
+  
+  <!-- Folded corner triangle -->
+  <path d="M 95 10 L 108 38 L 95 25 Z" fill="#00C4D4" opacity="0.7"/>
+  
+  <!-- White paper interior -->
+  <path d="M 30 20
+           L 88 20
+           L 88 30
+           C 88 30, 98 30, 98 40
+           L 98 105
+           L 30 105
+           Z" 
+        fill="white"/>
+  
+  <!-- Folded corner detail (white triangle) -->
+  <path d="M 88 20 L 98 40 L 88 30 Z" fill="#F0F0F0"/>
+  
+  <!-- Large curved checkmark (back) -->
+  <path d="M 25 65
+           C 25 70, 30 78, 38 85
+           C 42 88, 48 92, 55 95
+           L 50 102
+           C 42 99, 35 94, 30 89
+           C 20 80, 15 70, 15 62
+           Z" 
+        fill="url(#checkGradient)"/>
+  
+  <!-- Large curved checkmark (front) -->
+  <path d="M 35 75
+           C 35 78, 38 83, 43 88
+           C 46 91, 52 95, 60 98
+           L 55 105
+           C 47 102, 40 97, 35 92
+           C 28 85, 25 77, 25 72
+           Z" 
+        fill="url(#checkGradient)"/>
+  
+  <!-- Magic wand (diagonal stick) -->
+  <rect x="48" y="48" width="6" height="50" 
+        rx="3" ry="3"
+        fill="url(#wandGradient)"
+        transform="rotate(45 51 73)"/>
+  
+  <!-- Dots on wand -->
+  <circle cx="58" cy="63" r="2.5" fill="white"/>
+  <circle cx="68" cy="53" r="2.5" fill="white"/>
+  <circle cx="78" cy="43" r="2" fill="white"/>
+  
+  <!-- Sparkle 1 (large, top-left) -->
+  <path d="M 72 32 L 74 38 L 80 40 L 74 42 L 72 48 L 70 42 L 64 40 L 70 38 Z" 
+        fill="url(#wandGradient)"/>
+  
+  <!-- Sparkle 2 (medium, middle-right) -->
+  <path d="M 90 52 L 91.5 56 L 95.5 57.5 L 91.5 59 L 90 63 L 88.5 59 L 84.5 57.5 L 88.5 56 Z" 
+        fill="url(#wandGradient)"/>
+  
+  <!-- Sparkle 3 (small, far-right) -->
+  <path d="M 105 45 L 106 47.5 L 108.5 48.5 L 106 49.5 L 105 52 L 104 49.5 L 101.5 48.5 L 104 47.5 Z" 
+        fill="url(#wandGradient)"/>
+  
+  <!-- Particle squares -->
+  <rect x="95" y="48" width="4" height="4" fill="#00C4D4"/>
+  <rect x="102" y="55" width="4" height="4" fill="#00B5C4"/>
+  <rect x="96" y="63" width="3.5" height="3.5" fill="#00A5C4"/>
+  
+  <!-- Particle circles -->
+  <circle cx="88" cy="65" r="2" fill="#00C4D4"/>
+  <circle cx="92" cy="70" r="1.8" fill="#00B5C4"/>
+  <circle cx="98" cy="72" r="1.5" fill="#00A5C4"/>
+  <circle cx="85" cy="72" r="1.3" fill="#00C4D4" opacity="0.7"/>
+</svg>

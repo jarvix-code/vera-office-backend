@@ -1,0 +1,16 @@
+{
+    admin localhost:2019
+    skip_install_trust
+    https_port 8443
+    http_port 8001
+}
+
+# Bind to all interfaces (0.0.0.0)
+:8443 {
+    tls internal
+    reverse_proxy localhost:8080
+}
+
+:8001 {
+    redir https://{host}:8443{uri} permanent
+}

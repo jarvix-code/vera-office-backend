@@ -1,0 +1,401 @@
+"""
+VERA Office - Folder Manager
+GoBD-konforme Ordnerstruktur als WISSEN, nicht als Installationsskript.
+YAML-Templates = Wissensbasis der KI. Ordner werden on-demand angelegt.
+"""
+import os
+import copy
+from pathlib import Path
+from typing import Dict, List, Optional, Any
+from datetime import datetime
+
+import yaml
+from loguru import logger
+from backend.core.paths import VERA_HOME
+
+
+# Pfad zu den YAML-Templates
+TEMPLATES_DIR = VERA_HOME / "data" / "folder_templates"
+
+# Mapping von Industry-Strings auf YAML-Dateinamen
+INDUSTRY_TEMPLATE_MAP = {
+    # Arztpraxis
+    "arztpraxis": "arztpraxis",
+    "zahnarztpraxis": "arztpraxis",
+    "praxis": "arztpraxis",
+    # Handwerk
+    "handwerk": "handwerk",
+    "handwerksbetrieb": "handwerk",
+    # Steuerberater / RA
+    "steuerberater": "steuerberater_ra",
+    "rechtsanwalt": "steuerberater_ra",
+    "kanzlei": "steuerberater_ra",
+    "steuerberater/ra": "steuerberater_ra",
+    # Einzelhandel / Gastro
+    "einzelhandel": "einzelhandel_gastro",
+    "gastronomie": "einzelhandel_gastro",
+    "handel": "einzelhandel_gastro",
+    "gastro": "einzelhandel_gastro",
+    "restaurant": "einzelhandel_gastro",
+    "café": "einzelhandel_gastro",
+    # IT / Agentur
+    "it-dienstleister": "it_agentur",
+    "agentur": "it_agentur",
+    "it": "it_agentur",
+    "webentwicklung": "it_agentur",
+    "softwareentwicklung": "it_agentur",
+    "it/agentur": "it_agentur",
+    "it_agentur": "it_agentur",
+    # Allgemein
+    "allgemein": "allgemein",
+    "kmu": "allgemein",
+    "dienstleistung": "allgemein",
+    "default": "allgemein",
+    "sonstiges": "allgemein",
+}
+
+
+def _load_yaml(filename: str) -> dict:
+    """Lädt ein YAML-Template."""
+    path = TEMPLATES_DIR / f"{filename}.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"Template nicht gefunden: {path}")
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def _resolve_template(industry: str) -> str:
+    """Findet den Template-Namen für eine Branche."""
+    key = industry.lower().strip()
+    return INDUSTRY_TEMPLATE_MAP.get(key, "allgemein")
+
+
+class FolderManager:
+    """
+    Verwaltet die GoBD-konforme Ordnerstruktur.
+    Lädt YAML-Templates, merged Base + Branche, erstellt physische Ordner.
+    """
+
+    def __init__(self, base_documents_path: Optional[Path] = None):
+        if base_documents_path is None:
+            base_documents_path = Path(__file__).parent.parent.parent / "data" / "documents"
+        self.base_documents_path = Path(base_documents_path)
+
+    # ------------------------------------------------------------------
+    # Struktur generieren
+    # ------------------------------------------------------------------
+
+    def generate_structure(self, industry: str, company_type: str = "") -> dict:
+        """
+        Generiert die komplette Ordnerstruktur (Base + Branche).
+        
+        Args:
+            industry: Branchenbezeichnung (z.B. "Zahnarztpraxis")
+            company_type: Unternehmensform (aktuell informativ)
+        
+        Returns:
+            dict mit 'folders' (Liste), 'industry_template', 'extra_categories',
+            'retention_overrides'
+        """
+        base = _load_yaml("base")
+        template_name = _resolve_template(industry)
+
+        try:
+            branch = _load_yaml(template_name)
+        except FileNotFoundError:
+            logger.warning(f"Kein Branch-Template für '{industry}', nutze allgemein")
+            branch = _load_yaml("allgemein")
+
+        # Merge: Base-Ordner + Branch-Ordner (12_xxx)
+        merged_folders = copy.deepcopy(base.get("folders", []))
+        branch_folders = branch.get("folders", [])
+        merged_folders.extend(copy.deepcopy(branch_folders))
+
+        return {
+            "folders": merged_folders,
+            "industry": industry,
+            "company_type": company_type,
+            "industry_template": template_name,
+            "extra_categories": branch.get("extra_categories", []),
+            "retention_overrides": branch.get("retention_overrides", {}),
+        }
+
+    # ------------------------------------------------------------------
+    # Physische Ordner erstellen
+    # ------------------------------------------------------------------
+
+    def create_folders(
+        self,
+        structure: dict,
+        base_path: Optional[str] = None,
+        current_year: Optional[int] = None,
+    ) -> List[str]:
+        """
+        Erstellt die physischen Ordner auf der Festplatte.
+        
+        Args:
+            structure: Output von generate_structure()
+            base_path: Basis-Pfad (default: self.base_documents_path)
+            current_year: Aktuelles Jahr für Jahresordner
+        
+        Returns:
+            Liste aller erstellten Ordnerpfade
+        """
+        root = Path(base_path) if base_path else self.base_documents_path
+        root.mkdir(parents=True, exist_ok=True)
+
+        if current_year is None:
+            current_year = datetime.now().year
+
+        created: List[str] = []
+
+        def _create_recursive(folders: list, parent: Path):
+            for folder in folders:
+                # Skip template folders
+                if folder.get("is_template"):
+                    continue
+
+                folder_name = folder.get("name", folder.get("id", "unknown"))
+                folder_path = parent / folder_name
+                folder_path.mkdir(parents=True, exist_ok=True)
+                created.append(str(folder_path.relative_to(root)))
+
+                # Jahresordner anlegen
+                if folder.get("yearly"):
+                    for year in range(current_year - 1, current_year + 1):
+                        year_path = folder_path / str(year)
+                        year_path.mkdir(exist_ok=True)
+                        created.append(str(year_path.relative_to(root)))
+
+                        # Monatsordner
+                        if folder.get("monthly"):
+                            for month in range(1, 13):
+                                month_path = year_path / f"{month:02d}"
+                                month_path.mkdir(exist_ok=True)
+                                created.append(str(month_path.relative_to(root)))
+
+                # Quartalsordner
+                if folder.get("quarterly"):
+                    for year in range(current_year - 1, current_year + 1):
+                        for q in range(1, 5):
+                            q_path = folder_path / f"{year}-Q{q}"
+                            q_path.mkdir(exist_ok=True)
+                            created.append(str(q_path.relative_to(root)))
+
+                # Rekursion für Kinder
+                children = folder.get("children", [])
+                if children:
+                    _create_recursive(children, folder_path)
+
+        _create_recursive(structure.get("folders", []), root)
+        logger.info(f"✅ {len(created)} Ordner erstellt unter {root}")
+        return created
+
+    # ------------------------------------------------------------------
+    # Ordner on-demand anlegen (NEUES Paradigma)
+    # ------------------------------------------------------------------
+
+    def ensure_folder(
+        self,
+        category: str,
+        metadata: Optional[dict] = None,
+        structure: Optional[dict] = None,
+    ) -> Optional[str]:
+        """
+        Stellt sicher dass der Ordner für ein Dokument existiert.
+        Legt ihn an falls nötig. Gibt den absoluten Pfad zurück.
+        
+        Das ist die Hauptmethode — Ordner werden NICHT beim Onboarding
+        angelegt, sondern erst wenn ein Dokument abgelegt wird.
+        """
+        rel_path = self.get_folder_for_document(category, metadata, structure)
+        if not rel_path:
+            return None
+        
+        abs_path = self.base_documents_path / rel_path
+        if not abs_path.exists():
+            abs_path.mkdir(parents=True, exist_ok=True)
+            logger.info(f"📁 Neuer Ordner angelegt: {rel_path}")
+        
+        return str(abs_path)
+
+    def ensure_custom_folder(self, folder_path: str) -> str:
+        """
+        Legt einen benutzerdefinierten Ordner an (von VERA oder User angefragt).
+        Z.B. "09.05_Gerätewartung" wenn kein passender existiert.
+        """
+        abs_path = self.base_documents_path / folder_path
+        abs_path.mkdir(parents=True, exist_ok=True)
+        logger.info(f"📁 Benutzerdefinierter Ordner angelegt: {folder_path}")
+        return str(abs_path)
+
+    # ------------------------------------------------------------------
+    # Ordner für ein Dokument finden (ohne Anlegen)
+    # ------------------------------------------------------------------
+
+    def get_folder_for_document(
+        self,
+        category: str,
+        metadata: Optional[dict] = None,
+        structure: Optional[dict] = None,
+    ) -> Optional[str]:
+        """
+        Gibt den passenden Ablageordner für ein Dokument zurück.
+        
+        Args:
+            category: Dokumentkategorie (z.B. "rechnung_eingang")
+            metadata: Zusätzliche Metadaten (date, entity_name, etc.)
+            structure: Ordnerstruktur (optional, wird sonst aus allgemein geladen)
+        
+        Returns:
+            Relativer Pfad zum Ablageordner oder None
+        """
+        if structure is None:
+            structure = self.generate_structure("allgemein")
+
+        metadata = metadata or {}
+        doc_date = metadata.get("date", datetime.now())
+        if isinstance(doc_date, str):
+            try:
+                doc_date = datetime.fromisoformat(doc_date)
+            except (ValueError, TypeError):
+                doc_date = datetime.now()
+
+        # Suche Ordner mit passendem doc_type
+        result = self._find_folder_for_doctype(
+            category, structure.get("folders", []), ""
+        )
+        if not result:
+            return None
+
+        folder_path, folder_def = result
+
+        # Jahres-/Monatsordner anhängen
+        if folder_def.get("yearly"):
+            folder_path = f"{folder_path}/{doc_date.year}"
+            if folder_def.get("monthly"):
+                folder_path = f"{folder_path}/{doc_date.month:02d}"
+
+        if folder_def.get("quarterly"):
+            quarter = (doc_date.month - 1) // 3 + 1
+            folder_path = f"{folder_path}/{doc_date.year}-Q{quarter}"
+
+        return folder_path
+
+    def _find_folder_for_doctype(
+        self, doc_type: str, folders: list, parent_path: str
+    ) -> Optional[tuple]:
+        """Rekursive Suche nach dem Ordner für einen Dokumenttyp."""
+        for folder in folders:
+            if folder.get("is_template"):
+                continue
+            folder_name = folder.get("name", folder.get("id", ""))
+            current_path = f"{parent_path}/{folder_name}" if parent_path else folder_name
+
+            # Prüfe doc_types
+            if doc_type in folder.get("doc_types", []):
+                return (current_path, folder)
+
+            # Rekursion
+            children = folder.get("children", [])
+            if children:
+                result = self._find_folder_for_doctype(doc_type, children, current_path)
+                if result:
+                    return result
+
+        return None
+
+    # ------------------------------------------------------------------
+    # Aufbewahrungsfristen
+    # ------------------------------------------------------------------
+
+    def get_retention_info(self, structure: dict) -> List[dict]:
+        """
+        Gibt alle Ordner mit Aufbewahrungsfristen zurück.
+        
+        Returns:
+            Liste von dicts: {path, display_name, retention_years, doc_types}
+        """
+        result = []
+
+        def _collect(folders: list, parent_path: str):
+            for folder in folders:
+                if folder.get("is_template"):
+                    continue
+                folder_name = folder.get("name", folder.get("id", ""))
+                current_path = f"{parent_path}/{folder_name}" if parent_path else folder_name
+                
+                ret = folder.get("retention_years")
+                if ret is not None:
+                    result.append({
+                        "path": current_path,
+                        "display_name": folder.get("display_name", folder_name),
+                        "retention_years": ret,
+                        "doc_types": folder.get("doc_types", []),
+                    })
+
+                children = folder.get("children", [])
+                if children:
+                    _collect(children, current_path)
+
+        _collect(structure.get("folders", []), "")
+        return result
+
+    # ------------------------------------------------------------------
+    # Struktur als flache Liste (für API)
+    # ------------------------------------------------------------------
+
+    def structure_to_flat_list(self, structure: dict) -> List[dict]:
+        """Wandelt die hierarchische Struktur in eine flache Liste um."""
+        result = []
+
+        def _flatten(folders: list, parent_path: str, depth: int):
+            for folder in folders:
+                if folder.get("is_template"):
+                    continue
+                folder_name = folder.get("name", folder.get("id", ""))
+                current_path = f"{parent_path}/{folder_name}" if parent_path else folder_name
+                result.append({
+                    "id": folder.get("id"),
+                    "path": current_path,
+                    "name": folder_name,
+                    "display_name": folder.get("display_name", folder_name),
+                    "depth": depth,
+                    "retention_years": folder.get("retention_years"),
+                    "yearly": folder.get("yearly", False),
+                    "monthly": folder.get("monthly", False),
+                    "doc_types": folder.get("doc_types", []),
+                    "always": folder.get("always", False),
+                })
+                children = folder.get("children", [])
+                if children:
+                    _flatten(children, current_path, depth + 1)
+
+        _flatten(structure.get("folders", []), "", 0)
+        return result
+
+    # ------------------------------------------------------------------
+    # Verfügbare Templates auflisten
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def list_available_templates() -> List[dict]:
+        """Gibt alle verfügbaren Branchen-Templates zurück."""
+        templates = []
+        for yaml_file in TEMPLATES_DIR.glob("*.yaml"):
+            if yaml_file.stem == "base":
+                continue
+            try:
+                data = _load_yaml(yaml_file.stem)
+                templates.append({
+                    "template_name": yaml_file.stem,
+                    "industry_names": data.get("industry_names", []),
+                    "folder_count": len(data.get("folders", [])),
+                })
+            except Exception as e:
+                logger.warning(f"Fehler beim Laden von {yaml_file}: {e}")
+        return templates
+
+
+# Globale Instanz
+folder_manager = FolderManager()

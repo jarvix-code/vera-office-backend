@@ -1,0 +1,869 @@
+# BLZK Requirements Mapping
+# Mappt Fragen-IDs auf BLZK-Dokument-Quellen und Anforderungen
+# Portiert aus D:\QM\backend\app\data\blzk_requirements.py
+
+# Arbeitssicherheit - Kapitel 1: Gefährdungsbeurteilung
+as-1-q1:
+  pdf: bundle.pdf
+  section: "Gefährdungsbeurteilung"
+  page: 5
+  blzk_code: B01
+  keywords: [Gefährdungsbeurteilung, dokumentiert, Arbeitsschutzgesetz]
+  requirements:
+    - Schriftliche Dokumentation aller Gefährdungen
+    - Beurteilung nach Arbeitsschutzgesetz §5
+    - Unterschrift des Praxisinhabers
+  action_items:
+    - Gefährdungsbeurteilungs-Formular ausfüllen
+    - Alle Arbeitsbereiche erfassen
+    - Schutzmaßnahmen dokumentieren
+
+as-1-q2:
+  pdf: bundle.pdf
+  section: "Gefährdungsbeurteilung - Arbeitsbereiche"
+  page: 6
+  blzk_code: B01
+  keywords: [Behandlung, Labor, Röntgen, Sterilisation, Arbeitsbereiche]
+  requirements:
+    - Behandlungszimmer erfasst
+    - Labor/Technikraum erfasst
+    - Röntgenbereich erfasst
+    - Sterilisation/Aufbereitung erfasst
+  action_items:
+    - Checkliste für jeden Bereich erstellen
+    - Spezifische Gefährdungen pro Bereich identifizieren
+
+as-1-q3:
+  pdf: bundle.pdf
+  section: "Gefährdungsbeurteilung - Aktualisierung"
+  page: 7
+  blzk_code: B01
+  keywords: [jährlich, Aktualisierung, Überprüfung]
+  requirements:
+    - Jährliche Überprüfung
+    - Aktualisierung bei Änderungen
+    - Dokumentation der Prüftermine
+  action_items:
+    - Jährlichen Prüftermin festlegen
+    - Änderungsprotokoll führen
+
+as-1-q4:
+  pdf: bundle.pdf
+  section: "Gefährdungsbeurteilung - Schutzmaßnahmen"
+  page: 8
+  blzk_code: B01
+  keywords: [Schutzmaßnahmen, Maßnahmen, Risiko]
+  requirements:
+    - Schutzmaßnahmen für jede Gefährdung
+    - Priorisierung nach Risiko
+    - Verantwortliche benannt
+  action_items:
+    - Maßnahmenplan erstellen
+    - Umsetzungstermine festlegen
+    - Wirksamkeit prüfen
+
+# Arbeitssicherheit - Kapitel 2: Betriebsanweisungen
+as-2-q1:
+  pdf: bundle.pdf
+  section: "Betriebsanweisungen - Gefahrstoffe"
+  page: 10
+  blzk_code: B02
+  keywords: [Betriebsanweisung, Gefahrstoff, Sicherheitsdatenblatt]
+  requirements:
+    - Betriebsanweisung für jeden Gefahrstoff
+    - Basierend auf Sicherheitsdatenblättern
+    - In deutscher Sprache
+    - Gut lesbar (Schriftgröße!)
+  action_items:
+    - Liste aller Gefahrstoffe erstellen
+    - Sicherheitsdatenblätter beschaffen
+    - Betriebsanweisungen erstellen/aktualisieren
+
+as-2-q2:
+  pdf: bundle.pdf
+  section: "Betriebsanweisungen - Zugänglichkeit"
+  page: 11
+  blzk_code: B02
+  keywords: [zugänglich, Aushang, Arbeitsplatz]
+  requirements:
+    - Am Arbeitsplatz ausgehängt
+    - Für alle Mitarbeiter zugänglich
+    - Aktuell und lesbar
+  action_items:
+    - Aushangstellen festlegen
+    - Betriebsanweisungen laminieren
+    - Regelmäßig auf Lesbarkeit prüfen
+
+as-2-q3:
+  pdf: bundle.pdf
+  section: "Betriebsanweisungen - Neue Gefahrstoffe"
+  page: 11
+  blzk_code: B02
+  keywords: [neue, Gefahrstoffe, erstellen]
+  requirements:
+    - Vor Verwendung erstellen
+    - Unterweisung vor erstem Einsatz
+  action_items:
+    - Prozess für neue Gefahrstoffe definieren
+    - Verantwortlichen benennen
+
+# Arbeitssicherheit - Kapitel 3: Unterweisungen
+as-3-q1:
+  pdf: bundle.pdf
+  section: "Unterweisungen - Durchführung"
+  page: 15
+  blzk_code: B04
+  keywords: [Unterweisung, regelmäßig, Mitarbeiter]
+  requirements:
+    - Erstunterweisung bei Einstellung
+    - Mindestens jährliche Wiederholung
+    - Bei Änderungen sofort
+  action_items:
+    - Unterweisungskalender erstellen
+    - Themenplan für Jahr festlegen
+
+as-3-q2:
+  pdf: bundle.pdf
+  section: "Unterweisungen - Dokumentation"
+  page: 16
+  blzk_code: B04
+  keywords: [Dokumentation, Unterschrift, Nachweis]
+  requirements:
+    - Schriftliche Dokumentation
+    - Unterschrift Mitarbeiter
+    - Unterschrift Unterweisender
+    - Aufbewahrung mindestens 2 Jahre
+  action_items:
+    - Unterweisungsnachweis-Formular verwenden
+    - Ablagesystem einrichten
+
+as-3-q3:
+  pdf: bundle.pdf
+  section: "Unterweisungen - Zeitpunkte"
+  page: 16
+  blzk_code: B04
+  keywords: [Neueinstellung, jährlich, Zeitpunkt]
+  requirements:
+    - Bei Neueinstellung VOR Arbeitsaufnahme
+    - Danach mindestens jährlich
+    - Bei Änderungen zeitnah
+  action_items:
+    - Checkliste für Neueinstellungen
+    - Jährlichen Unterweisungstermin festlegen
+
+# Arbeitssicherheit - Kapitel 4: PSA
+as-4-q1:
+  pdf: bundle.pdf
+  section: "Persönliche Schutzausrüstung - Bereitstellung"
+  page: 20
+  blzk_code: B02
+  keywords: [PSA, Handschuhe, Schutzbrille, Maske]
+  requirements:
+    - Geeignete Handschuhe (latexfrei verfügbar)
+    - Schutzbrillen bei Spritzgefahr
+    - Mund-Nasen-Schutz
+    - Schutzkleidung
+  action_items:
+    - PSA-Bestand prüfen
+    - Größen für alle Mitarbeiter
+    - Lagerbestand sicherstellen
+
+as-4-q2:
+  pdf: bundle.pdf
+  section: "Persönliche Schutzausrüstung - Schulung"
+  page: 21
+  blzk_code: B04
+  keywords: [Schulung, Anwendung, korrekt]
+  requirements:
+    - Einweisung in korrekte Handhabung
+    - An-/Ausziehreihenfolge
+    - Dokumentation der Schulung
+  action_items:
+    - Schulungsunterlagen erstellen
+    - Praktische Übungen
+
+as-4-q3:
+  pdf: bundle.pdf
+  section: "Persönliche Schutzausrüstung - Prüfung"
+  page: 21
+  blzk_code: B02
+  keywords: [Prüfung, Zustand, Verfallsdatum]
+  requirements:
+    - Regelmäßige Sichtprüfung
+    - Verfallsdaten beachten
+    - Beschädigte PSA ersetzen
+  action_items:
+    - Prüfintervall festlegen
+    - Ersatzbeschaffung sicherstellen
+
+# Arbeitssicherheit - Kapitel 5: Erste Hilfe
+as-5-q1:
+  pdf: bundle.pdf
+  section: "Erste Hilfe - Ersthelfer"
+  page: 25
+  blzk_code: B07
+  keywords: [Ersthelfer, Ausbildung, benannt]
+  requirements:
+    - Mindestens 1 Ersthelfer pro 10 Beschäftigte
+    - Ausbildung durch zugelassene Stelle
+    - Auffrischung alle 2 Jahre
+  action_items:
+    - Ersthelfer benennen
+    - Kursanmeldung
+    - Auffrischungstermine planen
+
+as-5-q2:
+  pdf: bundle.pdf
+  section: "Erste Hilfe - Ausstattung"
+  page: 26
+  blzk_code: B07
+  keywords: [Erste-Hilfe-Kasten, Verbandskasten, Ausstattung]
+  requirements:
+    - Verbandskasten nach DIN 13157 (klein) oder DIN 13169 (groß)
+    - Regelmäßige Vollständigkeitsprüfung
+    - Verfallsdaten beachten
+  action_items:
+    - Inhalt prüfen
+    - Fehlende Teile nachbestellen
+    - Prüfintervall festlegen
+
+as-5-q3:
+  pdf: bundle.pdf
+  section: "Erste Hilfe - Übungen"
+  page: 26
+  blzk_code: B07
+  keywords: [Übung, regelmäßig, Erste Hilfe]
+  requirements:
+    - "Empfohlen: Jährliche Auffrischung"
+    - Praktische Übungen
+  action_items:
+    - Übungstermine planen
+    - Dokumentation der Übungen
+
+# Arbeitssicherheit - Kapitel 6: Brandschutz
+as-6-q1:
+  pdf: bundle.pdf
+  section: "Brandschutz - Feuerlöscher"
+  page: 30
+  blzk_code: B05
+  keywords: [Feuerlöscher, Wartung, vorhanden]
+  requirements:
+    - Mindestens 1 Feuerlöscher pro 50m² Nutzfläche
+    - ABC-Pulverlöscher oder CO2-Löscher
+    - Prüfung alle 2 Jahre durch Sachkundigen
+    - Montagehöhe 80-120 cm
+  action_items:
+    - Anzahl und Standorte prüfen
+    - Wartungsvertrag abschließen
+    - Prüfplaketten kontrollieren
+
+as-6-q2:
+  pdf: bundle.pdf
+  section: "Brandschutz - Flucht- und Rettungswege"
+  page: 31
+  blzk_code: B05
+  keywords: [Fluchtweg, Rettungsweg, gekennzeichnet, frei]
+  requirements:
+    - Mindestbreite 80 cm (bis 5 Personen)
+    - Türen in Fluchtrichtung
+    - Keine Hindernisse
+    - Beleuchtete Rettungszeichen
+  action_items:
+    - Fluchtwege kennzeichnen
+    - Hindernisse entfernen
+    - Notbeleuchtung prüfen
+
+as-6-q3:
+  pdf: bundle.pdf
+  section: "Brandschutz - Konzept"
+  page: 32
+  blzk_code: B05
+  keywords: [Brandschutzordnung, Alarmplan, Konzept]
+  requirements:
+    - Brandschutzordnung Teil A (Aushang)
+    - Teil B für Mitarbeiter
+    - Alarmplan mit Notrufnummern
+    - Sammelplatz festlegen
+  action_items:
+    - Brandschutzordnung erstellen
+    - Aushang im Eingangsbereich
+    - Mitarbeiter informieren
+
+as-6-q4:
+  pdf: bundle.pdf
+  section: "Brandschutz - Übungen"
+  page: 32
+  blzk_code: B05
+  keywords: [Brandschutzübung, Räumungsübung]
+  requirements:
+    - "Empfohlen: 1x jährlich Räumungsübung"
+    - Dokumentation der Übung
+    - Auswertung
+  action_items:
+    - Übungstermin festlegen
+    - Ablauf planen
+    - Nach Übung evaluieren
+
+# QM - Kapitel 1: Qualitätspolitik
+qm-1-q1:
+  pdf: bundle.pdf
+  section: "Qualitätspolitik - Schriftliche Formulierung"
+  page: 40
+  blzk_code: C01a01
+  keywords: [Qualitätspolitik, schriftlich, formuliert]
+  requirements:
+    - Schriftliche Formulierung der Praxisziele
+    - Vision und Mission
+    - Unterschrift Praxisinhaber
+  action_items:
+    - Qualitätspolitik formulieren
+    - Mit Team abstimmen
+    - Dokumentieren und unterschreiben
+
+qm-1-q2:
+  pdf: bundle.pdf
+  section: "Qualitätspolitik - Qualitätsziele"
+  page: 41
+  blzk_code: C01a01
+  keywords: [Qualitätsziele, messbar, SMART]
+  requirements:
+    - SMART-Ziele definiert
+    - Messbare Kennzahlen
+    - Regelmäßige Überprüfung
+  action_items:
+    - 3-5 Qualitätsziele definieren
+    - Messgrößen festlegen
+    - Überprüfungstermine planen
+
+qm-1-q3:
+  pdf: bundle.pdf
+  section: "Qualitätspolitik - Bekanntmachung"
+  page: 41
+  blzk_code: C01a01
+  keywords: [bekannt, Mitarbeiter, kommuniziert]
+  requirements:
+    - Alle Mitarbeiter informiert
+    - Aushang oder Intranet
+    - Teil der Einarbeitung neuer Mitarbeiter
+  action_items:
+    - Teambesprechung durchführen
+    - Aushang erstellen
+    - In Einarbeitungskonzept aufnehmen
+
+# QM - Kapitel 2: Prozesslandschaft
+qm-2-q1:
+  pdf: bundle.pdf
+  section: "Prozesslandschaft - Kernprozesse"
+  page: 45
+  blzk_code: C01a04
+  keywords: [Kernprozesse, dokumentiert, Prozesslandkarte]
+  requirements:
+    - Kernprozesse identifiziert
+    - Prozesslandkarte erstellt
+    - Schnittstellen definiert
+  action_items:
+    - Kernprozesse auflisten
+    - Prozesslandkarte zeichnen
+    - Verantwortliche zuordnen
+
+qm-2-q2:
+  pdf: bundle.pdf
+  section: "Prozesslandschaft - Prozessbeschreibungen"
+  page: 46
+  blzk_code: C01a04
+  keywords: [Prozessbeschreibung, Ablauf, dokumentiert]
+  requirements:
+    - Schriftliche Prozessbeschreibungen
+    - Ablaufdiagramme oder Checklisten
+    - Versionierung
+  action_items:
+    - Wichtigste Prozesse beschreiben
+    - Vorlagen nutzen
+    - Aktuell halten
+
+qm-2-q3:
+  pdf: bundle.pdf
+  section: "Prozesslandschaft - Optimierung"
+  page: 46
+  blzk_code: C01a04
+  keywords: [Überprüfung, optimiert, verbessert]
+  requirements:
+    - Regelmäßige Prozess-Reviews
+    - Verbesserungsvorschläge aufnehmen
+    - Änderungen dokumentieren
+  action_items:
+    - Jährliche Prozess-Reviews planen
+    - Feedback-System einrichten
+
+# QM - Kapitel 3: Verantwortlichkeiten
+qm-3-q1:
+  pdf: bundle.pdf
+  section: "Verantwortlichkeiten - Definition"
+  page: 50
+  blzk_code: C01a02
+  keywords: [Verantwortlichkeiten, definiert, Organigramm]
+  requirements:
+    - Klare Verantwortungsbereiche
+    - Organigramm erstellt
+    - Stellenbeschreibungen
+  action_items:
+    - Organigramm erstellen
+    - Verantwortungsbereiche schriftlich festhalten
+
+qm-3-q2:
+  pdf: bundle.pdf
+  section: "Verantwortlichkeiten - QM-Beauftragter"
+  page: 51
+  blzk_code: C01a03
+  keywords: [QM-Beauftragter, QMB, benannt]
+  requirements:
+    - QM-Beauftragten benennen
+    - Aufgaben schriftlich festlegen
+    - Zeit für QM-Aufgaben einplanen
+  action_items:
+    - QM-Beauftragten auswählen
+    - Aufgabenprofil erstellen
+    - Schulung organisieren
+
+qm-3-q3:
+  pdf: bundle.pdf
+  section: "Verantwortlichkeiten - Stellvertretung"
+  page: 51
+  blzk_code: C01a03
+  keywords: [Stellvertretung, Vertretungsregelung]
+  requirements:
+    - Vertretungsregelungen definiert
+    - Dokumentiert
+    - Allen bekannt
+  action_items:
+    - Vertretungsplan erstellen
+    - Kompetenzen sicherstellen
+
+# QM - Kapitel 4: Dokumentenlenkung
+qm-4-q1:
+  pdf: bundle.pdf
+  section: "Dokumentenlenkung - System"
+  page: 55
+  blzk_code: C01a05
+  keywords: [Dokumentenlenkung, System, Verwaltung]
+  requirements:
+    - Dokumentenlenkungssystem vorhanden
+    - Verantwortlicher benannt
+    - Klare Ablagestruktur
+  action_items:
+    - Ablagestruktur definieren
+    - Verantwortlichen benennen
+    - Versionierung einführen
+
+qm-4-q2:
+  pdf: bundle.pdf
+  section: "Dokumentenlenkung - Versionierung"
+  page: 56
+  blzk_code: C01a05
+  keywords: [Version, aktuell, erkennbar]
+  requirements:
+    - Versionsnummer auf jedem Dokument
+    - Datum der letzten Änderung
+    - Änderungshistorie
+  action_items:
+    - Versionierungsschema festlegen
+    - Vorlagen aktualisieren
+
+qm-4-q3:
+  pdf: bundle.pdf
+  section: "Dokumentenlenkung - Archivierung"
+  page: 56
+  blzk_code: C01a05
+  keywords: [archiviert, veraltet, Umlauf]
+  requirements:
+    - Veraltete Dokumente kennzeichnen
+    - Aus aktivem Umlauf nehmen
+    - Archivieren (Aufbewahrungspflichten beachten)
+  action_items:
+    - Archivierungsordner einrichten
+    - Regelmäßige Prüfung auf Aktualität
+
+# QM - Kapitel 5: Beschwerdemanagement
+qm-5-q1:
+  pdf: bundle.pdf
+  section: "Beschwerdemanagement - System"
+  page: 60
+  blzk_code: C03b02
+  keywords: [Beschwerdemanagement, strukturiert, System]
+  requirements:
+    - Beschwerdeweg definiert
+    - Ansprechpartner benannt
+    - Reaktionszeiten festgelegt
+  action_items:
+    - Beschwerdeprozess definieren
+    - Formular erstellen
+    - Mitarbeiter schulen
+
+qm-5-q2:
+  pdf: bundle.pdf
+  section: "Beschwerdemanagement - Dokumentation"
+  page: 61
+  blzk_code: C03b02
+  keywords: [dokumentiert, analysiert, Beschwerde]
+  requirements:
+    - Alle Beschwerden erfassen
+    - Kategorisierung
+    - Regelmäßige Auswertung
+  action_items:
+    - Beschwerderegister führen
+    - Quartalsweise auswerten
+
+qm-5-q3:
+  pdf: bundle.pdf
+  section: "Beschwerdemanagement - Maßnahmen"
+  page: 61
+  blzk_code: C03b02
+  keywords: [Maßnahmen, abgeleitet, Verbesserung]
+  requirements:
+    - Maßnahmen bei jeder Beschwerde
+    - Rückmeldung an Beschwerdeführer
+    - Prävention
+  action_items:
+    - Maßnahmenplan je Beschwerde
+    - Follow-up sicherstellen
+
+# QM - Kapitel 6: Interne Audits
+qm-6-q1:
+  pdf: bundle.pdf
+  section: "Interne Audits - Durchführung"
+  page: 65
+  blzk_code: C05a01
+  keywords: [internes Audit, regelmäßig, durchgeführt]
+  requirements:
+    - Mindestens 1x jährlich
+    - Auditplan erstellen
+    - Unabhängiger Auditor
+  action_items:
+    - Auditplan erstellen
+    - Auditor benennen/schulen
+    - Termine festlegen
+
+qm-6-q2:
+  pdf: bundle.pdf
+  section: "Interne Audits - Dokumentation"
+  page: 66
+  blzk_code: C05a01
+  keywords: [Auditbericht, dokumentiert, Ergebnisse]
+  requirements:
+    - Schriftlicher Auditbericht
+    - Stärken und Schwächen
+    - Feststellungen mit Priorität
+  action_items:
+    - Auditbericht-Vorlage nutzen
+    - Besprechung der Ergebnisse
+
+qm-6-q3:
+  pdf: bundle.pdf
+  section: "Interne Audits - Verbesserung"
+  page: 66
+  blzk_code: C05b03
+  keywords: [Verbesserung, Maßnahmen, Audit]
+  requirements:
+    - Maßnahmenplan aus Audit
+    - Umsetzungsverfolgung
+    - Wirksamkeitsprüfung
+  action_items:
+    - Maßnahmen ableiten
+    - Verantwortliche und Termine festlegen
+
+# QM - Kapitel 7: Korrekturmaßnahmen
+qm-7-q1:
+  pdf: bundle.pdf
+  section: "Korrekturmaßnahmen - Einleitung"
+  page: 70
+  blzk_code: C05b03
+  keywords: [Korrekturmaßnahme, Abweichung, eingeleitet]
+  requirements:
+    - Bei Abweichungen Maßnahmen definieren
+    - Ursachenanalyse durchführen
+    - Verantwortlichen benennen
+  action_items:
+    - Prozess für Korrekturmaßnahmen etablieren
+    - Formular erstellen
+
+qm-7-q2:
+  pdf: bundle.pdf
+  section: "Korrekturmaßnahmen - Wirksamkeit"
+  page: 70
+  blzk_code: C05b03
+  keywords: [Wirksamkeit, geprüft, Kontrolle]
+  requirements:
+    - Wirksamkeitsprüfung nach Umsetzung
+    - Dokumentation
+    - Bei Bedarf Nachjustierung
+  action_items:
+    - Prüftermin festlegen
+    - Ergebnis dokumentieren
+
+# Handbuch - Kapitel 1: Praxisvorstellung
+hb-1-q1:
+  pdf: bundle.pdf
+  section: "Praxisvorstellung"
+  page: 75
+  blzk_code: C01a01
+  keywords: [Praxisbeschreibung, aktuell, Vorstellung]
+  requirements:
+    - Name und Anschrift
+    - Praxisinhaber
+    - Öffnungszeiten
+    - Kontaktdaten
+  action_items:
+    - Praxisbeschreibung erstellen/aktualisieren
+    - Ins QM-Handbuch aufnehmen
+
+hb-1-q2:
+  pdf: bundle.pdf
+  section: "Praxisvorstellung - Leistungen"
+  page: 75
+  blzk_code: C01a01
+  keywords: [Leistungsspektrum, Behandlungsschwerpunkte]
+  requirements:
+    - Leistungsspektrum dokumentiert
+    - Schwerpunkte benannt
+    - Aktuell gehalten
+  action_items:
+    - Leistungsübersicht erstellen
+    - Jährlich aktualisieren
+
+# Hygieneplan
+as-7-q1:
+  pdf: bundle.pdf
+  section: "Hygieneplan - RKI"
+  page: 80
+  blzk_code: C02a01
+  keywords: [Hygieneplan, RKI, aktuell]
+  requirements:
+    - Hygieneplan nach RKI-Empfehlungen
+    - Jährliche Aktualisierung
+    - Von Hygienebeauftragtem geprüft
+  action_items:
+    - Hygieneplan erstellen/aktualisieren
+    - RKI-Empfehlungen prüfen
+    - Hygienebeauftragten benennen
+
+as-7-q2:
+  pdf: bundle.pdf
+  section: "Hygieneplan - Reinigungs-/Desinfektionspläne"
+  page: 81
+  blzk_code: C02b03
+  keywords: [Reinigungsplan, Desinfektionsplan, dokumentiert]
+  requirements:
+    - Flächendesinfektionsplan
+    - Instrumentendesinfektionsplan
+    - Händedesinfektionsplan
+    - Verantwortlichkeiten
+  action_items:
+    - Pläne erstellen
+    - Aushang vorbereiten
+    - Mitarbeiter schulen
+
+as-7-q3:
+  pdf: bundle.pdf
+  section: "Hygieneplan - Schulungen"
+  page: 82
+  blzk_code: C02b01
+  keywords: [Hygieneschulung, regelmäßig, Schulung]
+  requirements:
+    - Erstschulung bei Einstellung
+    - Jährliche Auffrischung
+    - Dokumentation mit Unterschrift
+  action_items:
+    - Schulungsplan erstellen
+    - Unterlagen vorbereiten
+    - Teilnahme dokumentieren
+
+as-7-q4:
+  pdf: bundle.pdf
+  section: "Hygieneplan - Medizinprodukte-Aufbereitung"
+  page: 83
+  blzk_code: C02b04
+  keywords: [Aufbereitung, Medizinprodukte, geregelt]
+  requirements:
+    - Risikobewertung und Einstufung
+    - Validierte Verfahren
+    - Dokumentation jeder Charge
+  action_items:
+    - Aufbereitungsprozess dokumentieren
+    - Validierung durchführen/nachweisen
+
+# Medizinprodukte
+as-8-q1:
+  pdf: bundle.pdf
+  section: "Medizinprodukte - Bestandsbuch"
+  page: 88
+  blzk_code: C02b04
+  keywords: [Medizinproduktebuch, Bestandsbuch, geführt]
+  requirements:
+    - Bestandsverzeichnis aller Medizinprodukte
+    - Eindeutige Identifikation
+    - Hersteller und Einweisungsnachweise
+  action_items:
+    - Bestandsverzeichnis anlegen
+    - Alle Geräte erfassen
+
+as-8-q2:
+  pdf: bundle.pdf
+  section: "Medizinprodukte - Wartung"
+  page: 89
+  blzk_code: C02b04
+  keywords: [Wartung, dokumentiert, regelmäßig]
+  requirements:
+    - Wartungsplan nach Herstellervorgaben
+    - STK/MTK durchgeführt
+    - Dokumentation
+  action_items:
+    - Wartungsplan erstellen
+    - Prüftermine festlegen
+    - Servicevertrag prüfen
+
+as-8-q3:
+  pdf: bundle.pdf
+  section: "Medizinprodukte - Einweisungen"
+  page: 89
+  blzk_code: C02b04
+  keywords: [Einweisung, Medizinprodukt, dokumentiert]
+  requirements:
+    - Einweisung vor erster Nutzung
+    - Durch Hersteller oder Beauftragte
+    - Schriftliche Dokumentation
+  action_items:
+    - Einweisungsnachweise sammeln
+    - Bei neuen Geräten Einweisung anfordern
+
+# Röntgen & Strahlenschutz
+as-9-q1:
+  pdf: bundle.pdf
+  section: "Röntgen - Genehmigung/Anzeige"
+  page: 95
+  blzk_code: C06a01
+  keywords: [Röntgenverordnung, gültig, Genehmigung]
+  requirements:
+    - Gültige Genehmigung/Anzeige
+    - Fachkunde nachgewiesen
+    - Aktualisierung der Fachkunde
+  action_items:
+    - Genehmigung prüfen
+    - Fachkunde-Aktualisierung planen
+
+as-9-q2:
+  pdf: bundle.pdf
+  section: "Röntgen - Dokumentation"
+  page: 96
+  blzk_code: C06b01
+  keywords: [Röntgendokumentation, Aufnahmen, dokumentiert]
+  requirements:
+    - Röntgentagebuch oder EDV-Dokumentation
+    - Indikation dokumentieren
+    - Aufbewahrung 10 Jahre
+  action_items:
+    - Dokumentationssystem prüfen
+    - Vollständigkeit sicherstellen
+
+as-9-q3:
+  pdf: bundle.pdf
+  section: "Röntgen - Strahlenschutz"
+  page: 96
+  blzk_code: C06a01
+  keywords: [Strahlenschutz, Maßnahmen, implementiert]
+  requirements:
+    - Schutzschürzen vorhanden
+    - Schilddrüsenschutz
+    - Regelmäßige Prüfung
+  action_items:
+    - Schutzmittel prüfen
+    - Prüfintervalle einhalten
+
+# Datenschutz
+qm-8-q1:
+  pdf: bundle.pdf
+  section: "Datenschutz - DSGVO-Konzept"
+  page: 100
+  blzk_code: C01a06
+  keywords: [Datenschutzkonzept, DSGVO, existiert]
+  requirements:
+    - Datenschutzkonzept dokumentiert
+    - Technische und organisatorische Maßnahmen
+    - Datenschutzbeauftragter (ab 20 Mitarbeiter)
+  action_items:
+    - Datenschutzkonzept erstellen
+    - TOMs dokumentieren
+
+qm-8-q2:
+  pdf: bundle.pdf
+  section: "Datenschutz - Verarbeitungsverzeichnis"
+  page: 101
+  blzk_code: C01a06
+  keywords: [Verzeichnis, Verarbeitungstätigkeiten]
+  requirements:
+    - Verzeichnis der Verarbeitungstätigkeiten
+    - Aktuell gehalten
+    - Alle Verarbeitungen erfasst
+  action_items:
+    - Verzeichnis anlegen
+    - Alle Prozesse mit Personendaten erfassen
+
+qm-8-q3:
+  pdf: bundle.pdf
+  section: "Datenschutz - Schulung"
+  page: 101
+  blzk_code: C01a06
+  keywords: [Datenschutzschulung, Mitarbeiter, geschult]
+  requirements:
+    - Erstschulung bei Einstellung
+    - Verpflichtung auf Datengeheimnis
+    - Regelmäßige Auffrischung
+  action_items:
+    - Schulungsunterlagen erstellen
+    - Verpflichtungserklärung unterschreiben lassen
+
+# Notfallmanagement
+as-10-q1:
+  pdf: bundle.pdf
+  section: "Notfallmanagement - Notfallplan"
+  page: 105
+  blzk_code: B06
+  keywords: [Notfallplan, medizinisch, existiert]
+  requirements:
+    - Schriftlicher Notfallplan
+    - Ablauf bei Notfall dokumentiert
+    - Notrufnummern
+  action_items:
+    - Notfallplan erstellen
+    - Aushang vorbereiten
+    - Team schulen
+
+as-10-q2:
+  pdf: bundle.pdf
+  section: "Notfallmanagement - Ausstattung"
+  page: 106
+  blzk_code: B06
+  keywords: [Notfallkoffer, Notfallwagen, geprüft]
+  requirements:
+    - Notfallkoffer/Notfallwagen vorhanden
+    - Inhalt nach Mindestanforderungen
+    - Regelmäßige Prüfung
+    - Verfallsdaten beachten
+  action_items:
+    - Inhalt prüfen
+    - Prüfintervall festlegen
+    - Fehlende Teile nachbestellen
+
+as-10-q3:
+  pdf: bundle.pdf
+  section: "Notfallmanagement - Übungen"
+  page: 106
+  blzk_code: B06
+  keywords: [Notfallübung, regelmäßig, geübt]
+  requirements:
+    - "Empfohlen: 1-2x jährlich"
+    - Dokumentation der Übung
+    - Auswertung und Verbesserung
+  action_items:
+    - Übungstermine planen
+    - Szenarien vorbereiten
+    - Nach Übung evaluieren

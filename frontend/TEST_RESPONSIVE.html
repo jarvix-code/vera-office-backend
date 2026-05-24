@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERA Responsive Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #8B5CF6;
+      margin-bottom: 10px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #8B5CF6;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #7C3AED;
+      transform: translateY(-2px);
+    }
+
+    button.active {
+      background: #EC4899;
+    }
+
+    .viewport-info {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .viewport-info strong {
+      color: #8B5CF6;
+      font-size: 18px;
+    }
+
+    .frame-container {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    iframe {
+      border: 2px solid #E5E7EB;
+      border-radius: 12px;
+      background: white;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .device-frame {
+      position: relative;
+      display: inline-block;
+    }
+
+    .device-label {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1F2937;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .checklist {
+      margin-top: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .checklist h2 {
+      color: #1F2937;
+      margin-bottom: 15px;
+    }
+
+    .checklist ul {
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 10px;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checklist li:last-child {
+      border-bottom: none;
+    }
+
+    .checklist input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎯 VERA Responsive Testing</h1>
+    <p>Teste die neue UI in verschiedenen Viewports</p>
+  </div>
+
+  <div class="controls">
+    <button onclick="setViewport(375, 667, 'iPhone SE')" data-device="mobile">📱 iPhone SE (375×667)</button>
+    <button onclick="setViewport(414, 896, 'iPhone 11')" data-device="mobile">📱 iPhone 11 (414×896)</button>
+    <button onclick="setViewport(768, 1024, 'iPad')" data-device="tablet">📱 iPad Portrait (768×1024)</button>
+    <button onclick="setViewport(1024, 768, 'iPad Landscape')" data-device="tablet">📱 iPad Landscape (1024×768)</button>
+    <button onclick="setViewport(1280, 720, 'Desktop Small')" data-device="desktop">💻 Desktop (1280×720)</button>
+    <button onclick="setViewport(1920, 1080, 'Desktop Large')" data-device="desktop">💻 Full HD (1920×1080)</button>
+  </div>
+
+  <div class="viewport-info">
+    <strong id="current-size">Wähle ein Gerät zum Testen</strong>
+  </div>
+
+  <div class="frame-container">
+    <div class="device-frame">
+      <div class="device-label" id="device-label">Preview</div>
+      <iframe 
+        id="preview-frame" 
+        src="http://localhost:5173/" 
+        width="1280" 
+        height="720"
+      ></iframe>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <h2>✅ Test Checklist</h2>
+    <ul>
+      <li>
+        <input type="checkbox" id="check1">
+        <label for="check1">Sidebar collapsible auf Mobile (Drawer)</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check2">
+        <label for="check2">Chat-Container zentriert und max-width korrekt</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check3">
+        <label for="check3">Action Bubbles Grid passt (2-spaltig Mobile, 4-spaltig Desktop)</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check4">
+        <label for="check4">Messages haben korrekte max-width (85% Mobile, 70% Desktop)</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check5">
+        <label for="check5">Input-Feld mindestens 44px hoch auf Mobile (Touch-Target)</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check6">
+        <label for="check6">Sidebar Hover-to-Expand funktioniert auf Desktop</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check7">
+        <label for="check7">Chat füllt verfügbare Höhe (100vh minus Header)</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check8">
+        <label for="check8">Landscape Mode: Kompaktere Abstände (Höhe < 600px)</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check9">
+        <label for="check9">Tooltips erscheinen auf Desktop (Icon-Sidebar)</label>
+      </li>
+      <li>
+        <input type="checkbox" id="check10">
+        <label for="check10">Gradient Background sichtbar auf allen Viewports</label>
+      </li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <p><strong>Hinweis:</strong> Starte <code>npm run dev</code> im Frontend-Ordner für Live-Preview auf localhost:5173</p>
+    <p>VERA Office Redesign - 2026-03-24</p>
+  </div>
+
+  <script>
+    function setViewport(width, height, deviceName) {
+      const iframe = document.getElementById('preview-frame');
+      const sizeInfo = document.getElementById('current-size');
+      const deviceLabel = document.getElementById('device-label');
+      
+      iframe.style.width = width + 'px';
+      iframe.style.height = height + 'px';
+      
+      sizeInfo.innerHTML = `${deviceName}: <span style="color: #EC4899;">${width}×${height}px</span>`;
+      deviceLabel.textContent = deviceName;
+
+      // Mark active button
+      document.querySelectorAll('.controls button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Auto-scroll to frame
+      iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Set default viewport
+    window.addEventListener('DOMContentLoaded', () => {
+      const firstButton = document.querySelector('.controls button');
+      if (firstButton) {
+        firstButton.click();
+      }
+    });
+  </script>
+</body>
+</html>

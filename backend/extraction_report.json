@@ -1,0 +1,314 @@
+{
+  "timestamp": "2026-03-28T14:26:41.758032",
+  "stats": {
+    "total_pdfs": 10,
+    "checklists": 0,
+    "procedures": 8,
+    "other": 2,
+    "errors": 0,
+    "total_questions": 0,
+    "total_steps": 30
+  },
+  "results": [
+    {
+      "file": "dokument_1.pdf",
+      "type": "sonstige",
+      "data": {
+        "text": "Betriebsärztliche und Sicherheitstechnische Betreuung\nBeschreibung der Unterlagen\nMerkmale des Kapitels Arbeitssicherheit im QM-System der BLZK\nDer Umfang des Ordners wird wesentlich durch Gesetzestexte und Literatur bestimmt. Es ist nicht\nerforderlich, diese auszudrucken und vollständig zu studieren. Sie dienen dem Vertiefen und\nNachschlagen. Die Kapitel können einzeln bearbeitet werden. Sie bauen nicht aufeinander auf. Jede\nvom Gesetzgeber an den Praxisinhaber gestellte Aufgabe wird in einem eigenen Kapitel vollständig\nmit allem zugehörigen Arbeitsmaterial dargestellt.\nDie Inhalte der Arbeitssicherheit sind in fünf Sachgebiete gegliedert:\nSachgebiet\nKapitel\nOrganisation des Arbeitsschutzes der BLZK\nA\nArbeitnehmer\nB\nArbeitsplatz\nC\nArbeitsgeräte\nD\nArbeitsstoffe\nE\nJedes Sachgebiet ist in Unterkapitel (z. B. B01) aufgeteilt. Die Unterkapitel enthalten Dokumente,\ndie sich wiederum in drei Arten von Registern gliedern. Das Register beschreibt, um welche Art\nvon Dokument es sich handelt:\nBe"
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_10.pdf",
+      "type": "sonstige",
+      "data": {
+        "text": "Arbeitsschutzinstitutionen, Ansprechpartner, Bezugsquellen\nVerlage, Medien, Druckschriftenvertrieb\nDer Bezug von Zeitschriften, von Gesetzen und Merkblättern zum Thema Arbeitssicherheit ist über\nspezialisierte Verlage möglich:\nEuropäische Kommission\nVertretung in München\nVorschriften der\nEuropäischen Union (EU)\nErhardtstraße 27, 80469 München\nTelefon: 089 2424-480, Fax: 089 242448-15\nInternet: www.eu-kommission.de\nBundesanzeiger Verlagsgesellschaft mbH\nAmsterdamer Straße 192, 50735 Köln\nGesetze des Bundes\nund der EU\nTelefon: 0221 97668-0, Fax: 0221 97668-278\nE-Mail: vertrieb@bundesanzeiger.de\nInternet: www.bundesanzeiger.de\nCarl Heymanns Verlag KG\nLuxemburger Straße 449, 50939 Köln\nVorschriften, Regelwerke\nTelefon: 0221 94373-0, Fax: 0221 94373-7000\nE-Mail: vertrieb@heymanns.com\nInternet: www.heymanns.com\nBeuth Verlag GmbH\nBurggrafenstraße 6, 10787 Berlin\nDIN-Normen,\nVDI-Richtlinien,\nRAL\nTelefon: 030 2601-22 60, Fax: 030 2601-1260\nE-Mail: info@beuth.de\nInternet: www.beuth.de\nVDE-Verlag"
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_100.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Extrahiere Schritt-für-Schritt Prozess aus der Word-Datei unter: http://www.blzk.de/blzk/site.nsf/gfx/c02b12.doc/$file/c02b12.doc"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "Arbeitsanweisung Tauchbaddesinfektion",
+            "actions": [
+              "..."
+            ]
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_101.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Extrahiere Schritt-für-Schritt Prozess aus der Word-Datei unter: http://www.blzk.de/blzk/site.nsf/gfx/c02b13.doc/$file/c02b13.doc"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "Arbeitsanweisung Verdünnung von Konzentraten",
+            "actions": [
+              "..."
+            ]
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_102.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Extrahiere Arbeitsanweisung für Aufbereitung von Medizinprodukten"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "Arbeitsanweisung",
+            "actions": [
+              "Abrufbar unter: http://www.blzk.de/blzk/site.nsf/gfx/c02b14.doc/$file/c02b14.doc"
+            ]
+          },
+          {
+            "step_number": 3,
+            "title": "Semikritisch",
+            "actions": [
+              ""
+            ]
+          },
+          {
+            "step_number": 4,
+            "title": "Eine zu individualisierende Vorlage",
+            "actions": [
+              ""
+            ]
+          },
+          {
+            "step_number": 5,
+            "title": "Arbeitsplatz",
+            "actions": [
+              ""
+            ]
+          },
+          {
+            "step_number": 6,
+            "title": "Arbeitssicherheit",
+            "actions": [
+              ""
+            ]
+          },
+          {
+            "step_number": 7,
+            "title": "Stand: 10.07.2025",
+            "actions": [
+              ""
+            ]
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_103.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Extrahiere Schritt-für-Schritt Prozess aus der Dokumentation unter: http://www.blzk.de/blzk/site.nsf/gfx/c02b15.doc/$file/c02b15.doc"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "Arbeitsanweisung Aufbereitung von Medizinprodukten",
+            "actions": [
+              "..."
+            ]
+          },
+          {
+            "step_number": 3,
+            "title": "semikritisch B / rotierende und oszillierende Instrumente",
+            "actions": [
+              "..."
+            ]
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_104.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Arbeitsanweisung Aufbereitung von Medizinprodukten"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "semikritisch B / Übertragungsinstrumente",
+            "actions": [
+              "Eine zu individualisierende Vorlage für die Erstellung einer Arbeitsanweisung ist abrufbar unter:"
+            ]
+          },
+          {
+            "step_number": 3,
+            "title": "Arbeitsplatz",
+            "actions": [
+              "Arbeitssicherheit"
+            ]
+          },
+          {
+            "step_number": 4,
+            "title": "Arbeitssicherheit",
+            "actions": [
+              "Stand: 10.07.2025"
+            ]
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_105.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Extrahiere Arbeitsanweisung für Aufbereitung von Medizinprodukten",
+              "Verwende die Vorlage unter: http://www.blzk.de/blzk/site.nsf/gfx/c02b17.doc/$file/c02b17.doc"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "Arbeitsplatz",
+            "actions": [
+              "Beschäftige dich mit Arbeitssicherheit"
+            ]
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_106.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Extrahiere Schritt-für-Schritt Prozess aus der Dokumentation unter: http://www.blzk.de/blzk/site.nsf/gfx/c02b18.doc/$file/c02b18.doc"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "Arbeitsanweisung Aufbereitung von Medizinprodukten",
+            "actions": [
+              "..."
+            ]
+          },
+          {
+            "step_number": 3,
+            "title": "kritisch B / rotierende und oszillierende Instrumente",
+            "actions": [
+              "..."
+            ]
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "dokument_107.pdf",
+      "type": "arbeitsanweisung",
+      "data": {
+        "steps": [
+          {
+            "step_number": 1,
+            "title": "Hygiene",
+            "actions": [
+              "Extrahiere Arbeitsanweisung für Aufbereitung von Medizinprodukten"
+            ]
+          },
+          {
+            "step_number": 2,
+            "title": "Arbeitsanweisung",
+            "actions": [
+              "Abrufbar unter: http://www.blzk.de/blzk/site.nsf/gfx/c02b19.doc/$file/c02b19.doc"
+            ]
+          },
+          {
+            "step_number": 3,
+            "title": "Kritisch",
+            "actions": [
+              "B",
+              "Übertragungsinstrumente"
+            ]
+          },
+          {
+            "step_number": 4,
+            "title": "Arbeitsplatz",
+            "actions": [
+              ""
+            ]
+          },
+          {
+            "step_number": 5,
+            "title": "Arbeitssicherheit",
+            "actions": [
+              ""
+            ]
+          },
+          {
+            "step_number": 6,
+            "title": "Seite 1 / 1",
+            "actions": [
+              ""
+            ]
+          },
+          {
+            "step_number": 7,
+            "title": "Arbeitssicherheit",
+            "actions": [
+              "Stand: 10.07.2025"
+            ]
+          }
+        ]
+      },
+      "error": null
+    }
+  ]
+}

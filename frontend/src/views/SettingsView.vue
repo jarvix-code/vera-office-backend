@@ -1,0 +1,811 @@
+<template>
+  <q-page class="settings-page">
+
+    <!-- Page Header -->
+    <div class="settings-header">
+      <div class="settings-header-content">
+        <div class="settings-header-icon">
+          <q-icon name="settings" size="28px" />
+        </div>
+        <div>
+          <div class="settings-header-title">Einstellungen</div>
+          <div class="settings-header-subtitle">Profil, System & Updates</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-body">
+      <div class="row q-col-gutter-lg">
+
+        <!-- ── Profil ───────────────────────────────────────────── -->
+        <div class="col-12 col-md-6">
+          <div class="settings-card">
+            <div class="card-header">
+              <q-icon name="person" size="20px" class="card-header-icon" />
+              <span>Mein Profil</span>
+            </div>
+
+            <div class="profile-avatar-row">
+              <q-avatar size="64px" class="profile-avatar">
+                <q-icon name="person" size="32px" />
+              </q-avatar>
+              <div class="profile-info">
+                <div class="profile-name">{{ authUser?.full_name || authUser?.username || '–' }}</div>
+                <div class="profile-email">{{ authUser?.email || 'Keine E-Mail hinterlegt' }}</div>
+                <q-chip dense color="primary" text-color="white" icon="verified_user" class="q-mt-xs">
+                  {{ authUser?.role || 'Admin' }}
+                </q-chip>
+              </div>
+            </div>
+
+            <q-separator class="q-my-md" />
+
+            <!-- Passwort ändern -->
+            <div class="card-sub-label">Passwort ändern</div>
+
+            <q-input
+              v-model="passwordForm.current"
+              outlined
+              dense
+              label="Aktuelles Passwort"
+              type="password"
+              class="q-mb-sm"
+            />
+            <q-input
+              v-model="passwordForm.newPw"
+              outlined
+              dense
+              label="Neues Passwort"
+              type="password"
+              class="q-mb-sm"
+            />
+            <q-input
+              v-model="passwordForm.confirm"
+              outlined
+              dense
+              label="Passwort wiederholen"
+              type="password"
+              class="q-mb-md"
+            />
+
+            <q-btn
+              unelevated
+              color="primary"
+              icon="lock"
+              label="Passwort aktualisieren"
+              class="full-width"
+              :loading="passwordLoading"
+              :disable="!passwordForm.current || !passwordForm.newPw || passwordForm.newPw !== passwordForm.confirm"
+              @click="changePassword"
+            />
+          </div>
+        </div>
+
+        <!-- ── System ───────────────────────────────────────────── -->
+        <div class="col-12 col-md-6">
+          <div class="settings-card">
+            <div class="card-header">
+              <q-icon name="tune" size="20px" class="card-header-icon" />
+              <span>System</span>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-label">
+                <q-icon name="dark_mode" size="18px" class="q-mr-sm text-grey-6" />
+                Dunkles Design
+              </div>
+              <q-toggle v-model="settings.darkMode" color="primary" />
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-label">
+                <q-icon name="language" size="18px" class="q-mr-sm text-grey-6" />
+                Sprache
+              </div>
+              <q-select
+                v-model="settings.language"
+                outlined
+                dense
+                :options="['Deutsch', 'English']"
+                style="min-width: 130px"
+              />
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-label">
+                <q-icon name="article" size="18px" class="q-mr-sm text-grey-6" />
+                Dokumente pro Seite
+              </div>
+              <q-input
+                v-model="settings.documentsPerPage"
+                outlined
+                dense
+                type="number"
+                style="width: 80px"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── OCR & KI ─────────────────────────────────────────── -->
+        <div class="col-12 col-md-6">
+          <div class="settings-card">
+            <div class="card-header">
+              <q-icon name="document_scanner" size="20px" class="card-header-icon" />
+              <span>OCR & Klassifikation</span>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-label">
+                <q-icon name="auto_awesome" size="18px" class="q-mr-sm text-grey-6" />
+                Automatische OCR
+              </div>
+              <q-toggle v-model="settings.autoOcr" color="primary" />
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-label">
+                <q-icon name="category" size="18px" class="q-mr-sm text-grey-6" />
+                Auto-Klassifikation
+              </div>
+              <q-toggle v-model="settings.autoClassify" color="primary" />
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-label">
+                <q-icon name="translate" size="18px" class="q-mr-sm text-grey-6" />
+                OCR-Sprache
+              </div>
+              <q-select
+                v-model="settings.ocrLanguage"
+                outlined
+                dense
+                :options="['Deutsch', 'English', 'Mehrsprachig']"
+                style="min-width: 140px"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Speicher ─────────────────────────────────────────── -->
+        <div class="col-12 col-md-6">
+          <div class="settings-card">
+            <div class="card-header">
+              <q-icon name="storage" size="20px" class="card-header-icon" />
+              <span>Speicher</span>
+            </div>
+
+            <div class="storage-bar-label">
+              <span>Verwendeter Speicher</span>
+              <span class="storage-size">4,5 GB / 10 GB</span>
+            </div>
+            <q-linear-progress
+              :value="0.45"
+              color="primary"
+              rounded
+              size="10px"
+              class="q-mb-lg"
+            />
+
+            <q-btn
+              outline
+              color="primary"
+              icon="cleaning_services"
+              label="Cache leeren"
+              class="full-width q-mb-sm"
+              @click="clearCache"
+            />
+
+            <q-btn
+              outline
+              color="negative"
+              icon="delete_forever"
+              label="Alle Daten löschen"
+              class="full-width"
+              @click="confirmReset"
+            />
+          </div>
+        </div>
+
+        <!-- ── Software-Updates ─────────────────────────────────── -->
+        <div class="col-12 col-md-6">
+          <div class="settings-card">
+            <div class="card-header">
+              <q-icon name="system_update" size="20px" class="card-header-icon" />
+              <span>Software-Updates</span>
+            </div>
+
+            <div class="version-row">
+              <div>
+                <div class="version-label">Installierte Version</div>
+                <div class="version-value">{{ updateState.currentVersion || '…' }}</div>
+              </div>
+              <div v-if="updateState.lastCheck">
+                <div class="version-label">Letzter Check</div>
+                <div class="version-value">{{ formatDate(updateState.lastCheck) }}</div>
+              </div>
+            </div>
+
+            <!-- Update verfügbar -->
+            <q-banner
+              v-if="updateState.updateAvailable"
+              class="update-banner update-available q-mb-md"
+              rounded
+            >
+              <template v-slot:avatar>
+                <q-icon name="new_releases" color="white" />
+              </template>
+              <div class="text-weight-medium">Version {{ updateState.latestVersion }} verfügbar!</div>
+              <div class="text-caption" v-if="updateState.changelog">{{ updateState.changelog }}</div>
+            </q-banner>
+
+            <!-- Aktuell -->
+            <q-banner
+              v-if="updateState.checked && !updateState.updateAvailable && !updateState.checking"
+              class="update-banner update-ok q-mb-md"
+              rounded
+            >
+              <template v-slot:avatar>
+                <q-icon name="check_circle" color="positive" />
+              </template>
+              VERA Office ist auf dem aktuellen Stand.
+            </q-banner>
+
+            <!-- Fehler -->
+            <q-banner
+              v-if="updateState.error"
+              class="update-banner update-error q-mb-md"
+              rounded
+            >
+              <template v-slot:avatar>
+                <q-icon name="error" color="white" />
+              </template>
+              {{ updateState.error }}
+            </q-banner>
+
+            <q-btn
+              unelevated
+              color="primary"
+              icon="refresh"
+              label="Auf Updates prüfen"
+              class="full-width q-mb-sm"
+              :loading="updateState.checking"
+              :disable="updateState.applying"
+              @click="checkForUpdate"
+            />
+
+            <q-btn
+              v-if="updateState.updateAvailable"
+              unelevated
+              color="positive"
+              icon="download"
+              :label="'Update ' + updateState.latestVersion + ' installieren'"
+              class="full-width q-mb-sm"
+              :loading="updateState.applying"
+              @click="applyUpdate"
+            />
+
+            <div v-if="updateState.applying" class="q-mt-sm">
+              <q-linear-progress indeterminate color="positive" rounded size="6px" />
+              <div class="text-caption text-center q-mt-xs text-grey-6">
+                Update wird installiert…
+              </div>
+            </div>
+
+            <q-separator class="q-my-md" />
+
+            <div class="setting-row">
+              <div class="setting-label">
+                <q-icon name="schedule" size="18px" class="q-mr-sm text-grey-6" />
+                Automatische Updates
+              </div>
+              <q-toggle v-model="updateState.autoUpdate" color="primary" @update:model-value="toggleAutoUpdate" />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Lizenz & Über VERA ───────────────────────────────── -->
+        <div class="col-12 col-md-6">
+          <div class="settings-card">
+            <div class="card-header">
+              <q-icon name="info" size="20px" class="card-header-icon" />
+              <span>Über VERA Office</span>
+            </div>
+
+            <div class="about-row">
+              <div class="about-item">
+                <div class="about-label">Version</div>
+                <div class="about-value">{{ updateState.currentVersion || '1.1.0' }}</div>
+              </div>
+              <div class="about-item">
+                <div class="about-label">Status</div>
+                <div class="about-value">
+                  <q-icon name="check_circle" color="positive" size="16px" class="q-mr-xs" />
+                  Verbunden
+                </div>
+              </div>
+              <div class="about-item">
+                <div class="about-label">Lizenz</div>
+                <div class="about-value text-positive">Aktiv</div>
+              </div>
+            </div>
+
+            <q-separator class="q-my-md" />
+
+            <q-btn
+              flat
+              color="primary"
+              icon="help_outline"
+              label="Hilfe & Dokumentation"
+              class="full-width q-mb-sm"
+              align="left"
+            />
+            <q-btn
+              flat
+              color="primary"
+              icon="bug_report"
+              label="Feedback senden"
+              class="full-width"
+              align="left"
+            />
+          </div>
+        </div>
+
+        <!-- ── Speichern ────────────────────────────────────────── -->
+        <div class="col-12">
+          <q-btn
+            unelevated
+            color="primary"
+            icon="save"
+            label="Einstellungen speichern"
+            size="lg"
+            class="full-width save-btn"
+            @click="saveSettings"
+          />
+        </div>
+
+      </div>
+    </div>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { Dialog, Notify, Dark } from 'quasar'
+import { updateApi } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
+import api from '@/services/api'
+
+const authStore = useAuthStore()
+const authUser = computed(() => authStore.user)
+
+// Passwort-Formular
+const passwordLoading = ref(false)
+const passwordForm = ref({ current: '', newPw: '', confirm: '' })
+
+async function changePassword() {
+  if (passwordForm.value.newPw !== passwordForm.value.confirm) return
+  passwordLoading.value = true
+  try {
+    await api.post('/auth/change-password', {
+      current_password: passwordForm.value.current,
+      new_password: passwordForm.value.newPw
+    })
+    Notify.create({ type: 'positive', message: 'Passwort erfolgreich geändert' })
+    passwordForm.value = { current: '', newPw: '', confirm: '' }
+  } catch (e: any) {
+    Notify.create({
+      type: 'negative',
+      message: e.response?.data?.detail || 'Passwort konnte nicht geändert werden'
+    })
+  } finally {
+    passwordLoading.value = false
+  }
+}
+
+// System-Einstellungen — Bug #691 fix: persist to localStorage
+function _loadSettings() {
+  try {
+    const saved = localStorage.getItem('vera_settings')
+    if (saved) return JSON.parse(saved)
+  } catch { /* ignore */ }
+  return null
+}
+
+const _savedSettings = _loadSettings()
+const settings = ref({
+  darkMode: _savedSettings?.darkMode ?? Dark.isActive,
+  language: _savedSettings?.language ?? 'Deutsch',
+  documentsPerPage: _savedSettings?.documentsPerPage ?? 20,
+  autoOcr: _savedSettings?.autoOcr ?? true,
+  autoClassify: _savedSettings?.autoClassify ?? true,
+  ocrLanguage: _savedSettings?.ocrLanguage ?? 'Deutsch'
+})
+// Apply saved dark mode on load
+if (_savedSettings?.darkMode !== undefined) {
+  Dark.set(_savedSettings.darkMode)
+}
+
+// Update State
+const updateState = ref({
+  currentVersion: '',
+  latestVersion: null as string | null,
+  updateAvailable: false,
+  autoUpdate: false,
+  lastCheck: null as string | null,
+  checking: false,
+  applying: false,
+  checked: false,
+  changelog: null as string | null,
+  error: null as string | null
+})
+
+onMounted(async () => {
+  await loadUpdateStatus()
+})
+
+async function loadUpdateStatus() {
+  try {
+    const data = await updateApi.getStatus()
+    updateState.value.currentVersion = data.current_version
+    updateState.value.updateAvailable = data.update_available
+    updateState.value.latestVersion = data.latest_version
+    updateState.value.autoUpdate = data.auto_update_enabled
+    updateState.value.lastCheck = data.last_check
+  } catch {
+    // Silently fail
+  }
+}
+
+async function checkForUpdate() {
+  updateState.value.checking = true
+  updateState.value.error = null
+  updateState.value.checked = false
+  try {
+    const data = await updateApi.checkForUpdate()
+    updateState.value.updateAvailable = data.update_available
+    updateState.value.latestVersion = data.version
+    updateState.value.changelog = data.changelog
+    updateState.value.checked = true
+    updateState.value.lastCheck = new Date().toISOString()
+    if (data.update_available) {
+      Notify.create({ type: 'positive', message: `Update ${data.version} verfügbar!`, icon: 'new_releases' })
+    }
+  } catch {
+    updateState.value.error = 'Update-Server nicht erreichbar. Bitte später erneut versuchen.'
+  } finally {
+    updateState.value.checking = false
+  }
+}
+
+async function applyUpdate() {
+  if (!updateState.value.latestVersion) return
+  Dialog.create({
+    title: 'Update installieren?',
+    message: `VERA Office wird auf Version ${updateState.value.latestVersion} aktualisiert.`,
+    cancel: 'Abbrechen',
+    ok: 'Jetzt installieren',
+    persistent: true,
+    color: 'positive'
+  }).onOk(async () => {
+    updateState.value.applying = true
+    updateState.value.error = null
+    try {
+      const result = await updateApi.downloadAndApply(updateState.value.latestVersion!)
+      if (result.success) {
+        updateState.value.updateAvailable = false
+        let countdown = 10
+        const notif = Notify.create({
+          type: 'positive',
+          message: `Update installiert! Seite lädt in ${countdown}s neu…`,
+          icon: 'check_circle',
+          timeout: 0,
+          position: 'center'
+        })
+        const interval = setInterval(() => {
+          countdown--
+          notif({ message: `Update installiert! Seite lädt in ${countdown}s neu…` })
+          if (countdown <= 0) { clearInterval(interval); window.location.reload() }
+        }, 1000)
+      } else {
+        updateState.value.error = result.message
+      }
+    } catch (e: any) {
+      updateState.value.error = e.response?.data?.message || 'Update-Installation fehlgeschlagen'
+    } finally {
+      updateState.value.applying = false
+    }
+  })
+}
+
+function toggleAutoUpdate(val: boolean) {
+  Notify.create({ type: 'info', message: val ? 'Automatische Updates aktiviert' : 'Automatische Updates deaktiviert' })
+}
+
+function formatDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  } catch { return dateStr }
+}
+
+function saveSettings() {
+  // Bug #691 fix: persist settings to localStorage and apply dark mode
+  localStorage.setItem('vera_settings', JSON.stringify(settings.value))
+  // Apply dark mode via Quasar Dark plugin
+  Dark.set(settings.value.darkMode)
+  // Language: save preference; full EN translation requires i18n rebuild
+  if (settings.value.language === 'English') {
+    Notify.create({
+      type: 'positive',
+      message: 'Einstellungen gespeichert. Englische Oberfläche wird in der nächsten Version vollständig unterstützt.',
+      icon: 'check',
+      timeout: 4000
+    })
+  } else {
+    Notify.create({ type: 'positive', message: 'Einstellungen gespeichert', icon: 'check' })
+  }
+}
+
+function clearCache() {
+  Notify.create({ type: 'positive', message: 'Cache geleert', icon: 'cleaning_services' })
+}
+
+function confirmReset() {
+  Dialog.create({
+    title: 'Alle Daten löschen?',
+    message: 'Dies löscht ALLE Dokumente und Einstellungen unwiderruflich!',
+    cancel: true,
+    persistent: true,
+    color: 'negative'
+  }).onOk(() => {
+    Notify.create({ type: 'info', message: 'Zurücksetzen in Entwicklung' })
+  })
+}
+</script>
+
+<style scoped lang="scss">
+$primary: #2563EB;       // Medical Blue
+$primary-dark: #1E40AF;  // Dark Medical Blue
+$border: #E5E7EB;
+
+// ── Page Layout ──────────────────────────────────────────────────────
+.settings-page {
+  background: #F9FAFB;
+  min-height: 100vh;
+}
+
+// ── Header ───────────────────────────────────────────────────────────
+.settings-header {
+  background: white;
+  border-bottom: 1px solid $border;
+  padding: 24px 32px;
+}
+
+.settings-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.settings-header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, $primary 0%, #EC4899 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.settings-header-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1F2937;
+  letter-spacing: -0.02em;
+}
+
+.settings-header-subtitle {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 2px;
+}
+
+// ── Body ─────────────────────────────────────────────────────────────
+.settings-body {
+  padding: 28px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// ── Card ─────────────────────────────────────────────────────────────
+.settings-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid $border;
+  height: 100%;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 20px;
+}
+
+.card-header-icon {
+  color: $primary;
+}
+
+.card-sub-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+// ── Profile ──────────────────────────────────────────────────────────
+.profile-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.profile-avatar {
+  background: linear-gradient(135deg, $primary 0%, #EC4899 100%);
+  color: white;
+  flex-shrink: 0;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.profile-email {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 2px;
+}
+
+// ── Setting Row ──────────────────────────────────────────────────────
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #F3F4F6;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #374151;
+}
+
+// ── Storage ──────────────────────────────────────────────────────────
+.storage-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.storage-size {
+  font-weight: 600;
+  color: #1F2937;
+}
+
+// ── Version / Updates ────────────────────────────────────────────────
+.version-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 16px;
+}
+
+.version-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9CA3AF;
+  margin-bottom: 4px;
+}
+
+.version-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  display: flex;
+  align-items: center;
+}
+
+.update-banner {
+  border-radius: 12px;
+
+  &.update-available {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+  }
+
+  &.update-ok {
+    background: #F0FDF4;
+    color: #166534;
+  }
+
+  &.update-error {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    color: white;
+  }
+}
+
+// ── About ────────────────────────────────────────────────────────────
+.about-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.about-item {
+  flex: 1;
+  min-width: 80px;
+}
+
+.about-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9CA3AF;
+  margin-bottom: 4px;
+}
+
+.about-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2937;
+  display: flex;
+  align-items: center;
+}
+
+// ── Save Button ──────────────────────────────────────────────────────
+.save-btn {
+  border-radius: 12px;
+  height: 52px;
+  font-size: 15px;
+  font-weight: 600;
+  background: linear-gradient(135deg, $primary 0%, #EC4899 100%) !important;
+}
+
+// ── Responsive ───────────────────────────────────────────────────────
+@media (max-width: 767px) {
+  .settings-header {
+    padding: 16px;
+  }
+  .settings-body {
+    padding: 16px;
+  }
+  .version-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+</style>

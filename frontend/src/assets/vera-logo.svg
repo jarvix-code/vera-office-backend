@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140" width="560" height="140">
+  <defs>
+    <!-- Main gradient: Cyan to Blue (diagonal top-right to bottom-left) -->
+    <linearGradient id="veraGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00C4D4"/>
+      <stop offset="50%" stop-color="#00A5C4"/>
+      <stop offset="100%" stop-color="#0068A8"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- === ICON SECTION === -->
+  <g id="icon" transform="translate(10, 5)">
+    
+    <!-- Document with folded corner -->
+    <g id="document">
+      <path id="documentBody" d="M30,0 L88,0 L120,32 L120,118 Q120,125 113,125 L30,125 Q23,125 23,118 L23,7 Q23,0 30,0 Z" 
+            fill="url(#veraGradient)" opacity="0.9"/>
+      <path id="cornerFold" d="M88,0 L120,32 L88,32 Z" 
+            fill="rgba(255,255,255,0.25)"/>
+      <path id="cornerFoldLine" d="M88,0 L88,32 L120,32" 
+            fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+    </g>
+    
+    <!-- Checkmarks (layered) -->
+    <g id="checkmarks">
+      <path id="checkmarkBack" d="M18,62 L42,86 L82,30" 
+            stroke="url(#veraGradient)" stroke-width="11" 
+            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path id="checkmarkFront" d="M10,82 L42,112 L95,42" 
+            stroke="url(#veraGradient)" stroke-width="13" 
+            stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+    
+    <!-- Magic wand -->
+    <g id="magicWand">
+      <path id="wandLine" d="M35,100 L78,18" 
+            stroke="url(#veraGradient)" stroke-width="4" 
+            stroke-linecap="round" opacity="0.8"/>
+    </g>
+    
+    <!-- Sparkles (4-pointed stars) -->
+    <g id="sparkles">
+      <path id="sparkleLarge" d="M72,5 L74.5,13 L82.5,15.5 L74.5,18 L72,26 L69.5,18 L61.5,15.5 L69.5,13 Z" 
+            fill="url(#veraGradient)"/>
+      <path id="sparkleMedium" d="M55,35 L56.5,40 L61.5,41.5 L56.5,43 L55,48 L53.5,43 L48.5,41.5 L53.5,40 Z" 
+            fill="url(#veraGradient)"/>
+      <path id="sparkleSmall" d="M42,58 L43,61 L46,62 L43,63 L42,66 L41,63 L38,62 L41,61 Z" 
+            fill="url(#veraGradient)"/>
+    </g>
+    
+    <!-- Particles (scattered dots) -->
+    <g id="particles">
+      <circle cx="6" cy="102" r="2.5" fill="url(#veraGradient)" opacity="0.7"/>
+      <circle cx="12" cy="110" r="2" fill="url(#veraGradient)" opacity="0.5"/>
+      <circle cx="3" cy="112" r="1.5" fill="url(#veraGradient)" opacity="0.6"/>
+      <circle cx="15" cy="118" r="2" fill="url(#veraGradient)" opacity="0.4"/>
+      <circle cx="8" cy="120" r="1.5" fill="url(#veraGradient)" opacity="0.5"/>
+      <circle cx="0" cy="107" r="1" fill="url(#veraGradient)" opacity="0.3"/>
+      <circle cx="18" cy="106" r="1" fill="url(#veraGradient)" opacity="0.4"/>
+      <circle cx="5" cy="116" r="1.5" fill="url(#veraGradient)" opacity="0.35"/>
+    </g>
+    
+  </g>
+  
+  <!-- === TEXT SECTION === -->
+  <g id="text" transform="translate(150, 0)">
+    
+    <!-- Main title: VERA Office -->
+    <text id="titleVERA" x="0" y="72" 
+          font-family="Poppins, Montserrat, Arial, sans-serif" 
+          font-weight="700" 
+          font-size="52" 
+          letter-spacing="3"
+          fill="#0077B6">VERA</text>
+    
+    <text id="titleOffice" x="172" y="72" 
+          font-family="Poppins, Montserrat, Arial, sans-serif" 
+          font-weight="300" 
+          font-size="52" 
+          fill="#0077B6">Office</text>
+    
+    <!-- Subtitle -->
+    <text id="subtitle" x="2" y="98" 
+          font-family="Poppins, Montserrat, Arial, sans-serif" 
+          font-weight="400" 
+          font-size="15" 
+          letter-spacing="1.5"
+          fill="#5A7A8A">Versatile Enterprise Record Assistant</text>
+    
+  </g>
+</svg>

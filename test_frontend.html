@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head><title>VERA Test</title></head>
+<body>
+<h1>VERA Frontend Test</h1>
+<button onclick="login()">Login</button>
+<button onclick="testChat()">Test Chat API</button>
+<button onclick="testDocs()">Test Docs API</button>
+<div id="result"></div>
+<script>
+let token = '';
+async function login() {
+  const res = await fetch('http://localhost:8001/api/auth/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username: 'boris', password: 'vera2024!'})
+  });
+  const data = await res.json();
+  token = data.access_token;
+  document.getElementById('result').innerHTML = 'Logged in: ' + token.substring(0,20);
+}
+async function testChat() {
+  const res = await fetch('http://localhost:8001/api/agent/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+    body: JSON.stringify({message: 'Hallo VERA'})
+  });
+  const data = await res.json();
+  document.getElementById('result').innerHTML = 'Chat response: ' + JSON.stringify(data);
+}
+async function testDocs() {
+  const res = await fetch('http://localhost:8001/api/documents', {
+    headers: {'Authorization': 'Bearer ' + token}
+  });
+  const data = await res.json();
+  document.getElementById('result').innerHTML = 'Docs: ' + JSON.stringify(data);
+}
+</script>
+</body>
+</html>

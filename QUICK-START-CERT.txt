@@ -1,0 +1,26 @@
+🎯 VERA Office - Trusted HTTPS Certificate (Quick Start)
+═══════════════════════════════════════════════════════
+
+PROBLEM:
+  Browser blockiert Camera/File-APIs weil Self-Signed Cert
+
+LÖSUNG:
+  mkcert (lokaler Trusted Cert - Browser vertraut automatisch!)
+
+SETUP (5 Minuten):
+  1. PowerShell als ADMINISTRATOR öffnen
+  2. cd C:\Jarvix\vera-office
+  3. .\setup-trusted-cert.ps1
+  4. cd frontend && npm run dev
+  5. Browser: https://192.168.178.44:5173
+  
+ERFOLG:
+  ✅ Browser zeigt "Sicher" 🔒 (kein Warnung!)
+  ✅ Camera API funktioniert
+  ✅ File System API funktioniert
+  
+DETAILS:
+  Siehe TRUSTED-CERT-SETUP.md
+
+SUPPORT:
+  Javix 🎯

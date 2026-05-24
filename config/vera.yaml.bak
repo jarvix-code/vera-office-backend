@@ -1,0 +1,51 @@
+# VERA Office - Konfiguration
+# Angepasst bei Installation
+
+app_name: "VERA Office"
+app_version: "1.0.0"
+debug: false
+host: "0.0.0.0"
+port: 8000
+
+database_url: "sqlite:///data/vera.db"
+
+ocr_language: "de"
+ocr_gpu: false
+
+image_max_size: 2048
+image_dpi: 300
+image_quality: 85
+
+hotfolder_enabled: true
+hotfolder_poll_interval: 2
+
+classification_threshold: 0.8
+
+ai:
+  model_path: "models/mistral-7b-instruct-v0.2.Q4_K_M.gguf"
+  n_ctx: 4096
+  n_threads: 8
+  temperature: 0.1
+  confidence_threshold: 0.80
+  auto_confirm_threshold: 0.95
+  few_shot_examples: 5
+  vision:
+    enabled: true
+    model_path: "models/ggml-model-q4_k.gguf"
+    clip_model_path: "models/mmproj-model-f16.gguf"
+    n_ctx: 2048
+    n_threads: 8
+    temperature: 0.1
+
+internet_enabled: false
+email_enabled: false
+
+# Update-Server (VPN)
+update_server: "https://updates.vera-office.de"
+auto_update: false
+
+# Diagnostics
+diagnostics:
+  enabled: true
+  check_interval_seconds: 60
+  disk_warning_percent: 90

@@ -1,0 +1,8 @@
+============================================================
+VERA QM Template Parser - Phase 2
+============================================================
+
+ Processing PDFs from: C:\Jarvix\QM\data\blzk_downloads
+Found 447 PDFs
+ Loading LLM: mistral-7b-instruct-v0.2.Q4_K_M.gguf
+OK LLM loaded

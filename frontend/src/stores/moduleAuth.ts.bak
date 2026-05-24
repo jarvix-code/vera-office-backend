@@ -1,0 +1,227 @@
+/**
+ * Module Auth Store
+ *
+ * Verwaltet die Modul-Zugangs-Session (getrennt vom Haupt-Login).
+ *
+ * Flow:
+ *   1. User klickt auf ERP/QM → Router Guard prüft Modul-Session
+ *   2. Keine Session → Dialog: Name + 6-stellige PIN
+ *   3. Backend verify-pin: gibt freigeschaltete Module zurück
+ *   4. Modul in Liste → Zugang gewährt, 24h Session gespeichert
+ *   5. Modul NICHT in Liste → Promo-Code Dialog
+ *   6. Promo-Code → Backend unlock → neues Modul in User-Account + Session
+ */
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+
+const SESSION_KEY = 'vera_module_session'
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000  // 24 Stunden
+
+function _loadSessionModules(): string[] {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY)
+    if (!raw) return []
+    const session: ModuleSession = JSON.parse(raw)
+    if (Date.now() > session.until) return []
+    return session.modules
+  } catch {
+    return []
+  }
+}
+
+interface ModuleSession {
+  username: string
+  fullName: string
+  modules: string[]
+  until: number
+}
+
+type DialogStep = 'pin' | 'promo' | null
+
+export const useModuleAuthStore = defineStore('moduleAuth', () => {
+  // Das Modul das gerade angefragt wird
+  const pendingModule = ref<string | null>(null)
+  // Die Route zu der nach Erfolg navigiert wird
+  const pendingRoute = ref<string | null>(null)
+  // Welcher Schritt des Dialogs wird gezeigt
+  const dialogStep = ref<DialogStep>(null)
+  // Reaktive Liste der freigeschalteten Module (spiegelt localStorage)
+  const sessionModules = ref<string[]>(_loadSessionModules())
+
+  // ──────────────────────────────────────────
+  // Session Management (localStorage)
+  // ──────────────────────────────────────────
+
+  function getSession(): ModuleSession | null {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY)
+      if (!raw) return null
+      const session: ModuleSession = JSON.parse(raw)
+      if (Date.now() > session.until) {
+        localStorage.removeItem(SESSION_KEY)
+        return null
+      }
+      return session
+    } catch {
+      return null
+    }
+  }
+
+  function setSession(username: string, fullName: string, modules: string[]) {
+    const session: ModuleSession = {
+      username,
+      fullName,
+      modules,
+      until: Date.now() + SESSION_TTL_MS
+    }
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+    sessionModules.value = modules
+  }
+
+  function clearSession() {
+    localStorage.removeItem(SESSION_KEY)
+    sessionModules.value = []
+  }
+
+  function hasModuleAccess(module: string): boolean {
+    const session = getSession()
+    if (!session) return false
+    return session.modules.includes(module)
+  }
+
+  function hasValidSession(): boolean {
+    return getSession() !== null
+  }
+
+  function getSessionModules(): string[] {
+    return getSession()?.modules ?? []
+  }
+
+  function getSessionUsername(): string | null {
+    return getSession()?.username ?? null
+  }
+
+  // ──────────────────────────────────────────
+  // Dialog Control
+  // ──────────────────────────────────────────
+
+  /**
+   * Aufruf aus dem Router Guard wenn Modul-Zugang benötigt wird.
+   * Setzt pendingModule + pendingRoute und öffnet den Dialog.
+   */
+  function requireAccess(module: string, route: string) {
+    pendingModule.value = module
+    pendingRoute.value = route
+
+    const session = getSession()
+    if (!session) {
+      // Keine Session → PIN-Eingabe nötig
+      dialogStep.value = 'pin'
+    } else if (!session.modules.includes(module)) {
+      // Session vorhanden, aber Modul nicht freigeschaltet → Promo-Code
+      dialogStep.value = 'promo'
+    } else {
+      // Sollte nicht passieren (Guard prüft vorher)
+      dialogStep.value = null
+    }
+  }
+
+  function closeDialog() {
+    dialogStep.value = null
+    pendingModule.value = null
+    pendingRoute.value = null
+  }
+
+  // ──────────────────────────────────────────
+  // API Calls
+  // ──────────────────────────────────────────
+
+  /**
+   * Verifiziert Name + PIN beim Backend.
+   * Speichert Session bei Erfolg.
+   */
+  async function verifyPin(username: string, pin: string): Promise<{
+    success: boolean
+    modules?: string[]
+    error?: string
+  }> {
+    try {
+      const resp = await fetch('/api/auth/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin, name: username })
+      })
+
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}))
+        return { success: false, error: data.detail || 'Name oder PIN ungültig' }
+      }
+
+      const data = await resp.json()
+      // Backend returns {access_token, name, modules}
+      const displayName = data.full_name || data.name || username
+      setSession(username, displayName, data.modules || [])
+      return { success: true, modules: data.modules || [] }
+    } catch {
+      return { success: false, error: 'Verbindungsfehler' }
+    }
+  }
+
+  /**
+   * Löst einen Promo-Code für den aktuellen Session-User ein.
+   * Aktualisiert die Session mit den neuen Modulen.
+   */
+  async function redeemPromoCode(code: string): Promise<{
+    success: boolean
+    modules?: string[]
+    error?: string
+  }> {
+    const session = getSession()
+    if (!session) {
+      return { success: false, error: 'Keine aktive Modul-Session' }
+    }
+
+    try {
+      const resp = await fetch('/api/modules/unlock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ promo_code: code, username: session.username })
+      })
+
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}))
+        return { success: false, error: data.detail || 'Ungültiger Promo-Code' }
+      }
+
+      const data = await resp.json()
+      // Session mit allen freigeschalteten Modulen aktualisieren
+      const allModules: string[] = data.modules || data.modules_unlocked || []
+      setSession(session.username, session.fullName, allModules)
+      return { success: true, modules: allModules }
+    } catch {
+      return { success: false, error: 'Verbindungsfehler' }
+    }
+  }
+
+  return {
+    // State
+    pendingModule,
+    pendingRoute,
+    dialogStep,
+    sessionModules,  // Reaktiv für Sidebar
+    // Session
+    getSession,
+    setSession,
+    clearSession,
+    hasModuleAccess,
+    hasValidSession,
+    getSessionModules,
+    getSessionUsername,
+    // Dialog
+    requireAccess,
+    closeDialog,
+    // API
+    verifyPin,
+    redeemPromoCode,
+  }
+})

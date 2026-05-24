@@ -1,0 +1,75 @@
+═══════════════════════════════════════════════════════════════
+  VERA OFFICE - ANLEITUNG FÜR BORIS
+═══════════════════════════════════════════════════════════════
+
+📍 Location: C:\VERA-Office
+
+🎯 SCHNELLSTART (2 Optionen):
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  OPTION 1: DOCKER (Empfohlen - sauber & isoliert)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Einmalig: INSTALL.bat doppelklicken
+   ↳ Baut Docker Container & erstellt Desktop-Verknüpfung
+
+2. VERA starten: START.bat doppelklicken
+   ↳ Oder: Desktop-Verknüpfung "VERA Office"
+   ↳ Browser öffnet automatisch: http://localhost:8000
+
+3. VERA stoppen: STOP.bat doppelklicken
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  OPTION 2: MANUELL (ohne Docker)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. start-vera-http.bat doppelklicken
+2. Browser: http://localhost:8000
+
+
+═══════════════════════════════════════════════════════════════
+
+✅ WAS IST FERTIG:
+
+  ✔ Backend: Komplett lauffähig (FastAPI + Python 3.11)
+  ✔ Frontend: Gebaut und einsatzbereit (Vue 3)
+  ✔ OCR: PaddleOCR konfiguriert
+  ✔ KI: Mistral 7B (optional, falls models/ vorhanden)
+  ✔ Docker: docker-compose.yml + Dockerfile
+  ✔ Installer: INSTALL.bat / START.bat / STOP.bat
+  ✔ Desktop-Verknüpfung: Automatisch erstellt
+
+═══════════════════════════════════════════════════════════════
+
+📂 DEPLOYMENT AUF ANDEREN PC:
+
+  1. Kompletten Ordner kopieren: C:\VERA-Office → Ziel-PC
+  2. Docker installieren (falls nötig)
+  3. INSTALL.bat ausführen
+  4. START.bat ausführen
+  
+  → FERTIG!
+
+═══════════════════════════════════════════════════════════════
+
+🔧 TROUBLESHOOTING:
+
+  Problem: "Docker nicht gefunden"
+  → Docker Desktop installieren:
+     https://www.docker.com/products/docker-desktop
+  
+  Problem: Port 8000 belegt
+  → Andere Anwendung stoppen oder Port in
+     docker-compose.yml ändern (8000:8000 → 8001:8000)
+  
+  Problem: Container startet nicht
+  → Logs prüfen: docker-compose logs -f
+
+═══════════════════════════════════════════════════════════════
+
+📖 Details: Siehe README.md
+
+═══════════════════════════════════════════════════════════════
+Erstellt: 2026-03-18 von Javix
+═══════════════════════════════════════════════════════════════

@@ -1,0 +1,231 @@
+{
+  "version": "1.0",
+  "created": "2026-03-28",
+  "purpose": "Ground truth dataset for VERA classification testing",
+  "samples": [
+    {
+      "id": 1,
+      "filename": "checkliste_datenschutz.pdf",
+      "type": "checkliste",
+      "text": "Checkliste Datenschutz\n\n□ Datenschutzbeauftragter bestellt\n□ Verzeichnis der Verarbeitungstätigkeiten erstellt\n□ Auftragsverarbeitungsverträge abgeschlossen\n□ Technische und organisatorische Maßnahmen dokumentiert\n□ Mitarbeiter geschult\n\nVerantwortlich: ____________\nErledigt am: ____________\nUnterschrift: ____________",
+      "keywords": ["checkliste", "datenschutz", "verantwortlich", "erledigt", "unterschrift"]
+    },
+    {
+      "id": 2,
+      "filename": "arbeitsanweisung_roentgen.pdf",
+      "type": "arbeitsanweisung",
+      "text": "Arbeitsanweisung: Röntgenaufnahmen\n\n1. Vorbereitung\n   ■ Patient aufklären\n   ■ Röntgenpass prüfen\n   ■ Strahlenschutz anlegen\n\n2. Durchführung\n   ■ Gerät einschalten und kalibrieren\n   ■ Positionierung des Patienten\n   ■ Belichtungsparameter einstellen\n   ■ Aufnahme erstellen\n\n3. Nachbereitung\n   ■ Bild kontrollieren\n   ■ Qualität prüfen\n   ■ Dokumentation im System",
+      "keywords": ["arbeitsanweisung", "vorbereitung", "durchführung", "nachbereitung", "schritte"]
+    },
+    {
+      "id": 3,
+      "filename": "hygieneplan_behandlungsraum.pdf",
+      "type": "hygieneplan",
+      "text": "Hygieneplan Behandlungsraum\n\nWann: Nach jeder Behandlung\nWie: Flächendesinfektion mit Bacillol\nVerantwortlich: ZMF/ZFA\n\nTäglich:\n- Fußboden wischen\n- Griffe desinfizieren\n- Spucknapf reinigen\n\nWöchentlich:\n- Absaugung prüfen\n- Filter wechseln\n- Schränke reinigen",
+      "keywords": ["hygieneplan", "täglich", "wöchentlich", "verantwortlich", "desinfektion"]
+    },
+    {
+      "id": 4,
+      "filename": "freigabeprotokoll_autoklav.pdf",
+      "type": "freigabeprotokoll",
+      "text": "Freigabeprotokoll Autoklav\n\nCharge-Nr: 2024-03-142\nDatum: 28.03.2024\nUhrzeit: 08:30\n\nProgramm: 134°C / 3 min\nDruck erreicht: 2,1 bar ✓\nTemperatur erreicht: 134°C ✓\nHaltezeit eingehalten: 3:00 min ✓\n\nChemischer Indikator: OK ✓\nBiologischer Indikator: OK ✓\n\nFreigegeben von: M. Müller\nUnterschrift: ____________",
+      "keywords": ["freigabeprotokoll", "autoklav", "charge", "freigegeben", "indikator"]
+    },
+    {
+      "id": 5,
+      "filename": "wartungsprotokoll_kompressor.pdf",
+      "type": "wartungsprotokoll",
+      "text": "Wartungsprotokoll Kompressor\n\nGerät: Dürr Tornado 2\nSerien-Nr: 12345-XY\n\nWartung durchgeführt am: 28.03.2024\nDurchgeführt von: Technik GmbH\n\nArbeiten:\n- Ölstand geprüft und nachgefüllt\n- Filter gewechselt\n- Kondensatableiter gereinigt\n- Dichtungen überprüft\n- Funktionstest durchgeführt\n\nNächste Wartung fällig: 28.09.2024\n\nTechniker: J. Schmidt\nUnterschrift: ____________",
+      "keywords": ["wartungsprotokoll", "gerät", "durchgeführt", "nächste wartung", "techniker"]
+    },
+    {
+      "id": 6,
+      "filename": "checkliste_notfallausruestung.pdf",
+      "type": "checkliste",
+      "text": "Checkliste Notfallausrüstung\n\nMonatliche Überprüfung - März 2024\n\n□ Notfallkoffer vollständig\n□ Medikamente nicht abgelaufen\n□ Sauerstoffflaschen gefüllt (mind. 10 bar)\n□ AED funktionsfähig (Selbsttest)\n□ Absaugung einsatzbereit\n□ Notfallnummern aktuell\n\nGeprüft von: ____________\nDatum: ____________\nUnterschrift: ____________",
+      "keywords": ["checkliste", "notfall", "überprüfung", "geprüft", "unterschrift"]
+    },
+    {
+      "id": 7,
+      "filename": "arbeitsanweisung_aufbereitung.pdf",
+      "type": "arbeitsanweisung",
+      "text": "Arbeitsanweisung: Instrumentenaufbereitung\n\n1. Vorreinigung\n   - Groben Schmutz entfernen\n   - In Desinfektionswanne einlegen\n   - 15 Minuten Einwirkzeit\n\n2. Reinigung\n   - Ultraschallbad 10 Minuten\n   - Manuell nachbürsten\n   - Gründlich spülen\n\n3. Kontrolle\n   - Sichtkontrolle auf Sauberkeit\n   - Funktionsprüfung beweglicher Teile\n   - Bei Mängeln: Aussortieren\n\n4. Verpackung\n   - In Sterilgutverpackung\n   - Mit Indikatoren versehen\n   - Charge-Nummer notieren",
+      "keywords": ["arbeitsanweisung", "schritte", "vorreinigung", "reinigung", "kontrolle"]
+    },
+    {
+      "id": 8,
+      "filename": "einweisung_mitarbeiter_scanner.pdf",
+      "type": "einweisung",
+      "text": "Einweisung Intraoralscanner iTero\n\nMitarbeiter: Sarah Schneider\nDatum: 28.03.2024\nDurchgeführt von: Dr. Müller\n\nInhalte:\n- Gerätebedienung\n- Scantechnik\n- Patientenpositionierung\n- Fehlerbehandlung\n- Datensicherung\n\nPraxisteil:\n✓ 3 Scan-Übungen durchgeführt\n✓ Datenexport geübt\n✓ Reinigung demonstriert\n\nMitarbeiter bestätigt Einweisung:\n____________\n\nEinweisender:\n____________",
+      "keywords": ["einweisung", "mitarbeiter", "durchgeführt", "bestätigt", "schulung"]
+    },
+    {
+      "id": 9,
+      "filename": "gefaehrdungsbeurteilung_roentgen.pdf",
+      "type": "gefaehrdungsbeurteilung",
+      "text": "Gefährdungsbeurteilung Röntgen\n\nArbeitsplatz: Röntgenraum\nTätigkeit: Dentale Röntgenaufnahmen\n\nGefährdungen:\n1. Ionisierende Strahlung\n   Risiko: mittel\n   Maßnahmen: ALARA-Prinzip, Strahlenschutz, Dosimetrie\n\n2. Stolpergefahr Kabel\n   Risiko: gering\n   Maßnahmen: Kabelkanäle, regelmäßige Kontrolle\n\n3. Elektrische Geräte\n   Risiko: gering\n   Maßnahmen: Jährliche Prüfung, Schulung\n\nErstellt: 28.03.2024\nVerantwortlich: Dr. Schmidt\nNächste Überprüfung: 28.03.2025",
+      "keywords": ["gefährdungsbeurteilung", "risiko", "maßnahmen", "arbeitsplatz", "gefährdungen"]
+    },
+    {
+      "id": 10,
+      "filename": "checkliste_tagesabschluss.pdf",
+      "type": "checkliste",
+      "text": "Checkliste Tagesabschluss\n\n□ Alle Behandlungsräume gereinigt\n□ Instrumente aufbereitet\n□ Sterilgut freigegeben\n□ Abfälle entsorgt\n□ Rezeption aufgeräumt\n□ Geräte ausgeschaltet\n□ Fenster geschlossen\n□ Alarmanlage scharf geschaltet\n\nAbschließende Person: ____________\nDatum: ____________\nUhrzeit: ____________",
+      "keywords": ["checkliste", "tagesabschluss", "abschließend", "datum", "uhrzeit"]
+    },
+    {
+      "id": 11,
+      "filename": "dokumentation_behandlung.pdf",
+      "type": "sonstige",
+      "text": "Behandlungsdokumentation\n\nPatient: Max Mustermann\nGeb: 15.05.1980\n\nDatum: 28.03.2024\n\nBefund:\n- Karies 16 distal\n- Gingivitis generalisiert\n\nBehandlung:\n- Füllungstherapie 16 distal (Composite)\n- Professionelle Zahnreinigung\n- Mundhygieneberatung\n\nMaterialien:\n- Composite 3M Filtek (Charge: ABC123)\n- Phosphorsäure Gel\n- Adhäsiv Scotchbond\n\nDr. Müller",
+      "keywords": ["behandlung", "patient", "befund", "materialien", "dokumentation"]
+    },
+    {
+      "id": 12,
+      "filename": "beipackzettel_medikament.pdf",
+      "type": "sonstige",
+      "text": "Fachinformation\n\nIbuprofen 400mg Filmtabletten\n\nWirkstoff: Ibuprofen\nIndikation: Schmerzen und Entzündungen\n\nDosierung:\n- Erwachsene: 1-2 Tabletten bis zu 3x täglich\n- Max. Tagesdosis: 2400mg\n\nGegenanzeigen:\n- Magen-Darm-Ulzera\n- Schwere Herzinsuffizienz\n- Schwangerschaft 3. Trimenon\n\nNebenwirkungen:\nHäufig: Magen-Darm-Beschwerden\nGelegentlich: Kopfschmerzen\n\nPharmazeutischer Unternehmer:\nRatiopharm GmbH",
+      "keywords": ["medikament", "fachinformation", "wirkstoff", "dosierung", "nebenwirkungen"]
+    },
+    {
+      "id": 13,
+      "filename": "hygieneplan_wartezimmer.pdf",
+      "type": "hygieneplan",
+      "text": "Hygieneplan Wartezimmer\n\nTäglich (Morgens vor Praxisöffnung):\n- Fußboden saugen und wischen\n- Tische abwischen mit Flächendesinfektion\n- Türklinken desinfizieren\n- Zeitschriften aussortieren (veraltet/beschädigt)\n- Pflanzen gießen\n\nWöchentlich:\n- Fenster putzen\n- Spielecke reinigen und desinfizieren\n- Getränkeautomat reinigen\n\nMonatlich:\n- Vorhänge waschen\n- Polster absaugen\n\nVerantwortlich: Empfangsteam",
+      "keywords": ["hygieneplan", "täglich", "wöchentlich", "monatlich", "reinigung"]
+    },
+    {
+      "id": 14,
+      "filename": "freigabeprotokoll_rlt.pdf",
+      "type": "freigabeprotokoll",
+      "text": "Freigabeprotokoll RLT-Anlage\n\nAnlage: Raumlufttechnische Anlage OP-Bereich\nPrüfdatum: 28.03.2024\nPrüfer: Haustechnik Schmidt GmbH\n\nMesswerte:\n- Volumenstrom: 850 m³/h (Soll: 800-900) ✓\n- Filterdruckdifferenz: 85 Pa (Soll: <120) ✓\n- Temperatur: 21,5°C (Soll: 20-22) ✓\n- Luftfeuchtigkeit: 45% (Soll: 40-60) ✓\n\nPartikelzählung:\n- Klasse ISO 7 eingehalten ✓\n\nAnlage freigegeben für Betrieb.\n\nUnterschrift Prüfer: ____________\nUnterschrift Betreiber: ____________",
+      "keywords": ["freigabeprotokoll", "messwerte", "prüfung", "freigegeben", "anlage"]
+    },
+    {
+      "id": 15,
+      "filename": "wartungsprotokoll_behandlungseinheit.pdf",
+      "type": "wartungsprotokoll",
+      "text": "Wartungsprotokoll Behandlungseinheit\n\nHersteller: Sirona\nModell: C4+ Behandlungszentrum\nSerien-Nr: S-2024-0815\nStandort: Behandlungsraum 2\n\nWartung am: 28.03.2024\nFirma: DentalService GmbH\nTechniker: Thomas Weber\n\nDurchgeführte Arbeiten:\n- Funktionsprüfung aller elektrischen Komponenten\n- Wassersystem gespült und desinfiziert\n- Behandlungsleuchte geprüft und justiert\n- Speichelsauger gereinigt\n- Kompressoranschluss überprüft\n- Fußanlasser getestet\n- Instrumentenschläuche auf Dichtheit geprüft\n\nMängel: Keine\n\nNächste Wartung: 28.09.2024",
+      "keywords": ["wartungsprotokoll", "behandlungseinheit", "durchgeführt", "techniker", "nächste wartung"]
+    },
+    {
+      "id": 16,
+      "filename": "arbeitsanweisung_notfallmanagement.pdf",
+      "type": "arbeitsanweisung",
+      "text": "Arbeitsanweisung: Notfallmanagement\n\n1. Notfall erkennen\n   - Bewusstseinsstörung\n   - Atemstörung\n   - Kreislaufstörung\n\n2. Sofortmaßnahmen\n   - Behandlung unterbrechen\n   - Notruf 112 absetzen\n   - Patient flach lagern\n   - Atemwege freimachen\n\n3. Erweiterte Maßnahmen\n   - Vitalzeichen überwachen\n   - Sauerstoff bereitstellen\n   - AED anlegen bei Bedarf\n   - Notfallkoffer bereithalten\n\n4. Nachbereitung\n   - Notfall dokumentieren\n   - Vorfall besprechen im Team\n   - Notfallausrüstung auffüllen",
+      "keywords": ["arbeitsanweisung", "notfall", "sofortmaßnahmen", "schritte", "management"]
+    },
+    {
+      "id": 17,
+      "filename": "einweisung_new_mitarbeiter_hygiene.pdf",
+      "type": "einweisung",
+      "text": "Hygiene-Einweisung Neue Mitarbeiter\n\nMitarbeiter: Lisa Wagner\nPosition: ZFA (Auszubildende)\nEinweisungsdatum: 28.03.2024\n\nThemen:\n✓ Händehygiene (5 Momente nach WHO)\n✓ Persönliche Schutzausrüstung\n✓ Flächendesinfektion\n✓ Instrumentenaufbereitung\n✓ Abfallentsorgung (Klassen A-E)\n✓ Verhalten bei Kontamination\n✓ Betriebsanweisung Biostoffe\n\nSchriftliche Unterweisung erhalten: ✓\nRückfragen beantwortet: ✓\nPraxisteil durchgeführt: ✓\n\nUnterschrift Mitarbeiter: ____________\nUnterschrift Hygienebeauftragte: ____________",
+      "keywords": ["einweisung", "hygiene", "mitarbeiter", "themen", "unterweisung"]
+    },
+    {
+      "id": 18,
+      "filename": "gefaehrdungsbeurteilung_chemikalien.pdf",
+      "type": "gefaehrdungsbeurteilung",
+      "text": "Gefährdungsbeurteilung Gefahrstoffe\n\nArbeitsbereich: Aufbereitungsraum\nGefahrstoff: Instrumentendesinfektionsmittel Gigasept\n\nEinstufung:\n- H319: Verursacht schwere Augenreizung\n- H315: Verursacht Hautreizungen\n- H335: Kann die Atemwege reizen\n\nExpositionswege:\n- Hautkontakt (wahrscheinlich)\n- Augenspritzer (möglich)\n- Einatmen von Dämpfen (bei unsachgemäßer Anwendung)\n\nSchutzmaßnahmen:\n- Schutzhandschuhe (Nitril)\n- Schutzbrille\n- Bei hohen Konzentrationen: Absaugung\n- Betriebsanweisung aushängen\n- Mitarbeiter unterweisen\n\nSubstitutionsprüfung: Kein gleichwertiger Ersatzstoff verfügbar\n\nErstellt: 28.03.2024\nNächste Überprüfung: 28.03.2025",
+      "keywords": ["gefährdungsbeurteilung", "gefahrstoffe", "schutzmaßnahmen", "exposition", "einstufung"]
+    },
+    {
+      "id": 19,
+      "filename": "checkliste_jahreswartung.pdf",
+      "type": "checkliste",
+      "text": "Checkliste Jährliche Gerätewartungen\n\nJahr: 2024\n\n□ Röntgengeräte (Sachverständigenprüfung)\n□ Behandlungseinheiten (3x)\n□ Autoklaven (2x)\n□ Kompressor\n□ RLT-Anlage\n□ Elektrische Betriebsmittel (DGUV V3)\n□ Notfallausrüstung (AED, O2)\n□ Absauganlagen\n□ IT-Equipment (Server, Backup)\n□ Brandschutzeinrichtungen\n\nVerantwortlich: Praxismanagement\nStatus-Check: Quartalsweise\n\nQ1: ____________\nQ2: ____________\nQ3: ____________\nQ4: ____________",
+      "keywords": ["checkliste", "wartung", "jährlich", "geräte", "verantwortlich"]
+    },
+    {
+      "id": 20,
+      "filename": "info_fortbildung.pdf",
+      "type": "sonstige",
+      "text": "Fortbildungsankündigung\n\nThema: Moderne Endodontie - Tipps und Tricks\nReferent: Prof. Dr. Stefan Müller\nDatum: 15.04.2024\nUhrzeit: 09:00 - 17:00 Uhr\nOrt: Hotel Maritim, München\n\nInhalte:\n- Neue Techniken in der Wurzelkanalaufbereitung\n- Maschinelle vs. manuelle Aufbereitung\n- Moderne Obturationstechniken\n- Komplikationsmanagement\n\nCME-Punkte: 8\nKosten: 450 EUR (inkl. Verpflegung)\n\nAnmeldung bis 01.04.2024 unter:\ninfo@dental-fortbildung.de",
+      "keywords": ["fortbildung", "seminar", "ankündigung", "inhalt", "anmeldung"]
+    },
+    {
+      "id": 21,
+      "filename": "checkliste_datenschutz_erweitert.pdf",
+      "type": "checkliste",
+      "text": "Erweiterte Datenschutz-Checkliste DSGVO\n\n□ Verzeichnis der Verarbeitungstätigkeiten gepflegt\n□ Datenschutzhinweise für Patienten aktuell\n□ Einwilligungen eingeholt (Foto, Marketing)\n□ Auftragsverarbeiterverträge mit allen Dienstleistern\n□ Technische und organisatorische Maßnahmen dokumentiert\n□ Datenschutz-Folgenabschätzung durchgeführt (falls erforderlich)\n□ Löschkonzept implementiert\n□ Datenpanne-Meldeprozess etabliert\n□ Mitarbeiterverpflichtungen unterschrieben\n□ Datenschutzschulungen durchgeführt (mind. jährlich)\n\nVerantwortlich: Datenschutzbeauftragter\nGeprüft am: ____________\nNächste Prüfung: ____________",
+      "keywords": ["checkliste", "datenschutz", "dsgvo", "verantwortlich", "geprüft"]
+    },
+    {
+      "id": 22,
+      "filename": "arbeitsanweisung_befundung_roentgen.pdf",
+      "type": "arbeitsanweisung",
+      "text": "Arbeitsanweisung: Röntgenbefundung und Dokumentation\n\n1. Bildkontrolle\n   - Qualität prüfen (Belichtung, Schärfe)\n   - Bei Mängeln: Wiederholung erwägen\n   - Patientendaten verifizieren\n\n2. Befundung\n   - Systematische Betrachtung aller Strukturen\n   - Vergleich mit Voraufnahmen\n   - Auffälligkeiten markieren\n\n3. Dokumentation\n   - Befund im Patientenakt vermerken\n   - Dosisdokumentation\n   - Rechtfertigende Indikation notieren\n\n4. Archivierung\n   - Digital: PACS-System\n   - Aufbewahrungsfrist: 10 Jahre\n   - Backup-Strategie beachten",
+      "keywords": ["arbeitsanweisung", "röntgen", "befundung", "dokumentation", "schritte"]
+    },
+    {
+      "id": 23,
+      "filename": "hygieneplan_küche_personalraum.pdf",
+      "type": "hygieneplan",
+      "text": "Hygieneplan Küche/Personalraum\n\nTäglich:\n- Arbeitsflächen reinigen und desinfizieren\n- Geschirr spülen (Geschirrspüler mind. 60°C)\n- Kühlschrank: Temperatur kontrollieren (2-7°C)\n- Abfälle entsorgen\n- Spüle und Spültücher desinfizieren\n\nWöchentlich:\n- Kühlschrank auswischen\n- Mikrowelle reinigen\n- Kaffeemaschine entkalken\n- Fußboden wischen\n\nMonatlich:\n- Schränke ausräumen und reinigen\n- Verfallsdaten kontrollieren\n- Tiefenreinigung\n\nVerantwortlich: Gesamtes Team (Rotationssystem)",
+      "keywords": ["hygieneplan", "küche", "täglich", "wöchentlich", "monatlich"]
+    },
+    {
+      "id": 24,
+      "filename": "freigabeprotokoll_wasserhygiene.pdf",
+      "type": "freigabeprotokoll",
+      "text": "Wasseranalysebericht\n\nProbenahme: 28.03.2024\nProbenahmestelle: Behandlungseinheit 1, Turbinenanschluss\nLabor: Hygiene-Institut München\n\nParameter:\n- Koloniezahl 36°C: < 100 KBE/ml ✓\n- Koloniezahl 22°C: < 1000 KBE/ml ✓\n- Legionellen: nicht nachweisbar ✓\n- Pseudomonas aeruginosa: nicht nachweisbar ✓\n\nBewertung:\nWasser entspricht Trinkwasserqualität.\nBehandlungseinheit für Patientenbehandlung freigegeben.\n\nLabor: Dr. Schmidt\nProbenehmer: M. Müller (Praxis)\nNächste Kontrolle: 28.09.2024",
+      "keywords": ["freigabeprotokoll", "wasser", "analyse", "labor", "freigegeben"]
+    },
+    {
+      "id": 25,
+      "filename": "wartungsprotokoll_absauganlage.pdf",
+      "type": "wartungsprotokoll",
+      "text": "Wartungsprotokoll Zentrale Absauganlage\n\nAnlage: Dürr Dental VS 300S\nSerien-Nr: VS-2023-4421\n\nWartungsdatum: 28.03.2024\nFirma: DentalTechnik Nord GmbH\nTechniker: Michael Braun\n\nArbeiten:\n- Vakuumpumpe: Ölstand geprüft, nachgefüllt\n- Amalgamabscheider: Füllstand 65%, nächster Tausch in 3 Monaten\n- Filter: gereinigt, Zustand gut\n- Leitungen: auf Leckagen geprüft, keine Mängel\n- Schalldämpfer: Zustand gut\n- Funktionstest: Unterdruck 350 mbar ✓\n\nErsatzteile verbaut: keine\nAuffälligkeiten: keine\n\nNächste Wartung fällig: 28.09.2024\n\nUnterschrift Techniker: ____________\nUnterschrift Praxis: ____________",
+      "keywords": ["wartungsprotokoll", "absauganlage", "wartung", "techniker", "nächste wartung"]
+    },
+    {
+      "id": 26,
+      "filename": "einweisung_geraet_cerec.pdf",
+      "type": "einweisung",
+      "text": "Geräteeinweisung CEREC Primescan\n\nTeilnehmer:\n- Dr. Anna Schmidt (Zahnärztin)\n- Julia Klein (ZFA)\n\nDatum: 28.03.2024\nDurchgeführt von: Dentsply Sirona (Anwendungsberater Herr Hofmann)\n\nInhalte:\n✓ Systemübersicht und Funktionen\n✓ Scan-Workflow\n✓ Präparationstipps für optimale Scans\n✓ Software-Bedienung CEREC SW 5.2\n✓ Design von Restaurationen\n✓ Fräseinheit Connect\n✓ Materialkunde\n✓ Troubleshooting\n\nPraktische Übungen:\n- 5 Präparations-Scans durchgeführt\n- 2 Kronen designed\n- 1 Krone gefräst und eingesetzt (Übungsmodell)\n\nZertifikat ausgestellt: ✓\n\nTeilnehmer-Unterschriften: ____________",
+      "keywords": ["einweisung", "gerät", "cerec", "durchgeführt", "teilnehmer"]
+    },
+    {
+      "id": 27,
+      "filename": "gefaehrdungsbeurteilung_biostoffe.pdf",
+      "type": "gefaehrdungsbeurteilung",
+      "text": "Gefährdungsbeurteilung Biologische Arbeitsstoffe\n\nTätigkeit: Behandlung von Patienten in zahnärztlicher Praxis\nRisikogruppe: 2 (nach BioStoffV)\n\nGefährdungen:\n- Übertragung von Infektionskrankheiten (Hepatitis B/C, HIV, Tuberkulose)\n- Aerosol-Bildung bei rotierenden Instrumenten\n- Stich-/Schnittverletzungen mit kontaminierten Instrumenten\n\nTransmissionswege:\n- Blut-Blutkontakt\n- Tröpfcheninfektion\n- Aerosole\n\nSchutzmaßnahmen:\n- Impfangebot Hepatitis B (Pflicht)\n- Persönliche Schutzausrüstung (Handschuhe, MNS, Schutzbrille)\n- Spezielle Entsorgungsbehälter für scharfe/spitze Gegenstände\n- Hygienepläne und Desinfektionspläne\n- Schulung aller Mitarbeiter\n- Betriebsanweisung Biostoffe\n\nArbeitsmedizinische Vorsorge: Pflichtvorsorge nach ArbMedVV\n\nErstellt: 28.03.2024\nVerantwortlich: Dr. Müller\nNächste Aktualisierung: 28.03.2025",
+      "keywords": ["gefährdungsbeurteilung", "biostoffe", "infektionen", "schutzmaßnahmen", "risikogruppe"]
+    },
+    {
+      "id": 28,
+      "filename": "rechnung_dentallabor.pdf",
+      "type": "sonstige",
+      "text": "Rechnung\n\nDental Labor Schmidt GmbH\nMusterstraße 12\n80331 München\n\nRechnungsnummer: 2024-03-0815\nRechnungsdatum: 28.03.2024\nLeistungszeitraum: März 2024\n\nEmpfänger:\nZahnarztpraxis Dr. Müller\nPraxisweg 5\n80333 München\n\nPosition | Beschreibung | Menge | Einzelpreis | Gesamt\n---------|--------------|-------|-------------|-------\n1 | Vollkeramik-Krone Zahn 16 | 1 | 280,00 € | 280,00 €\n2 | Modellguss-Prothese OK | 1 | 850,00 € | 850,00 €\n3 | Reparatur Teilprothese | 1 | 95,00 € | 95,00 €\n\nNetto: 1.225,00 €\nMwSt 19%: 232,75 €\nBrutto: 1.457,75 €\n\nZahlungsziel: 14 Tage netto\nBankverbindung: IBAN DE12 3456 7890 1234 5678 90",
+      "keywords": ["rechnung", "labor", "betrag", "zahlungsziel", "position"]
+    },
+    {
+      "id": 29,
+      "filename": "checkliste_praxisbegehung.pdf",
+      "type": "checkliste",
+      "text": "Checkliste Praxisbegehung (Berufsgenossenschaft)\n\nDatum: 28.03.2024\nBegehende Person: Sicherheitsfachkraft (extern)\n\nBereiche:\n\n□ Empfang: Flucht- und Rettungswege frei\n□ Behandlungsräume: Stolperfallen beseitigt\n□ Aufbereitung: Schutzausrüstung vorhanden\n□ Röntgenraum: Kennzeichnung und Zutritt geregelt\n□ Labor: Absaugung funktionsfähig\n□ Personalräume: Erste-Hilfe-Material vorhanden\n□ Lagerräume: Gefahrstoffe ordnungsgemäß gelagert\n□ Elektrik: Prüfplaketten vorhanden und gültig\n□ Brandschutz: Feuerlöscher gewartet\n□ Dokumentation: Unterweisungen nachweisbar\n\nFestgestellte Mängel:\n- Keine -\n\nNächste Begehung: März 2025\n\nUnterschrift Fachkraft: ____________\nUnterschrift Praxisinhaber: ____________",
+      "keywords": ["checkliste", "begehung", "praxis", "bereiche", "mängel"]
+    },
+    {
+      "id": 30,
+      "filename": "protokoll_teamsitzung.pdf",
+      "type": "sonstige",
+      "text": "Protokoll Teamsitzung\n\nDatum: 28.03.2024\nUhrzeit: 13:00 - 14:00 Uhr\nTeilnehmer: Gesamtes Praxisteam (8 Personen)\nModeration: Dr. Müller\n\nTagesordnung:\n\n1. Rückblick Q1/2024\n   - Patientenzahlen: +12% vs. Vorjahr\n   - Zufriedenheitsumfrage: 94% sehr zufrieden\n   - Danke ans Team!\n\n2. Neue Abläufe ab April\n   - Recall-System: Automatisierte Erinnerungen\n   - Online-Terminbuchung wird freigeschaltet\n   - Verantwortlich: Julia (Empfang)\n\n3. Fortbildungen\n   - Endodontie-Kurs: Dr. Schmidt (15.04.)\n   - Hygiene-Update: Gesamtes Team (22.04.)\n\n4. Verschiedenes\n   - Sommerfest-Planung: Termin 20.07.2024\n   - Neue Mitarbeiterin startet: 01.05. (ZFA Lisa Wagner)\n\nNächste Sitzung: 28.06.2024",
+      "keywords": ["protokoll", "teamsitzung", "besprechung", "tagesordnung", "team"]
+    }
+  ],
+  "metadata": {
+    "total_samples": 30,
+    "distribution": {
+      "checkliste": 7,
+      "arbeitsanweisung": 5,
+      "hygieneplan": 3,
+      "freigabeprotokoll": 4,
+      "wartungsprotokoll": 4,
+      "einweisung": 3,
+      "gefaehrdungsbeurteilung": 3,
+      "sonstige": 4
+    },
+    "purpose": "Testing VERA classification accuracy with real dental practice documents"
+  }
+}

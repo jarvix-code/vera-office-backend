@@ -1,0 +1,30 @@
+<svg width="600" height="200" viewBox="0 0 600 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="medicalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976D2;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#42A5F5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00897B;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- ICON (Links) -->
+  <g transform="translate(20, 20)">
+    <!-- Dokument mit umgeknickter Ecke (skaliert 0.8) -->
+    <path d="M 40 24 L 104 24 L 104 40 L 120 56 L 120 136 L 40 136 Z" fill="none" stroke="url(#medicalGradient)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 104 24 L 104 40 L 120 56" fill="none" stroke="url(#medicalGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Doppelter Haken -->
+    <path d="M 56 88 L 68 100 L 108 60" stroke="url(#medicalGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.5"/>
+    <path d="M 60 92 L 72 104 L 112 64" stroke="url(#medicalGradient)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- Sparkles -->
+    <path d="M 128 36 L 130 39 L 133 41 L 130 43 L 128 46 L 126 43 L 123 41 L 126 39 Z" fill="url(#medicalGradient)"/>
+    <path d="M 136 24 L 137 26 L 139 27 L 137 28 L 136 30 L 135 28 L 133 27 L 135 26 Z" fill="url(#medicalGradient)"/>
+  </g>
+  
+  <!-- TEXT "VERA" (Mitte, große Bold Font) -->
+  <text x="200" y="110" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" fill="url(#medicalGradient)" letter-spacing="-2">VERA</text>
+  
+  <!-- TEXT "Office" (Rechts darunter, smaller) -->
+  <text x="200" y="145" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="32" font-weight="500" fill="#757575">Office</text>
+</svg>

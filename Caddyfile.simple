@@ -1,0 +1,23 @@
+{
+    admin localhost:2019
+    https_port 8443
+    http_port 8001
+}
+
+# HTTPS Main Entry
+vera-office.local:8443 {
+    tls internal {
+        on_demand
+    }
+    reverse_proxy localhost:8080
+    
+    log {
+        output file C:\Jarvix\vera-office\logs\caddy-access.log
+        format json
+    }
+}
+
+# HTTP Redirect
+vera-office.local:8001 {
+    redir https://vera-office.local:8443{uri} permanent
+}

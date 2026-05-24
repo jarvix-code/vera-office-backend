@@ -1,0 +1,290 @@
+/**
+ * VERA Office - 3-Spalten-Layout Anpassungen
+ * 
+ * Diese CSS-Datei passt alle Views für das neue 3-Spalten-Layout an:
+ * - Desktop: Sidebar (33%) + Content (33%) + VERA Chat (33%)
+ * - Content-Bereich ist deutlich schmaler → Grids müssen Single-Column werden
+ */
+
+/* ============================================ */
+/* DESKTOP: 3-Spalten-Layout Anpassungen       */
+/* ============================================ */
+@media (min-width: 1024px) {
+  
+  /* Alle Grid-Layouts: Single-Column erzwingen */
+  .dashboard-page .info-grid,
+  .dashboard-page .alerts-grid,
+  .dashboard-page .warnings-grid,
+  .document-grid,
+  .stats-grid,
+  .card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Kacheln kompakter machen */
+  .info-card,
+  .alert-card,
+  .document-card {
+    max-width: 100%;
+  }
+
+  /* Tabellen: Kleinere Schrift */
+  .q-table {
+    font-size: 0.875rem;
+  }
+
+  .q-table th,
+  .q-table td {
+    padding: 8px 12px !important;
+  }
+
+  /* Formulare: Single-Column bevorzugen */
+  .form-grid,
+  .settings-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .q-field {
+    max-width: 100% !important;
+  }
+
+  /* Header kompakter */
+  .dashboard-title,
+  .page-title {
+    font-size: 1.75rem !important;
+  }
+
+  .section-title {
+    font-size: 1.25rem !important;
+  }
+
+  /* Content-Container: Maximale Breite nutzen */
+  .q-page {
+    max-width: 100% !important;
+  }
+
+  /* Listen: Kompaktere Darstellung */
+  .q-item {
+    min-height: 48px !important;
+  }
+
+  /* Buttons: Kleinere Icons */
+  .q-btn .q-icon {
+    font-size: 1.25rem;
+  }
+
+  /* Dashboard Aktivitäten: Kompakter */
+  .activity-timeline {
+    max-width: 100%;
+  }
+
+  /* Charts: An schmalen Container anpassen */
+  .chart-container {
+    max-width: 100%;
+    height: 250px !important; /* Niedriger für bessere Proportionen */
+  }
+}
+
+/* ============================================ */
+/* TABLET: 2-Spalten-Layout (Content + VERA)   */
+/* ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  
+  /* Grids: 1-2 Spalten je nach Inhalt */
+  .dashboard-page .info-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .dashboard-page .alerts-grid,
+  .dashboard-page .warnings-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .document-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================ */
+/* MOBILE: Single-Column überall               */
+/* ============================================ */
+@media (max-width: 767px) {
+  
+  /* Alle Grids: Single-Column */
+  .dashboard-page .info-grid,
+  .dashboard-page .alerts-grid,
+  .dashboard-page .warnings-grid,
+  .document-grid,
+  .stats-grid,
+  .card-grid,
+  .form-grid,
+  .settings-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Padding reduzieren */
+  .q-page {
+    padding: 12px !important;
+  }
+
+  /* Schrift kleiner */
+  .dashboard-title,
+  .page-title {
+    font-size: 1.5rem !important;
+  }
+
+  .section-title {
+    font-size: 1.125rem !important;
+  }
+
+  /* Tabellen: Horizontal scrollbar */
+  .q-table {
+    overflow-x: auto;
+  }
+}
+
+/* ============================================ */
+/* SPEZIFISCHE VIEW-ANPASSUNGEN                */
+/* ============================================ */
+
+/* Dashboard View */
+.dashboard-page {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.dashboard-page .info-grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-page .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Documents View */
+.documents-view .filter-section {
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 1024px) {
+  .documents-view .document-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Capture View */
+.capture-view .upload-area {
+  max-width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .capture-view .preview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Search View */
+.search-view .results-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tasks View */
+.tasks-view .task-list {
+  max-width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .tasks-view .task-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Settings View */
+@media (min-width: 1024px) {
+  .settings-view .settings-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .settings-view .q-card {
+    max-width: 100%;
+  }
+}
+
+/* QM Views */
+@media (min-width: 1024px) {
+  .qm-view .qm-grid,
+  .qm-view .handbook-grid,
+  .qm-view .audit-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ERP Views */
+@media (min-width: 1024px) {
+  .erp-view .finance-grid,
+  .erp-view .bwa-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================ */
+/* UTILITY CLASSES                             */
+/* ============================================ */
+
+/* Force Single-Column */
+.single-column-layout {
+  grid-template-columns: 1fr !important;
+}
+
+/* Kompakte Karten */
+.compact-card {
+  padding: 12px !important;
+}
+
+.compact-card .q-card__section {
+  padding: 12px !important;
+}
+
+/* Schmale Container */
+.narrow-container {
+  max-width: 100% !important;
+  margin: 0 auto;
+}
+
+/* Responsive Text-Größen */
+.responsive-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.responsive-subtitle {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+}
+
+/* ============================================ */
+/* PERFORMANCE OPTIMIERUNGEN                   */
+/* ============================================ */
+
+/* GPU-Beschleunigung für Drawer-Animationen */
+.q-drawer {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Smooth Scrolling */
+.q-page-container {
+  scroll-behavior: smooth;
+}
+
+/* Reduzierte Animationen für schmale Screens */
+@media (min-width: 1024px) {
+  .q-page {
+    transition: margin 0.3s ease;
+  }
+}

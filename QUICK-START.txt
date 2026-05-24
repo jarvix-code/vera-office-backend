@@ -1,0 +1,43 @@
+╔══════════════════════════════════════════════════════════════╗
+║            VERA Office - Quick Start Guide                  ║
+╚══════════════════════════════════════════════════════════════╝
+
+🚀 SOFORT NUTZEN (ohne Setup):
+   https://127.0.0.1:8443
+   
+   Login: boris / boris
+   
+   ⚠️ Browser zeigt Warnung → "Erweitert" → "Trotzdem fortfahren"
+
+📝 DOMAIN AKTIVIEREN (einmalig):
+   1. Rechtsklick auf SETUP-COMPLETE.ps1
+   2. "Als Administrator ausführen"
+   3. Enter drücken
+   
+   Danach: https://vera-office.local:8443
+
+🎥 KAMERA NUTZEN:
+   ✅ HTTPS läuft → Kamera-API funktioniert!
+   
+   In VERA → Rechnung erfassen → Kamera-Button klicken
+
+🔧 CADDY NEUSTARTEN:
+   
+   PowerShell:
+   cd C:\Jarvix\vera-office
+   Get-Process caddy | Stop-Process -Force
+   Start-Process .\caddy\caddy.exe -ArgumentList "run","--config","Caddyfile.final","--adapter","caddyfile" -WindowStyle Hidden
+
+📊 STATUS CHECKEN:
+   
+   Get-Process caddy
+   netstat -ano | findstr "8443"
+
+════════════════════════════════════════════════════════════════
+
+WICHTIG:
+- Backend muss laufen (Port 8080)
+- Caddy muss laufen (Port 8443)
+- hosts-Datei braucht Eintrag für Domain
+
+FERTIG! 🎉

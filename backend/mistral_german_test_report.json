@@ -1,0 +1,310 @@
+{
+  "test_date": "2026-03-28",
+  "model": "Mistral 7B Instruct v0.2 (Q4_K_M)",
+  "objective": "Prüfe ob Mistral 7B gut genug für deutsche QM-Dokumente ist",
+  "tests": {
+    "synthetic_samples": {
+      "test_name": "synthetic_samples",
+      "samples": [
+        {
+          "description": "Simple Checkliste mit Checkbox",
+          "text_preview": "□ Datenschutzbeauftragter benannt? [Ja/Nein]\nVerantwortlich: Praxisinhaber",
+          "expected": "checkliste",
+          "responses": {
+            "DE_FewShot": {
+              "raw": "checkliste",
+              "normalized": "checkliste",
+              "correct": true
+            },
+            "EN_FewShot": {
+              "raw": "checklist",
+              "normalized": "checkliste",
+              "correct": true
+            },
+            "DE_Simple": {
+              "raw": "arbeitsanweisung",
+              "normalized": "arbeitsanweisung",
+              "correct": false
+            },
+            "EN_Simple": {
+              "raw": "other (this document appears to be a yes/no question in german, likely related to data protection, but it does not follow a clear checklist",
+              "normalized": "checkliste",
+              "correct": true
+            }
+          }
+        },
+        {
+          "description": "Arbeitsanweisung mit nummerierten Schritten",
+          "text_preview": "1. Vorbereitung\n■ Patient aufklären\n■ Schutzkleidung anlegen\n2. Durchführung",
+          "expected": "arbeitsanweisung",
+          "responses": {
+            "DE_FewShot": {
+              "raw": "arbeitsanweisung",
+              "normalized": "arbeitsanweisung",
+              "correct": true
+            },
+            "EN_FewShot": {
+              "raw": "procedure",
+              "normalized": "arbeitsanweisung",
+              "correct": true
+            },
+            "DE_Simple": {
+              "raw": "arbeitsanweisung",
+              "normalized": "arbeitsanweisung",
+              "correct": true
+            },
+            "EN_Simple": {
+              "raw": "procedure.",
+              "normalized": "arbeitsanweisung",
+              "correct": true
+            }
+          }
+        },
+        {
+          "description": "Newsletter/Info-Dokument",
+          "text_preview": "BLZK Newsletter 02/2024 - Wichtige Infos zur GOZ...",
+          "expected": "sonstige",
+          "responses": {
+            "DE_FewShot": {
+              "raw": "sonstige",
+              "normalized": "sonstige",
+              "correct": true
+            },
+            "EN_FewShot": {
+              "raw": "other",
+              "normalized": "sonstige",
+              "correct": true
+            },
+            "DE_Simple": {
+              "raw": "checkliste.",
+              "normalized": "checkliste",
+              "correct": false
+            },
+            "EN_Simple": {
+              "raw": "procedure.",
+              "normalized": "arbeitsanweisung",
+              "correct": false
+            }
+          }
+        },
+        {
+          "description": "Prozess-Beschreibung mit Schritten",
+          "text_preview": "Hygieneplan Desinfektion\n1. Händedesinfektion durchführen\n2. Flächen desinfizieren\n3. Dokumentation",
+          "expected": "arbeitsanweisung",
+          "responses": {
+            "DE_FewShot": {
+              "raw": "arbeitsanweisung",
+              "normalized": "arbeitsanweisung",
+              "correct": true
+            },
+            "EN_FewShot": {
+              "raw": "procedure",
+              "normalized": "arbeitsanweisung",
+              "correct": true
+            },
+            "DE_Simple": {
+              "raw": "checkliste.",
+              "normalized": "checkliste",
+              "correct": false
+            },
+            "EN_Simple": {
+              "raw": "procedure.",
+              "normalized": "arbeitsanweisung",
+              "correct": true
+            }
+          }
+        },
+        {
+          "description": "Mehrere Checkboxen mit Verantwortlichem",
+          "text_preview": "□ Erste-Hilfe-Material vollständig? [Ja/Nein]\n□ Ablaufdatum geprüft? [Ja/Nein]\nVerantwortlich: ZMF",
+          "expected": "checkliste",
+          "responses": {
+            "DE_FewShot": {
+              "raw": "checkliste",
+              "normalized": "checkliste",
+              "correct": true
+            },
+            "EN_FewShot": {
+              "raw": "checklist",
+              "normalized": "checkliste",
+              "correct": true
+            },
+            "DE_Simple": {
+              "raw": "checkliste.",
+              "normalized": "checkliste",
+              "correct": true
+            },
+            "EN_Simple": {
+              "raw": "procedure.",
+              "normalized": "arbeitsanweisung",
+              "correct": false
+            }
+          }
+        },
+        {
+          "description": "Protokoll/Meeting-Notes",
+          "text_preview": "Qualitätszirkel Protokoll 03/2024\nTeilnehmer: Dr. Müller, ZMF Schmidt\nThemen: Hygienekonzept, Geräte",
+          "expected": "sonstige",
+          "responses": {
+            "DE_FewShot": {
+              "raw": "",
+              "normalized": "",
+              "correct": false
+            },
+            "EN_FewShot": {
+              "raw": "other",
+              "normalized": "sonstige",
+              "correct": true
+            },
+            "DE_Simple": {
+              "raw": "arbeitsanweisung",
+              "normalized": "arbeitsanweisung",
+              "correct": false
+            },
+            "EN_Simple": {
+              "raw": "procedure.",
+              "normalized": "arbeitsanweisung",
+              "correct": false
+            }
+          }
+        }
+      ],
+      "accuracy": {
+        "DE_FewShot": {
+          "correct": 5,
+          "total": 6,
+          "accuracy": 83.3
+        },
+        "EN_FewShot": {
+          "correct": 6,
+          "total": 6,
+          "accuracy": 100.0
+        },
+        "DE_Simple": {
+          "correct": 2,
+          "total": 6,
+          "accuracy": 33.3
+        },
+        "EN_Simple": {
+          "correct": 3,
+          "total": 6,
+          "accuracy": 50.0
+        }
+      }
+    },
+    "fachbegriffe": {
+      "test_name": "fachbegriffe",
+      "terms": [
+        {
+          "term": "Hygieneplan",
+          "explanation": "Ein Hygieneplan ist eine Schriftstücksammlung, die die Maßnahmen zur Erhaltung einer sauberen und gesunden Umwelt in einer Einrichtung beschreibt.",
+          "is_relevant": true
+        },
+        {
+          "term": "Medizinprodukteaufbereitung",
+          "explanation": "Das Vorbereiten und Pflegen von Medizinprodukten, um ihre Wirksamkeit und Sicherheit zu gewährleisten.",
+          "is_relevant": true
+        },
+        {
+          "term": "Qualitätszirkel",
+          "explanation": "",
+          "is_relevant": false
+        },
+        {
+          "term": "Arbeitsschutzgesetz",
+          "explanation": "Das Arbeitsschutzgesetz regelt die Rechte und Pflichten von Arbeitgebern und Arbeitnehmern, um die Gesundheit und Sicherheit der Beschäftigten im Arbeitsleben zu gew",
+          "is_relevant": true
+        },
+        {
+          "term": "DSGVO-Compliance",
+          "explanation": "Die DSGVO-Compliance beinhaltet die Einhaltung der Vorgaben der Datenschutz-Gesetzgebung der Europäischen Union, insbesondere der EU-Datenschutz-Grundver",
+          "is_relevant": true
+        },
+        {
+          "term": "Sterilisation",
+          "explanation": "Prozedur zur permanenten Behinderung der Fortpflanzungsfähigkeit.",
+          "is_relevant": false
+        },
+        {
+          "term": "Dokumentationspflicht",
+          "explanation": "Pflicht, alle relevanten Informationen über ein Unternehmen oder ein Projekt in schriftlicher Form aufzuzeichnen und aufzubewahren.",
+          "is_relevant": false
+        },
+        {
+          "term": "Geräteeinweisung",
+          "explanation": "Instruktion zur Einrichtung und Bedienung einer technischen Anlage. (Instructions for setting up and operating a technical device.)",
+          "is_relevant": false
+        },
+        {
+          "term": "Notfallmanagement",
+          "explanation": "Organisiertes Vorgehen bei unerwarteten Ereignissen, um Risiken zu minimieren und Schaden zu begrenzen. (18 Wörter)",
+          "is_relevant": false
+        },
+        {
+          "term": "Praxishygiene",
+          "explanation": "Die Praxishygiene beinhaltet Maßnahmen zur Vermeidung der Übertragung von Krankheiten in medizinischen und pflegerischen Einrichtungen. (The concept of Praxish",
+          "is_relevant": true
+        }
+      ],
+      "relevance_rate": 50.0
+    },
+    "real_pdfs": {
+      "test_name": "real_pdfs",
+      "files_tested": 5,
+      "results": [
+        {
+          "file": "09102023GOZ ON TOUR-Materialien  Protesttag  F.pdf",
+          "classified_as": "sonstige",
+          "text_preview": "Seite 1\nLiebe Kolleginnen und Kollegen, \nmit diesem Rundschreiben wollen wir Sie über eine Reihe wichtiger Themen und Termine informieren, \ndie uns derzeit in der zahnärztlichen Selbstverwaltung besch",
+          "features": {
+            "has_checkboxes": false,
+            "has_steps": true
+          }
+        },
+        {
+          "file": "15022024Beschlüsse Ordentliche Vollversammlung d.pdf",
+          "classified_as": "",
+          "text_preview": "Beschlüsse Ordentliche  \nVollversammlung der BLZK\nvom 24.11.2023\nProtest: „Es reicht, Herr Lauterbach!“\nAntragsteller:\nVorstand\nWortlaut:\nDie Delegierten der BLZK beauftragen den Vorstand mit der \nOrg",
+          "features": {
+            "has_checkboxes": false,
+            "has_steps": true
+          }
+        },
+        {
+          "file": "21022025Beschlüsse Ordentliche Vollversammlung d.pdf",
+          "classified_as": "sonstige",
+          "text_preview": "Beschlüsse Ordentliche  \nVollversammlung der BLZK\nvom 23.11.2024\nElektronische Patientenakte:  \nChance für den Neustart nutzen \nAntragsteller:\nVorstand der BLZK\nWortlaut:\nDie Vollversammlung der Bayer",
+          "features": {
+            "has_checkboxes": false,
+            "has_steps": true
+          }
+        },
+        {
+          "file": "24112021Sonderrundschreiben 24112021  Infekti.pdf",
+          "classified_as": "sonstige",
+          "text_preview": " \n \n \n \n \n \n \n \n \nSehr geehrte Frau Kollegin, \nsehr geehrter Herr Kollege, \n \nam 23.11.2021 wurde die Änderung des Infektionsschutzgesetzes verkündet, die heute in \nKraft getreten ist. Dieses Gesetz, ",
+          "features": {
+            "has_checkboxes": false,
+            "has_steps": true
+          }
+        },
+        {
+          "file": "30052023GOZ ON TOUR  Aktuelles aus der Gesundhe.pdf",
+          "classified_as": "sonstige",
+          "text_preview": "R U ND S CHREI BEN  DER B LZK    1/2023\nX X .  M A I  2 02 3\nSeite 1\nGOZ ON TOUR startet \nam 14. Juni in Regensburg\nQualität hat ihren Preis! Diese Maxime gilt auch in der \nZahnarztpraxis. Mit der Ver",
+          "features": {
+            "has_checkboxes": false,
+            "has_steps": true
+          }
+        }
+      ]
+    }
+  },
+  "success_criteria": {
+    "accuracy_over_85": true,
+    "german_better_than_english": false,
+    "fachbegriffe_understood": false
+  },
+  "passed": false,
+  "recommendation": "⚠️ Mistral 7B Performance unter Erwartung. Empfehle multilingual Fine-Tuning oder alternatives Modell."
+}

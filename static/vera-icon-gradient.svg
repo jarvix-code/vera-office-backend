@@ -1,0 +1,26 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tealGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4DD9C0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1BA8A0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#085E6A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Dokument mit umgeknickter Ecke -->
+  <path d="M 50 30 L 130 30 L 130 50 L 150 70 L 150 170 L 50 170 Z" fill="none" stroke="url(#tealGradient)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Umgeknickte Ecke -->
+  <path d="M 130 30 L 130 50 L 150 70" fill="none" stroke="url(#tealGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Doppelter Häkchen (hinteres) -->
+  <path d="M 70 110 L 85 125 L 135 75" stroke="url(#tealGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.5"/>
+  
+  <!-- Doppelter Häkchen (vorderes) -->
+  <path d="M 75 115 L 90 130 L 140 80" stroke="url(#tealGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  
+  <!-- Sparkles rechts oben -->
+  <path d="M 160 45 L 162 48 L 165 50 L 162 52 L 160 55 L 158 52 L 155 50 L 158 48 Z" fill="url(#tealGradient)"/>
+  <path d="M 170 30 L 171 32 L 173 33 L 171 34 L 170 36 L 169 34 L 167 33 L 169 32 Z" fill="url(#tealGradient)"/>
+  <path d="M 175 55 L 176.5 57 L 178.5 58.5 L 176.5 60 L 175 62 L 173.5 60 L 171.5 58.5 L 173.5 57 Z" fill="url(#tealGradient)"/>
+</svg>

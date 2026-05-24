@@ -1,0 +1,24 @@
+{
+    admin localhost:2019
+}
+
+# HTTPS auf 8443 – erreichbar von iPad über https://192.168.178.44:8443
+# Cert: certs/vera.crt enthält SAN 192.168.178.44 + vera-office.local
+:8443 {
+    tls C:\Jarvix\vera-office\certs\vera.crt C:\Jarvix\vera-office\certs\vera.key
+
+    reverse_proxy localhost:8081
+
+    log {
+        output file C:\Jarvix\vera-office\logs\caddy-access.log {
+            roll_size 10MB
+            roll_keep 5
+        }
+        format json
+    }
+}
+
+# HTTP → HTTPS Redirect (alle Interfaces)
+:8080 {
+    redir https://{host}:8443{uri} permanent
+}

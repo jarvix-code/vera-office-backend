@@ -1,0 +1,1093 @@
+<template>
+  <q-page class="capture-page">
+    <!-- Card Selection View -->
+    <div v-if="!cameraActive && !capturedImage && !uploading && !showScannerView && !showUSBView" class="card-view">
+      <div class="page-header">
+        <h1 class="page-title">Dokumentenerfassung</h1>
+        <p class="page-subtitle">Wähle eine Erfassungsmethode</p>
+      </div>
+
+      <div class="capture-methods">
+        <!-- Kamera -->
+        <div class="method-card" @click="startCamera">
+          <div class="method-icon" style="background: #0EA5A0;">
+            <q-icon name="camera_alt" size="48px" color="white" />
+          </div>
+          <div class="method-title">Kamera</div>
+          <div class="method-description">iPad-Kamera verwenden</div>
+          <q-badge color="teal" label="iOS" class="method-badge" />
+        </div>
+
+        <!-- Ordner auswählen (USB/Drive) -->
+        <div class="method-card" @click="selectFolder">
+          <div class="method-icon" style="background: #2E3B8E;">
+            <q-icon name="folder_open" size="48px" color="white" />
+          </div>
+          <div class="method-title">Ordner auswählen</div>
+          <div class="method-description">Von USB/Festplatte/Netzwerk</div>
+          <q-badge color="indigo" label="Chrome/Edge" class="method-badge" />
+        </div>
+
+        <!-- Scanner -->
+        <div class="method-card" @click="showScannerDiscovery">
+          <div class="method-icon" style="background: #085E6A;">
+            <q-icon name="scanner" size="48px" color="white" />
+          </div>
+          <div class="method-title">Scanner</div>
+          <div class="method-description">Netzwerk/AirPrint Scanner</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera View -->
+    <div v-if="cameraActive" class="camera-container">
+      <video
+        ref="videoElement"
+        autoplay
+        playsinline
+        class="camera-video"
+      ></video>
+      
+      <div class="camera-controls">
+        <q-btn
+          fab
+          color="negative"
+          icon="close"
+          @click="stopCamera"
+          class="q-mr-md"
+        />
+        <q-btn
+          v-if="cameras.length > 1"
+          fab
+          color="white"
+          text-color="primary"
+          icon="flip_camera_ios"
+          @click="switchCamera"
+          class="q-mr-md"
+        />
+        <q-btn
+          fab
+          color="primary"
+          icon="camera"
+          size="xl"
+          @click="capturePhoto"
+        />
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div v-if="capturedImage && !uploading" class="preview-container">
+      <img :src="capturedImage" alt="Vorschau" class="preview-image" />
+      
+      <div class="preview-controls">
+        <q-btn
+          unelevated
+          color="grey-7"
+          label="Nochmal"
+          icon="refresh"
+          @click="retakePhoto"
+          class="q-mr-md"
+        />
+        <q-btn
+          unelevated
+          color="primary"
+          label="Übernehmen"
+          icon="check"
+          @click="uploadImage"
+        />
+      </div>
+    </div>
+
+    <!-- Scanner Discovery View -->
+    <div v-if="showScannerView" class="scanner-view">
+      <div class="view-header">
+        <q-btn flat round icon="arrow_back" @click="backToCards" />
+        <h2 class="view-title">Scanner suchen</h2>
+      </div>
+
+      <div v-if="!scannersLoaded" class="text-center q-pa-xl">
+        <q-btn
+          unelevated
+          color="primary"
+          icon="search"
+          label="Scanner suchen"
+          @click="discoverScanners"
+          :loading="scannerDiscovering"
+          size="lg"
+        />
+      </div>
+
+      <div v-else-if="availableScanners.length === 0" class="text-center q-pa-xl">
+        <q-icon name="scanner" size="64px" color="grey-5" />
+        <div class="text-h6 q-mt-md text-grey-7">Keine Scanner gefunden</div>
+        <q-btn
+          flat
+          color="primary"
+          label="Erneut suchen"
+          icon="refresh"
+          @click="discoverScanners"
+          class="q-mt-md"
+        />
+      </div>
+
+      <div v-else class="scanner-list q-pa-md">
+        <q-list bordered separator>
+          <q-item
+            v-for="scanner in availableScanners"
+            :key="scanner.id"
+            clickable
+            @click="selectedScanner = scanner"
+            :active="selectedScanner?.id === scanner.id"
+            active-class="bg-primary text-white"
+          >
+            <q-item-section avatar>
+              <q-icon name="scanner" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ scanner.name }}</q-item-label>
+              <q-item-label caption>{{ scanner.ip }}:{{ scanner.port }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+
+        <div v-if="selectedScanner" class="text-center q-mt-lg">
+          <q-btn
+            unelevated
+            color="primary"
+            size="lg"
+            icon="scanner"
+            label="Scannen starten"
+            @click="startScan"
+            :loading="scanning"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Folder Picker View (File System Access API) -->
+    <div v-if="showFolderView" class="folder-view">
+      <div class="view-header">
+        <q-btn flat round icon="arrow_back" @click="backToCards" />
+        <h2 class="view-title">Ordner auswählen</h2>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="folderScanning" class="text-center q-pa-xl">
+        <q-spinner-dots color="primary" size="40px" />
+        <div class="text-h6 q-mt-md">Ordner wird durchsucht...</div>
+      </div>
+
+      <!-- File Selection -->
+      <div v-else-if="folderFiles.length > 0" class="folder-file-selection">
+        <div class="folder-header q-pa-md">
+          <div class="text-h6">Dateien auswählen</div>
+          <div class="text-caption text-grey-7">📁 {{ folderPath }}</div>
+          <div class="text-caption text-primary q-mt-sm">
+            {{ selectedFilesCount }} von {{ folderFiles.length }} ausgewählt 
+            ({{ selectedSizeMB.toFixed(1) }} MB)
+          </div>
+        </div>
+
+        <q-separator />
+
+        <!-- Select All / None Buttons -->
+        <div class="folder-actions q-pa-md">
+          <q-btn
+            flat
+            dense
+            color="primary"
+            icon="check_box"
+            label="Alle auswählen"
+            @click="selectAllFiles"
+            class="q-mr-sm"
+          />
+          <q-btn
+            flat
+            dense
+            color="grey-7"
+            icon="check_box_outline_blank"
+            label="Keine"
+            @click="selectNoFiles"
+          />
+        </div>
+
+        <q-separator />
+
+        <!-- File Tree -->
+        <q-list class="file-list">
+          <q-item
+            v-for="file in folderFiles"
+            :key="file.path"
+            clickable
+            @click="toggleFile(file.path)"
+          >
+            <q-item-section avatar>
+              <q-checkbox
+                :model-value="selectedFiles.includes(file.path)"
+                @update:model-value="toggleFile(file.path)"
+                color="primary"
+              />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>
+                <q-icon 
+                  :name="file.name.endsWith('.pdf') ? 'picture_as_pdf' : 'image'" 
+                  :color="file.name.endsWith('.pdf') ? 'red' : 'green'" 
+                  class="q-mr-sm" 
+                />
+                {{ file.name }}
+              </q-item-label>
+              <q-item-label caption>
+                {{ file.path.split('/').slice(0, -1).join('/') || 'Root' }}
+                · {{ (file.size / 1024).toFixed(1) }} KB
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+
+        <!-- Import Button -->
+        <div class="folder-import-action q-pa-md">
+          <q-btn
+            unelevated
+            color="primary"
+            icon="cloud_upload"
+            :label="`${selectedFilesCount} Dateien importieren`"
+            @click="startFolderImport"
+            :disable="selectedFilesCount === 0"
+            :loading="folderImporting"
+            size="lg"
+            class="full-width"
+          />
+        </div>
+      </div>
+
+      <!-- No Files Found -->
+      <div v-else-if="!folderScanning" class="text-center q-pa-xl">
+        <q-icon name="folder_off" size="80px" color="grey-5" class="q-mb-md" />
+        <div class="text-h6 q-mb-md text-grey-7">Keine Dateien gefunden</div>
+        <div class="text-body2 text-grey-6 q-mb-lg">
+          Der ausgewählte Ordner enthält keine importierbaren Dateien (PDF, JPG, PNG).
+        </div>
+        <q-btn
+          unelevated
+          color="primary"
+          icon="folder_open"
+          label="Anderen Ordner wählen"
+          @click="selectFolder"
+          class="q-mb-sm"
+        />
+        <br />
+        <q-btn
+          flat
+          color="grey-7"
+          icon="arrow_back"
+          label="Zurück"
+          @click="backToCards"
+        />
+      </div>
+    </div>
+
+    <!-- Uploading -->
+    <div v-if="uploading" class="uploading-view text-center">
+      <q-spinner-hourglass color="primary" size="80px" />
+      <div class="text-h6 q-mt-md">Dokument wird hochgeladen...</div>
+      <div class="text-caption text-grey-7">Wird klassifiziert und verarbeitet</div>
+    </div>
+
+    <!-- Camera Permission Dialog -->
+    <q-dialog v-model="showPermissionDialog" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section class="text-center">
+          <q-icon name="videocam_off" size="64px" color="negative" />
+          <div class="text-h6 q-mt-md">Kamerazugriff nicht erlaubt</div>
+        </q-card-section>
+
+        <q-card-section>
+          <div class="text-body2 text-grey-8">
+            {{ permissionErrorMessage }}
+          </div>
+          <div v-if="isIOS" class="text-caption text-grey-7 q-mt-sm">
+            Einstellungen → Safari → Kamera → Erlauben
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="center" vertical>
+          <q-btn
+            v-if="canOpenSettings"
+            unelevated
+            color="primary"
+            label="Einstellungen öffnen"
+            icon="settings"
+            @click="openSettings"
+            class="full-width q-mb-sm"
+          />
+          <q-btn
+            unelevated
+            color="primary"
+            label="Erneut versuchen"
+            icon="refresh"
+            @click="retryCamera"
+            class="full-width q-mb-sm"
+          />
+          <q-btn
+            flat
+            color="grey-7"
+            label="Abbrechen"
+            @click="cancelCamera"
+            class="full-width"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- iOS Camera Fallback (hidden) -->
+    <input
+      ref="iosCameraInput"
+      type="file"
+      accept="image/*"
+      capture="environment"
+      style="display: none"
+      @change="handleFileUpload"
+    />
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useDocumentsStore } from '@/stores/documents'
+import { Notify } from 'quasar'
+import { scannerApi } from '@/services/api'
+import axios from 'axios'
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+
+const router = useRouter()
+const documentsStore = useDocumentsStore()
+
+// View states
+const cameraActive = ref(false)
+const capturedImage = ref<string | null>(null)
+const uploading = ref(false)
+const showScannerView = ref(false)
+const showUSBView = ref(false)
+
+// Folder Picker states (File System Access API)
+const folderScanning = ref(false)
+const folderPath = ref('')
+const folderFiles = ref<any[]>([])
+const selectedFiles = ref<string[]>([])
+const folderImporting = ref(false)
+const showFolderView = ref(false)
+const folderPickerSupported = ref(false)
+
+// Camera refs
+const videoElement = ref<HTMLVideoElement | null>(null)
+const iosCameraInput = ref<HTMLInputElement | null>(null)
+const stream = ref<MediaStream | null>(null)
+const cameras = ref<MediaDeviceInfo[]>([])
+const currentCameraIndex = ref(0)
+
+// Permission handling
+const showPermissionDialog = ref(false)
+const permissionErrorMessage = ref('')
+const isIOS = ref(false)
+const canOpenSettings = ref(false)
+
+// Scanner
+const availableScanners = ref<any[]>([])
+const selectedScanner = ref<any>(null)
+const scannersLoaded = ref(false)
+const scannerDiscovering = ref(false)
+const scanning = ref(false)
+
+onMounted(() => {
+  detectIOS()
+  enumerateCameras()
+  checkFolderPickerSupport()
+})
+
+function checkFolderPickerSupport() {
+  folderPickerSupported.value = 'showDirectoryPicker' in window
+  if (!folderPickerSupported.value) {
+    console.warn('File System Access API nicht unterstützt (nutze Chrome/Edge)')
+  }
+}
+
+onUnmounted(() => {
+  stopCamera()
+})
+
+function detectIOS() {
+  const ua = navigator.userAgent
+  isIOS.value = /iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream
+}
+
+async function enumerateCameras() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    cameras.value = devices.filter(device => device.kind === 'videoinput')
+    
+    // Prefer back camera
+    const backCameraIndex = cameras.value.findIndex(camera =>
+      camera.label.toLowerCase().includes('back') ||
+      camera.label.toLowerCase().includes('rear') ||
+      camera.label.toLowerCase().includes('environment')
+    )
+    if (backCameraIndex !== -1) {
+      currentCameraIndex.value = backCameraIndex
+    }
+  } catch (error) {
+    console.error('Failed to enumerate cameras:', error)
+  }
+}
+
+async function startCamera() {
+  try {
+    const constraints: MediaStreamConstraints = {
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      },
+      audio: false
+    }
+
+    // If we have multiple cameras, use deviceId
+    if (cameras.value.length > 0 && cameras.value[currentCameraIndex.value]) {
+      constraints.video = {
+        deviceId: { exact: cameras.value[currentCameraIndex.value].deviceId },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
+    }
+
+    stream.value = await navigator.mediaDevices.getUserMedia(constraints)
+    
+    if (videoElement.value) {
+      videoElement.value.srcObject = stream.value
+      cameraActive.value = true
+    }
+  } catch (error: any) {
+    console.error('Camera access error:', error)
+    handleCameraError(error)
+  }
+}
+
+function handleCameraError(error: any) {
+  if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+    permissionErrorMessage.value = 'Bitte erlaube den Kamerazugriff in den Browser-Einstellungen.'
+    showPermissionDialog.value = true
+    
+    // Check if we can open settings (limited browser support)
+    canOpenSettings.value = isIOS.value || 'permissions' in navigator
+  } else if (error.name === 'NotFoundError') {
+    permissionErrorMessage.value = 'Keine Kamera gefunden. Bitte prüfe die Hardware-Verbindung.'
+    showPermissionDialog.value = true
+  } else if (error.name === 'NotReadableError') {
+    permissionErrorMessage.value = 'Kamera wird bereits verwendet. Bitte schließe andere Apps.'
+    showPermissionDialog.value = true
+  } else {
+    Notify.create({
+      type: 'negative',
+      message: `Kamerazugriff fehlgeschlagen: ${error.message}`
+    })
+  }
+}
+
+function openSettings() {
+  if (isIOS.value) {
+    // Try to open iOS settings (may not work in all browsers)
+    window.open('app-settings:')
+  } else {
+    // For other browsers, show instructions
+    Notify.create({
+      type: 'info',
+      message: 'Bitte öffne die Browser-Einstellungen manuell und erlaube den Kamerazugriff.',
+      timeout: 5000
+    })
+  }
+}
+
+function retryCamera() {
+  showPermissionDialog.value = false
+  startCamera()
+}
+
+function cancelCamera() {
+  showPermissionDialog.value = false
+}
+
+function switchCamera() {
+  stopCamera()
+  currentCameraIndex.value = (currentCameraIndex.value + 1) % cameras.value.length
+  startCamera()
+}
+
+function stopCamera() {
+  if (stream.value) {
+    stream.value.getTracks().forEach(track => track.stop())
+    stream.value = null
+  }
+  cameraActive.value = false
+}
+
+function capturePhoto() {
+  if (!videoElement.value) return
+
+  const canvas = document.createElement('canvas')
+  canvas.width = videoElement.value.videoWidth
+  canvas.height = videoElement.value.videoHeight
+  
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    ctx.drawImage(videoElement.value, 0, 0)
+    capturedImage.value = canvas.toDataURL('image/jpeg', 0.9)
+  }
+
+  stopCamera()
+}
+
+function retakePhoto() {
+  capturedImage.value = null
+  startCamera()
+}
+
+async function handleFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    await uploadFile(file)
+  }
+}
+
+async function uploadImage() {
+  if (!capturedImage.value) return
+
+  uploading.value = true
+  try {
+    // Convert base64 to blob
+    const response = await fetch(capturedImage.value)
+    const blob = await response.blob()
+    const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' })
+
+    await uploadFile(file)
+  } catch (error) {
+    console.error('Upload error:', error)
+    uploading.value = false
+  }
+}
+
+async function uploadFile(file: File) {
+  uploading.value = true
+  try {
+    const result = await documentsStore.uploadDocument(file)
+    
+    Notify.create({
+      type: 'positive',
+      message: `Dokument erfolgreich hochgeladen: ${result.document_type || 'Unbekannt'}`,
+      timeout: 4000
+    })
+
+    // Reset and navigate
+    capturedImage.value = null
+    uploading.value = false
+    router.push('/documents')
+  } catch (error) {
+    console.error('Upload error:', error)
+    uploading.value = false
+    Notify.create({
+      type: 'negative',
+      message: 'Upload fehlgeschlagen. Bitte erneut versuchen.'
+    })
+  }
+}
+
+// View Navigation
+function showScannerDiscovery() {
+  showScannerView.value = true
+  discoverScanners()
+}
+
+async function selectFolder() {
+  if (!folderPickerSupported.value) {
+    Notify.create({
+      type: 'warning',
+      message: 'Ordner-Auswahl wird nur von Chrome und Edge unterstützt. Bitte nutze einen kompatiblen Browser.',
+      timeout: 5000
+    })
+    return
+  }
+
+  try {
+    // @ts-ignore (File System Access API ist experimentell)
+    const dirHandle = await window.showDirectoryPicker({
+      mode: 'read'
+    })
+
+    folderPath.value = dirHandle.name
+    showFolderView.value = true
+    folderScanning.value = true
+
+    // Lese Ordnerstruktur rekursiv
+    const files = await readDirectory(dirHandle, '')
+    
+    // Filter: Nur PDF, JPG, PNG
+    const validFiles = files.filter(f =>
+      /\.(pdf|jpg|jpeg|png)$/i.test(f.name)
+    )
+
+    folderFiles.value = validFiles
+    
+    // Auto-select alle Dateien
+    selectedFiles.value = validFiles.map(f => f.path)
+
+    folderScanning.value = false
+
+    if (validFiles.length === 0) {
+      Notify.create({
+        type: 'info',
+        message: 'Keine importierbaren Dateien gefunden (PDF, JPG, PNG).'
+      })
+    } else {
+      Notify.create({
+        type: 'positive',
+        message: `${validFiles.length} Dateien gefunden`
+      })
+    }
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      // User hat Cancel geklickt
+      return
+    }
+    console.error('Ordner-Zugriff fehlgeschlagen:', err)
+    Notify.create({
+      type: 'negative',
+      message: `Ordner-Zugriff fehlgeschlagen: ${err.message || 'Unbekannter Fehler'}`
+    })
+  }
+}
+
+async function readDirectory(dirHandle: any, parentPath: string): Promise<any[]> {
+  const files: any[] = []
+
+  for await (const entry of dirHandle.values()) {
+    const path = parentPath ? `${parentPath}/${entry.name}` : entry.name
+
+    if (entry.kind === 'file') {
+      // Datei
+      const file = await entry.getFile()
+      files.push({
+        name: entry.name,
+        path: path,
+        size: file.size,
+        handle: entry,
+        fileObj: file
+      })
+    } else if (entry.kind === 'directory') {
+      // Ordner (rekursiv)
+      const subFiles = await readDirectory(entry, path)
+      files.push(...subFiles)
+    }
+  }
+
+  return files
+}
+
+function backToCards() {
+  showScannerView.value = false
+  showFolderView.value = false
+  scannersLoaded.value = false
+  availableScanners.value = []
+  selectedScanner.value = null
+  
+  // Reset Folder state
+  folderScanning.value = false
+  folderPath.value = ''
+  folderFiles.value = []
+  selectedFiles.value = []
+  folderImporting.value = false
+}
+
+// File Selection (Folder Picker)
+const selectedFilesCount = computed(() => selectedFiles.value.length)
+
+const selectedSizeMB = computed(() => {
+  return folderFiles.value
+    .filter(f => selectedFiles.value.includes(f.path))
+    .reduce((sum, f) => sum + f.size, 0) / (1024 * 1024)
+})
+
+function toggleFile(path: string) {
+  const index = selectedFiles.value.indexOf(path)
+  if (index === -1) {
+    selectedFiles.value.push(path)
+  } else {
+    selectedFiles.value.splice(index, 1)
+  }
+}
+
+function selectAllFiles() {
+  selectedFiles.value = folderFiles.value.map(f => f.path)
+}
+
+function selectNoFiles() {
+  selectedFiles.value = []
+}
+
+// Scanner functions
+async function discoverScanners() {
+  scannerDiscovering.value = true
+  try {
+    const response = await scannerApi.discover()
+    availableScanners.value = response.scanners || []
+    scannersLoaded.value = true
+    
+    if (availableScanners.value.length === 0) {
+      Notify.create({
+        type: 'info',
+        message: 'Keine Scanner im Netzwerk gefunden.'
+      })
+    } else {
+      Notify.create({
+        type: 'positive',
+        message: `${availableScanners.value.length} Scanner gefunden.`
+      })
+    }
+  } catch (error) {
+    console.error('Scanner discovery error:', error)
+    Notify.create({
+      type: 'negative',
+      message: 'Scanner-Suche fehlgeschlagen.'
+    })
+    scannersLoaded.value = true
+  } finally {
+    scannerDiscovering.value = false
+  }
+}
+
+async function startScan() {
+  if (!selectedScanner.value) return
+
+  scanning.value = true
+  try {
+    const response = await scannerApi.scan(selectedScanner.value.id, {
+      resolution: 300,
+      color_mode: 'color',
+      format: 'jpeg'
+    })
+
+    // Convert response to image preview
+    if (response.image_data) {
+      capturedImage.value = `data:image/jpeg;base64,${response.image_data}`
+      showScannerView.value = false
+    }
+
+    Notify.create({
+      type: 'positive',
+      message: 'Scan erfolgreich!'
+    })
+  } catch (error) {
+    console.error('Scan error:', error)
+    Notify.create({
+      type: 'negative',
+      message: 'Scan fehlgeschlagen. Bitte erneut versuchen.'
+    })
+  } finally {
+    scanning.value = false
+  }
+}
+
+// Folder Import functions (File System Access API)
+async function startFolderImport() {
+  if (selectedFilesCount.value === 0) {
+    Notify.create({
+      type: 'warning',
+      message: 'Bitte mindestens eine Datei auswählen.'
+    })
+    return
+  }
+
+  folderImporting.value = true
+  
+  try {
+    // Upload alle selektierten Dateien einzeln
+    const selectedFileObjs = folderFiles.value.filter(f => selectedFiles.value.includes(f.path))
+    
+    let successCount = 0
+    let errorCount = 0
+    
+    for (let i = 0; i < selectedFileObjs.length; i++) {
+      const fileData = selectedFileObjs[i]
+      
+      try {
+        // Nutze das bereits geladene File-Objekt
+        await documentsStore.uploadDocument(fileData.fileObj)
+        successCount++
+      } catch (error) {
+        console.error(`Upload-Fehler bei ${fileData.name}:`, error)
+        errorCount++
+      }
+    }
+    
+    folderImporting.value = false
+    
+    if (successCount > 0) {
+      Notify.create({
+        type: 'positive',
+        message: `${successCount} Datei${successCount > 1 ? 'en' : ''} erfolgreich importiert`,
+        timeout: 4000
+      })
+    }
+    
+    if (errorCount > 0) {
+      Notify.create({
+        type: 'warning',
+        message: `${errorCount} Datei${errorCount > 1 ? 'en' : ''} fehlgeschlagen`,
+        timeout: 3000
+      })
+    }
+    
+    // Navigate to documents
+    router.push('/documents')
+    
+  } catch (error: any) {
+    console.error('Folder import error:', error)
+    Notify.create({
+      type: 'negative',
+      message: `Import fehlgeschlagen: ${error.message || 'Unbekannter Fehler'}`
+    })
+    folderImporting.value = false
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.capture-page {
+  min-height: 100vh;
+}
+
+.card-view {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: #6B7280;
+}
+
+.capture-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.method-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+}
+
+.method-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.method-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 8px;
+}
+
+.method-description {
+  font-size: 14px;
+  color: #6B7280;
+  margin-bottom: 16px;
+}
+
+.method-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+// Camera View
+.camera-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: black;
+}
+
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-controls {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+// Preview
+.preview-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.preview-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.preview-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 16px;
+}
+
+// Scanner & Folder Views
+.scanner-view,
+.folder-view {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.view-header {
+  background: white;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.view-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1F2937;
+  margin: 0;
+}
+
+.scanner-list {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+// Folder File Selection
+.folder-file-selection {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+}
+
+.folder-header {
+  background: white;
+}
+
+.folder-actions {
+  background: white;
+  display: flex;
+  gap: 8px;
+}
+
+.folder-list,
+.file-list {
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+}
+
+.folder-import-action {
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+// Uploading
+.uploading-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: white;
+}
+
+@media (max-width: 768px) {
+  .card-view {
+    padding: 20px;
+  }
+
+  .capture-methods {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .method-card {
+    padding: 32px 24px;
+  }
+
+  .method-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .camera-controls {
+    bottom: 20px;
+  }
+}
+</style>

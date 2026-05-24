@@ -1,0 +1,35 @@
+[
+  {
+    "file": "dokument_103.pdf",
+    "text_preview": "Hygiene\nArbeitsanweisung Aufbereitung von Medizinprodukten\nsemikritisch B / rotierende und oszillierende Instrumente\nEine zu individualisierende Vorlage für die Erstellung einer Arbeitsanweisung ist a",
+    "responses": {
+      "ORIGINAL": "",
+      "V1_SIMPLE": "arbeitsanweisung.",
+      "V2_FEWSHOT": "arbeitsanweisung",
+      "V3_KEYWORDS": "arbeitsanweisung",
+      "V4_INSTRUCT": "arbeitsanweisung"
+    }
+  },
+  {
+    "file": "Ablaufdiagramm für die Zahnarztpraxis.pdf",
+    "text_preview": "Patientin/Patient stellt sich in Zahnarztpraxis vor\nAnamnese/Untersuchung\nGibt es Hinweise auf Verletzungen im Kopf-, Gesichts-, \nHals- und Mundbereich?\nERKENNEN\nBefragung\n> Routinemäßiges Erfragen de",
+    "responses": {
+      "ORIGINAL": "",
+      "V1_SIMPLE": "checkliste.",
+      "V2_FEWSHOT": "checkliste/arbeitsanweisung/sonstige (hier: checkliste)",
+      "V3_KEYWORDS": "Arbeitsanweisung",
+      "V4_INSTRUCT": "checkliste"
+    }
+  },
+  {
+    "file": "09102023GOZ ON TOUR-Materialien  Protesttag  F.pdf",
+    "text_preview": "Seite 1\nLiebe Kolleginnen und Kollegen, \nmit diesem Rundschreiben wollen wir Sie über eine Reihe wichtiger Themen und Termine informieren, \ndie uns derzeit in der zahnärztlichen Selbstverwaltung besch",
+    "responses": {
+      "ORIGINAL": "",
+      "V1_SIMPLE": "arbeitsanweisung",
+      "V2_FEWSHOT": "sonstige",
+      "V3_KEYWORDS": "Infos / Newsletter",
+      "V4_INSTRUCT": "arbeitsanweisung"
+    }
+  }
+]

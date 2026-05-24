@@ -1,0 +1,2 @@
+Datum;Rechnungsnr;Richtung;Geschäftspartner;Kategorie;Netto;MwSt%;MwSt-Betrag;Brutto;Status;Fälligkeitsdatum
+2026-02-22;;Eingang;Henry Schein;Material;1000,00;19,00;190,00;1190,00;PaymentStatus.OPEN;
