@@ -1,903 +1,699 @@
 <template>
   <q-page class="chat-page">
-    <!-- Centered Container -->
-    <div class="chat-centered-container">
-      
-      <!-- Header with VERA branding -->
-      <div class="chat-header">
-        <div class="vera-brand">
-          <div class="vera-logo">
-            <img src="/vera-logo.svg" alt="VERA" style="width: 48px; height: 48px; object-fit: contain;" />
+    <div class="chat-container">
+
+      <!-- Welcome State: Logo + 6 Module Cards -->
+      <div v-if="messages.length === 0 && !loading" class="welcome-state">
+        <!-- VERA Branding -->
+        <div class="welcome-brand">
+          <div class="welcome-avatar">
+            <img src="/vera-icon.svg?v=3" alt="VERA" />
           </div>
-          <div class="vera-info">
-            <div class="vera-title">VERA Office</div>
-            <div class="vera-subtitle">Deine intelligente Praxis-Assistentin</div>
-          </div>
+          <h1 class="welcome-title">Hey! Ich bin VERA</h1>
+          <p class="welcome-subtitle">Deine intelligente Assistentin fuer Praxis-Management.<br />Waehle ein Modul oder stelle mir eine Frage.</p>
+        </div>
+
+        <!-- 6 Module Cards — 21st.dev clean card style -->
+        <div class="module-grid">
+          <button
+            v-for="mod in modules"
+            :key="mod.id"
+            class="module-card"
+            :class="{ 'module-card--locked': mod.locked }"
+            @click="handleModuleClick(mod)"
+          >
+            <div class="module-card-icon" :style="{ background: mod.color + '18', color: mod.color }">
+              <q-icon :name="mod.icon" size="22px" />
+            </div>
+            <div class="module-card-body">
+              <div class="module-card-title">{{ mod.label }}</div>
+              <div class="module-card-desc">{{ mod.description }}</div>
+            </div>
+            <div v-if="mod.locked" class="module-card-lock">
+              <q-icon name="lock" size="14px" />
+            </div>
+            <div v-else-if="mod.badge" class="module-card-badge" :style="{ background: mod.color }">
+              {{ mod.badge }}
+            </div>
+          </button>
+        </div>
+
+        <!-- Quick suggestions -->
+        <div class="quick-suggestions">
+          <button
+            v-for="(s, i) in suggestions"
+            :key="i"
+            class="suggestion-chip"
+            @click="sendMessage(s)"
+          >
+            {{ s }}
+          </button>
         </div>
       </div>
 
-      <!-- Messages Area -->
-      <div ref="messagesContainer" class="messages-area">
-        <!-- Welcome State -->
-        <div v-if="messages.length === 0 && !loading" class="welcome-state">
-          <div class="welcome-logo">
-            <img src="/vera-icon.svg?v=3" alt="VERA Office" style="width: 120px; height: 120px; object-fit: contain;" />
-          </div>
-          <div class="welcome-title">Hey! Ich bin VERA 👋</div>
-          <div class="welcome-text">
-            Deine intelligente Assistentin für Praxis-Management.
-            Wähle ein Modul oder stelle mir eine Frage.
-          </div>
-
-          <!-- Module Cards Grid -->
-          <div class="module-cards">
-            <div 
-              v-for="module in modules" 
-              :key="module.label"
-              class="module-card"
-              @click="handleModuleClick(module)"
-            >
-              <div class="module-header">
-                <div class="module-icon" :style="{ background: module.color }">
-                  <q-icon :name="module.icon" size="28px" color="white" />
-                </div>
-                <div class="module-badge" v-if="module.badge">{{ module.badge }}</div>
-              </div>
-              <div class="module-title">{{ module.label }}</div>
-              <div class="module-description">{{ module.description }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Chat Messages -->
-        <transition-group name="message" tag="div" class="messages-list">
+      <!-- Chat Messages -->
+      <div ref="messagesEl" class="messages-area" v-show="messages.length > 0 || loading">
+        <transition-group name="msg" tag="div" class="messages-list">
           <div
-            v-for="(message, index) in messages"
-            :key="'msg-' + index"
-            :class="['message-item', message.role]"
+            v-for="(msg, idx) in messages"
+            :key="'m' + idx"
+            :class="['msg-row', msg.role]"
           >
-            <div v-if="message.role === 'assistant'" class="message-avatar">
-              <q-avatar size="32px" class="assistant-avatar">
-                <q-icon name="auto_awesome" size="18px" />
-              </q-avatar>
+            <div v-if="msg.role === 'assistant'" class="msg-avatar">
+              <img src="/vera-icon.svg?v=3" alt="VERA" />
             </div>
-            <div class="message-bubble">
-              <div class="message-text">{{ message.content }}</div>
-              <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+            <div class="msg-bubble">
+              <p class="msg-text">{{ msg.content }}</p>
+              <span class="msg-time">{{ formatTime(msg.timestamp) }}</span>
             </div>
           </div>
         </transition-group>
 
-        <!-- Typing Indicator -->
-        <div v-if="loading" class="message-item assistant">
-          <div class="message-avatar">
-            <q-avatar size="32px" class="assistant-avatar">
-              <q-icon name="auto_awesome" size="18px" />
-            </q-avatar>
+        <!-- Typing indicator -->
+        <div v-if="loading" class="msg-row assistant">
+          <div class="msg-avatar">
+            <img src="/vera-icon.svg?v=3" alt="VERA" />
           </div>
-          <div class="typing-indicator">
-            <span></span>
-            <span></span>
-            <span></span>
+          <div class="typing-bubble">
+            <span></span><span></span><span></span>
           </div>
-        </div>
-      </div>
-
-      <!-- Suggestions -->
-      <div v-if="suggestions.length > 0" class="suggestions-area">
-        <div
-          v-for="(suggestion, index) in suggestions"
-          :key="index"
-          class="suggestion-chip"
-          @click="sendQuickMessage(suggestion)"
-        >
-          {{ suggestion }}
         </div>
       </div>
 
       <!-- Input Area -->
       <div class="input-area">
-        <div class="input-container">
-          <q-input
-            v-model="inputMessage"
-            outlined
-            dense
-            placeholder="Nachricht an VERA..."
-            bg-color="white"
-            @keyup.enter="sendMessage"
-            :disable="loading"
-            class="message-input"
-          >
-            <template v-slot:prepend>
-              <q-icon name="edit" size="20px" color="grey-6" />
-            </template>
-          </q-input>
-          
-          <div class="input-actions">
-            <q-btn
-              round
-              flat
-              :color="isRecording ? 'red-6' : 'grey-7'"
-              :icon="isRecording ? 'mic' : 'mic_none'"
-              size="md"
-              @click="toggleVoiceInput"
-              :disable="loading"
-            >
-              <q-tooltip>Spracheingabe</q-tooltip>
-            </q-btn>
-            
-            <q-btn
-              round
-              unelevated
-              color="primary"
-              icon="send"
-              size="md"
-              :disable="!inputMessage.trim() || loading"
-              @click="sendMessage"
-              class="send-btn"
-            />
+        <div class="input-row">
+          <!-- Camera / upload button -->
+          <button class="input-action-btn" @click="handleCapture" title="Dokument scannen">
+            <q-icon name="camera_alt" size="20px" />
+          </button>
+
+          <!-- Text input -->
+          <div class="input-field-wrap">
+            <textarea
+              ref="inputEl"
+              v-model="inputText"
+              class="input-field"
+              placeholder="Nachricht an VERA..."
+              rows="1"
+              @keydown.enter.exact.prevent="onEnter"
+              @input="autoResize"
+            ></textarea>
           </div>
+
+          <!-- Send button -->
+          <button
+            class="send-btn"
+            :class="{ 'send-btn--active': inputText.trim().length > 0 }"
+            :disabled="!inputText.trim() || loading"
+            @click="onSend"
+          >
+            <q-icon name="send" size="18px" />
+          </button>
         </div>
+        <div class="input-hint">Enter zum Senden &middot; Shift+Enter fuer neue Zeile</div>
       </div>
+
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch } from 'vue'
-import { useChatStore } from '@/stores/chat'
-import { useOnboardingStore } from '@/stores/onboarding'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
+import { useModuleAuthStore } from '@/stores/moduleAuth'
+import axios from 'axios'
+
+interface Message {
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: Date
+}
 
 const router = useRouter()
-const chatStore = useChatStore()
-const onboardingStore = useOnboardingStore()
-const authStore = useAuthStore()
-const { messages, loading, suggestions } = storeToRefs(chatStore)
+const moduleAuth = useModuleAuthStore()
+const messagesEl = ref<HTMLElement | null>(null)
+const inputEl = ref<HTMLTextAreaElement | null>(null)
+const inputText = ref('')
+const loading = ref(false)
+const messages = ref<Message[]>([])
 
-const inputMessage = ref('')
-const messagesContainer = ref<HTMLElement | null>(null)
-const isRecording = ref(false)
-let recognition: any = null
+// ── Module definitions ──────────────────────────────────────
+const modules = computed(() => [
+  {
+    id: 'dms',
+    label: 'Dokumentenverwaltung',
+    description: 'Dokumente verwalten, ablegen und suchen',
+    icon: 'folder_open',
+    color: '#0EA5A0',
+    route: '/documents',
+    locked: false,
+    badge: null,
+  },
+  {
+    id: 'capture',
+    label: 'KI-Erfassung',
+    description: 'Dokumente scannen und automatisch erkennen',
+    icon: 'document_scanner',
+    color: '#6366F1',
+    route: '/capture',
+    locked: false,
+    badge: 'KI',
+  },
+  {
+    id: 'erp',
+    label: 'ERP / Finanzen',
+    description: 'BWA, Umsatzsteuer und DATEV-Export',
+    icon: 'account_balance',
+    color: '#F59E0B',
+    route: '/finanzen',
+    locked: !moduleAuth.isAdminUser() && !moduleAuth.sessionModules.includes('erp'),
+    badge: null,
+  },
+  {
+    id: 'qm',
+    label: 'Qualitaetsmanagement',
+    description: 'Handbuch, Audits, Hygiene und Compliance',
+    icon: 'checklist',
+    color: '#10B981',
+    route: '/qm',
+    locked: !moduleAuth.isAdminUser() && !moduleAuth.sessionModules.includes('qm'),
+    badge: null,
+  },
+  {
+    id: 'search',
+    label: 'Volltextsuche',
+    description: 'KI-gestuetzte Suche ueber alle Dokumente',
+    icon: 'manage_search',
+    color: '#8B5CF6',
+    route: '/search',
+    locked: false,
+    badge: null,
+  },
+  {
+    id: 'datev',
+    label: 'DATEV-Export',
+    description: 'Steuerberaterdaten exportieren',
+    icon: 'file_download',
+    color: '#EF4444',
+    route: '/finanzen/datev',
+    locked: !moduleAuth.isAdminUser() && !moduleAuth.sessionModules.includes('erp'),
+    badge: null,
+  },
+])
 
-// Module Cards (VERA Office Features)
-const modules = [
-  { 
-    label: 'Chat mit VERA', 
-    icon: 'forum', 
-    color: '#0EA5A0',
-    description: 'Stelle Fragen und lass dir helfen',
-    badge: null,
-    action: () => {
-      // Bereits auf Chat-Seite, fokussiere Input
-      const input = document.querySelector('.message-input input') as HTMLInputElement
-      input?.focus()
-    }
-  },
-  { 
-    label: 'Dokumente', 
-    icon: 'folder_open', 
-    color: '#085E6A',
-    description: 'Verwalte alle Praxis-Dokumente',
-    badge: null,
-    action: () => router.push('/documents')
-  },
-  { 
-    label: 'KI-Erfassung', 
-    icon: 'document_scanner', 
-    color: '#0EA5A0',
-    description: 'Scanne & erkenne Dokumente',
-    badge: 'OCR',
-    action: () => router.push('/capture')
-  },
-  { 
-    label: 'Volltext-Suche', 
-    icon: 'search', 
-    color: '#2E3B8E',
-    description: 'Finde alles in Sekunden',
-    badge: null,
-    action: () => router.push('/search')
-  },
-  { 
-    label: 'Einstellungen', 
-    icon: 'settings', 
-    color: '#085E6A',
-    description: 'Passe VERA an deine Praxis an',
-    badge: null,
-    action: () => router.push('/settings')
-  },
-  { 
-    label: 'Zuletzt bearbeitet', 
-    icon: 'history', 
-    color: '#0EA5A0',
-    description: 'Schnellzugriff auf Letzte',
-    badge: null,
-    action: () => router.push('/recent')
-  }
+const suggestions = [
+  'Zeig mir neue Dokumente',
+  'Was ist heute faellig?',
+  'Hygiene-Protokoll erstellen',
+  'DATEV exportieren',
 ]
 
-onMounted(async () => {
-  chatStore.generateSessionId()
-
-  // Router-Guard leitet unauthentifizierte Nutzer zu /login um –
-  // kein startAuthFlow() hier nötig (würde /api/auth/chat aufrufen, existiert nicht).
-  if (!authStore.isAuthenticated) {
+// ── Event handlers ──────────────────────────────────────────
+function handleModuleClick(mod: typeof modules.value[0]) {
+  if (mod.locked) {
+    moduleAuth.requireAccess(mod.id, mod.route)
     return
   }
-
-  await onboardingStore.checkStatus()
-
-  // Vorschläge laden (Fehler stumm schlucken – keine Fehlermeldung beim Start)
-  if (onboardingStore.isComplete) {
-    try {
-      await chatStore.loadSuggestions()
-    } catch {
-      // LLM noch nicht bereit – kein Problem, Nutzer sieht Welcome-Screen
-    }
-  }
-  // Onboarding nicht abgeschlossen: statischer Welcome-Screen genügt.
-  // Kein sendMessage('') – das würde ein Leerzeichen schicken und ggf. LLM blockieren.
-
-  initVoiceRecognition()
-})
-
-watch(messages, () => {
-  nextTick(() => scrollToBottom())
-}, { deep: true })
-
-function scrollToBottom() {
-  if (messagesContainer.value) {
-    messagesContainer.value.scrollTo({
-      top: messagesContainer.value.scrollHeight,
-      behavior: 'smooth'
-    })
-  }
+  router.push(mod.route)
 }
 
-async function sendMessage() {
-  if (!inputMessage.value.trim()) return
-  const message = inputMessage.value
-  inputMessage.value = ''
-  
-  if (message.startsWith('/')) {
-    handleCommand(message)
-    return
-  }
-  
+function handleCapture() {
+  router.push('/capture')
+}
+
+function onEnter() {
+  if (inputText.value.trim()) onSend()
+}
+
+async function onSend() {
+  const text = inputText.value.trim()
+  if (!text || loading.value) return
+  await sendMessage(text)
+}
+
+async function sendMessage(text: string) {
+  inputText.value = ''
+  autoResize()
+
+  messages.value.push({ role: 'user', content: text, timestamp: new Date() })
+  await scrollToBottom()
+
+  loading.value = true
   try {
-    await chatStore.sendMessage(message)
-  } catch (error: any) {
-    // Zeige freundliche Nachricht statt roter Fehler-Notification
-    const isServerError = error?.response?.status >= 500
-    if (isServerError && chatStore.messages.at(-1)?.role !== 'assistant') {
-      chatStore.messages.push({
-        role: 'assistant',
-        content: 'Einen Moment – ich starte gerade. Das kann beim ersten Mal 10–30 Sekunden dauern. Bitte gleich nochmal versuchen! ⏳',
-        timestamp: new Date()
-      })
-    }
-  }
-}
-
-function handleCommand(command: string) {
-  const cmd = command.toLowerCase().trim()
-  
-  if (cmd === '/login') {
-    if (authStore.isAuthenticated) {
-      chatStore.messages.push({
-        role: 'assistant',
-        content: 'Du bist bereits angemeldet! Nutze /logout um dich abzumelden.',
-        timestamp: new Date()
-      })
-    } else {
-      chatStore.startAuthFlow()
-    }
-  }
-  else if (cmd === '/logout') {
-    if (!authStore.isAuthenticated) {
-      chatStore.messages.push({
-        role: 'assistant',
-        content: 'Du bist nicht angemeldet! Nutze /login um dich anzumelden.',
-        timestamp: new Date()
-      })
-    } else {
-      authStore.logout()
-      chatStore.clearChat()
-      chatStore.messages.push({
-        role: 'assistant',
-        content: 'Du wurdest abgemeldet. Bis bald! 👋\n\nNutze /login um dich wieder anzumelden.',
-        timestamp: new Date()
-      })
-    }
-  }
-  else {
-    chatStore.messages.push({
+    const res = await axios.post('/api/chat', {
+      message: text,
+      history: messages.value.slice(-10).map(m => ({ role: m.role, content: m.content }))
+    })
+    const reply = res.data?.response || res.data?.message || 'Ich habe Ihre Frage erhalten.'
+    messages.value.push({ role: 'assistant', content: reply, timestamp: new Date() })
+  } catch {
+    messages.value.push({
       role: 'assistant',
-      content: `Unbekannter Befehl: ${command}\n\nVerfügbare Befehle:\n/login - Anmelden\n/logout - Abmelden`,
+      content: 'Entschuldigung, ich bin gerade nicht erreichbar. Bitte versuche es erneut.',
       timestamp: new Date()
     })
+  } finally {
+    loading.value = false
+    await scrollToBottom()
   }
 }
 
-function handleModuleClick(module: any) {
-  module.action()
+function autoResize() {
+  if (!inputEl.value) return
+  inputEl.value.style.height = 'auto'
+  inputEl.value.style.height = Math.min(inputEl.value.scrollHeight, 160) + 'px'
 }
 
-function sendQuickMessage(message: string) {
-  inputMessage.value = message
-  sendMessage()
-}
-
-function formatTime(date: Date): string {
-  if (!date) return ''
-  const d = new Date(date)
-  const now = new Date()
-  const diff = now.getTime() - d.getTime()
-  if (diff < 60000) return 'Gerade eben'
-  if (diff < 3600000) return `Vor ${Math.floor(diff / 60000)} Min`
-  if (d.toDateString() === now.toDateString()) {
-    return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-  }
-  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
-}
-
-function initVoiceRecognition() {
-  const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-  if (!SpeechRecognition) return
-
-  recognition = new SpeechRecognition()
-  recognition.lang = 'de-DE'
-  recognition.continuous = false
-  recognition.interimResults = false
-
-  recognition.onresult = (event: any) => {
-    const transcript = event.results[0][0].transcript
-    inputMessage.value = transcript
-    isRecording.value = false
-  }
-  recognition.onerror = () => { isRecording.value = false }
-  recognition.onend = () => { isRecording.value = false }
-}
-
-function toggleVoiceInput() {
-  if (!recognition) return
-  if (isRecording.value) {
-    recognition.stop()
-    isRecording.value = false
-  } else {
-    recognition.start()
-    isRecording.value = true
+async function scrollToBottom() {
+  await nextTick()
+  if (messagesEl.value) {
+    messagesEl.value.scrollTop = messagesEl.value.scrollHeight
   }
 }
+
+function formatTime(d: Date): string {
+  return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+}
+
+onMounted(() => {
+  inputEl.value?.focus()
+})
 </script>
 
-<style scoped lang="scss">
-// Design Tokens - Mockup Stil
-$teal-primary: #0EA5A0;
-$teal-dark: #085E6A;
-$navy: #2E3B8E;
-$off-white: #F4F6F8;
-$card-bg: #FFFFFF;
-$text-primary: #1F2937;
-$text-secondary: #6B7280;
-$card-radius: 16px;
-$card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-$card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+<style lang="scss" scoped>
+// ============================================================
+// ChatView — 21st.dev Chat-First Design
+// White background, teal accent, 6 module cards, iPad-first
+// ============================================================
 
 .chat-page {
-  background: $off-white;
-  min-height: calc(100dvh - 50px);
+  background: #F8FAFC;
+  min-height: calc(100dvh - 56px);
+  height: calc(100dvh - 56px);
+  overflow: hidden;
   display: flex;
-  justify-content: center;
-  padding: 24px 16px;
+  align-items: stretch;
 }
 
-.chat-centered-container {
-  width: 100%;
-  max-width: 1000px;
-  height: calc(100dvh - 98px);
+.chat-container {
   display: flex;
   flex-direction: column;
-  background: $card-bg;
-  border-radius: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  height: 100%;
+  background: #FFFFFF;
+  border-left: 1px solid #F1F5F9;
+  border-right: 1px solid #F1F5F9;
 }
 
-// Header - Dark Teal
-.chat-header {
-  padding: 20px 28px;
-  background: $teal-dark;
-  border-bottom: none;
-}
-
-.vera-brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.vera-logo {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.vera-info {
-  flex: 1;
-}
-
-.vera-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #FFFFFF;
-  letter-spacing: -0.02em;
-}
-
-.vera-subtitle {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: 4px;
-}
-
-// Messages Area
-.messages-area {
+// ── Welcome state ────────────────────────────────────────────
+.welcome-state {
   flex: 1;
   overflow-y: auto;
-  padding: 32px 28px;
-  background: $off-white;
-  -webkit-overflow-scrolling: touch;
-}
-
-// Welcome State
-.welcome-state {
-  text-align: center;
-  padding: 40px 20px 32px;
-}
-
-.welcome-logo {
-  margin: 0 auto 32px;
+  padding: 40px 24px 24px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.welcome-brand {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.welcome-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: #F0FDFA;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  
+  overflow: hidden;
+  border: 1px solid #CCFBF1;
+
   img {
-    filter: drop-shadow(0 4px 12px rgba(14, 165, 160, 0.2));
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
   }
 }
 
 .welcome-title {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
-  color: $text-primary;
-  margin-bottom: 16px;
-  letter-spacing: -0.03em;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0;
 }
 
-.welcome-text {
-  font-size: 16px;
-  color: $text-secondary;
-  line-height: 1.6;
-  max-width: 480px;
-  margin: 0 auto 48px;
-  font-weight: 400;
+.welcome-subtitle {
+  font-size: 15px;
+  color: #6B7280;
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
 }
 
-// Module Cards - 3×2 Grid (Mockup Stil)
-.module-cards {
+// ── Module grid (3x2) ────────────────────────────────────────
+.module-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  max-width: 900px;
-  margin: 0 auto;
+  gap: 12px;
+  width: 100%;
+  max-width: 680px;
 }
 
 .module-card {
-  background: $card-bg;
-  border-radius: $card-radius;
-  padding: 24px;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: $card-shadow;
   position: relative;
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: $card-shadow-hover;
-    border-color: $teal-primary;
-  }
-  
-  &:active {
-    transform: translateY(-2px);
-  }
-}
-
-.module-header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  gap: 12px;
+  padding: 16px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+
+  &:hover {
+    border-color: #D1D5DB;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+
+  &:active { transform: translateY(0); }
+
+  &.module-card--locked {
+    opacity: 0.6;
+    &:hover { border-color: #E5E7EB; box-shadow: none; transform: none; }
+  }
 }
 
-.module-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+.module-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(14, 165, 160, 0.2);
-}
-
-.module-badge {
-  background: $teal-primary;
-  color: white;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.module-title {
-  font-size: 17px;
-  font-weight: 700;
-  color: $text-primary;
-  margin-bottom: 8px;
-  letter-spacing: -0.01em;
-}
-
-.module-description {
-  font-size: 14px;
-  color: $text-secondary;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
-// Messages
-.messages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.message-item {
-  display: flex;
-  gap: 12px;
-  animation: slideUp 0.3s ease;
-  
-  &.user {
-    flex-direction: row-reverse;
-    
-    .message-bubble {
-      background: $teal-primary;
-      color: white;
-      border-radius: 18px 18px 4px 18px;
-      margin-left: auto;
-    }
-    
-    .message-time {
-      color: rgba(255, 255, 255, 0.85);
-    }
-  }
-  
-  &.assistant {
-    .message-bubble {
-      background: $card-bg;
-      color: $text-primary;
-      border-radius: 18px 18px 18px 4px;
-      box-shadow: $card-shadow;
-      border: 1px solid rgba(0, 0, 0, 0.04);
-    }
-  }
-}
-
-.message-avatar {
   flex-shrink: 0;
 }
 
-.assistant-avatar {
-  background: linear-gradient(135deg, $teal-primary 0%, $teal-dark 100%);
-  color: white;
+.module-card-body { flex: 1; min-width: 0; }
+
+.module-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.2;
+  margin-bottom: 3px;
 }
 
-.message-bubble {
-  max-width: 75%;
-  padding: 14px 18px;
-  word-wrap: break-word;
+.module-card-desc {
+  font-size: 11px;
+  color: #9CA3AF;
+  line-height: 1.3;
 }
 
-.message-text {
-  line-height: 1.6;
-  font-size: 15px;
-  white-space: pre-wrap;
-  font-weight: 400;
+.module-card-lock {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #D1D5DB;
 }
 
-.message-time {
-  font-size: 12px;
-  margin-top: 8px;
-  opacity: 0.7;
-  font-weight: 500;
+.module-card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
 }
 
-// Typing Indicator
-.typing-indicator {
-  background: $card-bg;
-  padding: 14px 18px;
-  border-radius: 18px;
-  box-shadow: $card-shadow;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+// ── Quick suggestions ────────────────────────────────────────
+.quick-suggestions {
   display: flex;
-  gap: 5px;
-  
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.suggestion-chip {
+  padding: 8px 16px;
+  background: #F8FAFC;
+  border: 1px solid #E5E7EB;
+  border-radius: 100px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #F0FDFA;
+    border-color: #99F6E4;
+    color: #0D7380;
+  }
+}
+
+// ── Messages ─────────────────────────────────────────────────
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  scroll-behavior: smooth;
+}
+
+.messages-list { display: flex; flex-direction: column; gap: 12px; }
+
+.msg-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+
+  &.user {
+    flex-direction: row-reverse;
+    .msg-bubble {
+      background: linear-gradient(135deg, #0EA5A0, #0D7380);
+      color: #FFFFFF;
+      border-radius: 18px 18px 4px 18px;
+      .msg-time { color: rgba(255,255,255,0.7); }
+    }
+  }
+  &.assistant {
+    .msg-bubble {
+      background: #F8FAFC;
+      border: 1px solid #F1F5F9;
+      border-radius: 18px 18px 18px 4px;
+      color: #111827;
+    }
+  }
+}
+
+.msg-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #F0FDFA;
+  border: 1px solid #CCFBF1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  img { width: 22px; height: 22px; object-fit: contain; }
+}
+
+.msg-bubble {
+  max-width: 72%;
+  padding: 10px 14px;
+  .msg-text { font-size: 14px; line-height: 1.5; margin: 0 0 4px; white-space: pre-wrap; }
+  .msg-time { font-size: 11px; color: #9CA3AF; }
+}
+
+// Typing indicator
+.typing-bubble {
+  padding: 12px 16px;
+  background: #F8FAFC;
+  border: 1px solid #F1F5F9;
+  border-radius: 18px 18px 18px 4px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
   span {
-    width: 8px;
-    height: 8px;
-    background: $teal-primary;
+    width: 7px;
+    height: 7px;
+    background: #9CA3AF;
     border-radius: 50%;
-    animation: typing 1.4s infinite;
-    
+    animation: bounce 1.4s infinite ease-in-out;
+    &:nth-child(1) { animation-delay: 0s; }
     &:nth-child(2) { animation-delay: 0.2s; }
     &:nth-child(3) { animation-delay: 0.4s; }
   }
 }
 
-@keyframes typing {
-  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-  30% { transform: translateY(-8px); opacity: 1; }
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+// Message enter transition
+.msg-enter-active { transition: all 0.25s ease; }
+.msg-enter-from { opacity: 0; transform: translateY(8px); }
 
-// Suggestions
-.suggestions-area {
-  padding: 16px 28px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  background: $card-bg;
-}
-
-.suggestion-chip {
-  padding: 10px 18px;
-  background: $off-white;
-  border-radius: 24px;
-  font-size: 14px;
-  color: $text-primary;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  font-weight: 500;
-  
-  &:hover {
-    background: $teal-primary;
-    color: white;
-    border-color: $teal-primary;
-  }
-  
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-// Input Area
+// ── Input area ───────────────────────────────────────────────
 .input-area {
-  padding: 20px 24px;
-  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-  background: white;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  flex-shrink: 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid #F1F5F9;
+  background: #FFFFFF;
 }
 
-.input-container {
+.input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 8px 8px 8px 12px;
+  transition: border-color 0.15s ease;
+
+  &:focus-within {
+    border-color: #0EA5A0;
+    box-shadow: 0 0 0 3px rgba(14,165,160,0.08);
+    background: #FFFFFF;
+  }
+}
+
+.input-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #9CA3AF;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+
+  &:hover { background: #F0FDFA; color: #0EA5A0; }
 }
 
-.message-input {
-  flex: 1;
-  
-  :deep(.q-field__control) {
-    border-radius: 24px;
-    height: 48px;
-    border: 2px solid #E5E7EB;
-    transition: all 0.2s ease;
-    
-    &:hover {
-      border-color: #D1D5DB;
-    }
-    
-    &:focus-within {
-      border-color: #0EA5A0;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-    }
-  }
-  
-  :deep(.q-field__native) {
-    padding: 0 16px 0 12px;
-    font-size: 14px;
-  }
-}
+.input-field-wrap { flex: 1; }
 
-.input-actions {
-  display: flex;
-  gap: 8px;
+.input-field {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #111827;
+  line-height: 1.5;
+  resize: none;
+  max-height: 160px;
+  font-family: inherit;
+  padding: 4px 0;
+
+  &::placeholder { color: #9CA3AF; }
 }
 
 .send-btn {
-  background: linear-gradient(135deg, #0EA5A0 0%, #0D7380 100%);
-  
-  &:hover:not(:disabled) {
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  background: #E5E7EB;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+
+  &.send-btn--active {
+    background: linear-gradient(135deg, #0EA5A0, #0D7380);
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(14,165,160,0.3);
   }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-// Responsive Design
-// Mobile Portrait (< 600px)
-@media (max-width: 599px) {
-  .chat-page {
-    padding: 0;
-  }
+.input-hint {
+  font-size: 11px;
+  color: #D1D5DB;
+  text-align: center;
+  margin-top: 6px;
+}
 
-  .chat-centered-container {
-    // 50px App-Header, no padding on mobile
-    height: calc(100dvh - 50px);
-    border-radius: 0;
+// ── Responsive: iPad ─────────────────────────────────────────
+@media (max-width: 768px) {
+  .chat-page {
+    height: calc(100dvh - 56px);
+  }
+  .chat-container {
+    border-left: none;
+    border-right: none;
     max-width: 100%;
   }
-  
-  .chat-header {
-    padding: 16px 16px;
-  }
-  
-  .vera-logo {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .vera-title {
-    font-size: 18px;
-  }
-  
-  .messages-area {
-    padding: 16px;
-  }
-  
-  .welcome-state {
-    padding: 40px 16px 32px;
-  }
-  
-  .welcome-icon {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .welcome-title {
-    font-size: 24px;
-  }
-  
-  .action-bubbles {
+  .module-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    max-width: 100%;
   }
-  
-  .action-bubble {
-    padding: 16px 12px;
-  }
-  
-  .message-bubble {
-    max-width: 85%;
-  }
-  
-  .input-area {
-    padding: 16px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  }
-  
-  .message-input :deep(.q-field__control) {
-    height: 44px;
-  }
+  .welcome-state { padding: 24px 16px 16px; }
+  .welcome-title { font-size: 22px; }
 }
 
-// Mobile Landscape (600px - 767px)
-@media (min-width: 600px) and (max-width: 767px) {
-  .chat-page {
-    padding: 8px;
-  }
-
-  .chat-centered-container {
-    // 50px App-Header + 16px padding (8px * 2)
-    height: calc(100dvh - 66px);
-    border-radius: 16px;
-  }
-  
-  .action-bubbles {
-    grid-template-columns: repeat(4, 1fr);
-  }
+@media (max-width: 480px) {
+  .module-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .module-card { padding: 12px; gap: 8px; }
+  .module-card-icon { width: 34px; height: 34px; }
+  .module-card-title { font-size: 12px; }
+  .module-card-desc { display: none; }
+  .welcome-title { font-size: 20px; }
 }
 
-// Tablet Portrait (768px - 1023px)
-@media (min-width: 768px) and (max-width: 1023px) {
-  .chat-page {
-    padding: 16px;
-  }
-
-  .chat-centered-container {
-    // 50px App-Header + 32px padding (16px * 2)
-    height: calc(100dvh - 82px);
-    max-width: 700px;
-  }
-  
-  .action-bubbles {
-    grid-template-columns: repeat(4, 1fr);
-  }
+// iPad landscape: 3 columns
+@media (min-width: 768px) and (max-width: 1024px) {
+  .module-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-// Tablet Landscape / Desktop (1024px+)
-@media (min-width: 1024px) {
-  .chat-centered-container {
-    max-width: 800px;
+// Dark mode
+.body--dark {
+  .chat-page { background: #0F172A; }
+  .chat-container { background: #111827; border-color: #1F2937; }
+  .welcome-title { color: #F9FAFB; }
+  .welcome-subtitle { color: #9CA3AF; }
+  .welcome-avatar { background: rgba(14,165,160,0.1); border-color: rgba(14,165,160,0.2); }
+  .module-card {
+    background: #1F2937; border-color: #374151;
+    .module-card-title { color: #F9FAFB; }
+    &:hover { border-color: #4B5563; }
   }
-  
-  .action-bubbles {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-// Large Desktop (1440px+)
-@media (min-width: 1440px) {
-  .chat-centered-container {
-    max-width: 900px;
-  }
-}
-
-// Handle orientation changes
-@media (orientation: landscape) and (max-height: 600px) {
-  .welcome-state {
-    padding: 20px 16px;
-  }
-  
-  .welcome-icon {
-    width: 64px;
-    height: 64px;
-  }
-  
-  .welcome-title {
-    font-size: 22px;
-    margin-bottom: 8px;
-  }
-  
-  .welcome-text {
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-  
-  .action-bubbles {
-    gap: 12px;
-  }
-  
-  .action-bubble {
-    padding: 12px;
-  }
-}
-
-// Ensure chat fills available viewport — always subtract App header (50px)
-// dvh = dynamic viewport height, solves Safari URL-bar issue
-.chat-page {
-  min-height: calc(100dvh - 50px);
-  height: calc(100dvh - 50px);
-  overflow: hidden;
+  .suggestion-chip { background: #1F2937; border-color: #374151; color: #D1D5DB; &:hover { background: rgba(14,165,160,0.1); border-color: rgba(14,165,160,0.3); color: #5EEAD4; } }
+  .msg-row.assistant .msg-bubble { background: #1F2937; border-color: #374151; color: #F9FAFB; }
+  .typing-bubble { background: #1F2937; border-color: #374151; }
+  .input-area { background: #111827; border-top-color: #1F2937; }
+  .input-row { background: #1F2937; border-color: #374151; &:focus-within { border-color: #0EA5A0; background: #1F2937; } }
+  .input-field { color: #F9FAFB; &::placeholder { color: #4B5563; } }
+  .input-hint { color: #4B5563; }
 }
 </style>
