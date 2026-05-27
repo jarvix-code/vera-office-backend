@@ -23,6 +23,7 @@ from backend.core.auth_middleware import AuthMiddleware
 from backend.modules.setup import setup_modules
 from backend.api import documents, documents_ai, documents_download, onboarding, onboarding_admin, system, scanner, agent, folders, auth
 from backend.api import discovery, feedback, promo, dashboard, workflow
+from backend.api import vera_chat
 from backend.services.update_client import init_update_client, get_update_client
 from backend.services.telemetry_client import init_telemetry_client, get_telemetry_client
 
@@ -431,7 +432,15 @@ app.include_router(feedback.router, prefix="/api", tags=["Feedback"])
 app.include_router(promo.router, prefix="/api", tags=["Promo"])
 app.include_router(dashboard.router, prefix="/api", tags=["Dashboard"])
 app.include_router(workflow.router, prefix="/api", tags=["Workflow"])
+app.include_router(vera_chat.router)  # Chat API: POST /api/chat, GET/DELETE /api/chat/history
 
+
+
+# Static file serving for 21st.dev assets (CSS, JS, logo placeholder)
+# Mounts backend/static/ at /static/ — independent of frontend build
+BACKEND_STATIC = Path(__file__).parent / "static"
+BACKEND_STATIC.mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(BACKEND_STATIC)), name="backend_static")
 
 # Frontend dist path
 FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
