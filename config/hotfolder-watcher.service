@@ -1,0 +1,33 @@
+[Unit]
+Description=VERA Office Hotfolder Watcher Daemon
+Documentation=https://github.com/jarvix-code/vera-office-updates
+After=network.target vera-office.service
+Wants=vera-office.service
+
+[Service]
+Type=simple
+User=vera
+Group=vera
+WorkingDirectory=/opt/vera-office
+Environment="PYTHONPATH=/opt/vera-office"
+Environment="VERA_HOTFOLDER_DIR=/opt/vera-office/data/hotfolder"
+Environment="VERA_API_URL=http://127.0.0.1:8080"
+Environment="VERA_LOG_FILE=/opt/vera-office/logs/hotfolder_watcher.log"
+Environment="VERA_PID_FILE=/opt/vera-office/hotfolder_watcher.pid"
+Environment="VERA_RETRY_MAX=3"
+Environment="VERA_RETRY_DELAY=5"
+EnvironmentFile=-/opt/vera-office/.env
+
+ExecStart=/opt/vera-office/venv/bin/python /opt/vera-office/backend/hotfolder_watcher.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/opt/vera-office/logs/hotfolder_watcher.log
+StandardError=append:/opt/vera-office/logs/hotfolder_watcher.log
+
+# Sicherheitsoptionen
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/vera-office/data/hotfolder /opt/vera-office/logs /opt/vera-office/hotfolder_watcher.pid
+
+[Install]
+WantedBy=multi-user.target

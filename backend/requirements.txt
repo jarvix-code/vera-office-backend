@@ -13,6 +13,10 @@ alembic==1.14.0
 
 # File Watching
 watchdog==6.0.0
+watchfiles>=0.21.0  # Rust-basiert, async — bevorzugt für hotfolder_watcher.py (Fact #26917)
+
+# HTTP Client (für hotfolder_watcher.py Daemon → API-POST)
+httpx>=0.27.0
 
 # Image Processing
 opencv-python==4.10.0.84
