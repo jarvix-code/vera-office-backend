@@ -3,6 +3,7 @@ VERA Office - FastAPI Backend
 Hauptapplikation mit Lifespan, CORS, Health-Endpoints
 """
 import asyncio
+import httpx
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, Request
@@ -249,6 +250,9 @@ async def lifespan(app: FastAPI):
     
     # === STARTUP ===
     logger.info("VERA Office Backend startet...")
+
+    # Shared HTTP client for chat/LLM Worker requests
+    app.state.http_client = httpx.AsyncClient(timeout=120.0)
     
     # SSL-Zertifikate sicherstellen (generiert bei Bedarf)
     try:
@@ -376,6 +380,9 @@ async def lifespan(app: FastAPI):
     if telemetry_client:
         await telemetry_client.stop()
     
+    # Shared HTTP client schließen
+    await app.state.http_client.aclose()
+
     # mDNS Service deregistrieren
     mdns_service.unregister()
     

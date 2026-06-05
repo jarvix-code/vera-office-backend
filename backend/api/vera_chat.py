@@ -190,6 +190,19 @@ async def get_history(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+
+
+@router.get("/messages", response_model=List[ChatHistoryItem])
+async def get_messages(
+    limit: int = 50,
+    current_user = Depends(get_current_user)
+):
+    """
+    Alias for GET /api/chat/history.
+    Backward compatibility for callers using /api/chat/messages.
+    """
+    return await get_history(limit=limit, current_user=current_user)
+
 @router.delete("/history")
 async def delete_history(
     current_user = Depends(get_current_user)
