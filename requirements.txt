@@ -53,3 +53,6 @@ lxml
 pydantic==2.10.5
 pydantic-settings==2.7.0
 qrcode[pil]
+
+# Messaging / Bot
+python-telegram-bot==22.7
