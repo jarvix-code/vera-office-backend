@@ -5,7 +5,7 @@ Hauptapplikation mit Lifespan, CORS, Health-Endpoints
 import asyncio
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -13,7 +13,7 @@ from loguru import logger
 import sys
 
 from backend.config import config
-from backend.db.database import init_db
+from backend.db.database import init_db, get_db
 from backend.core.scanner import HotfolderScanner
 from backend.core.mdns import mdns_service
 from backend.core.ssl_setup import ensure_ssl_certs
@@ -22,7 +22,7 @@ from backend.core.license_check import check_license_on_startup
 from backend.core.auth_middleware import AuthMiddleware
 from backend.modules.setup import setup_modules
 from backend.api import documents, documents_ai, documents_download, onboarding, onboarding_admin, system, scanner, agent, folders, auth
-from backend.api import discovery, feedback, promo, dashboard, workflow, ocr, dms, settings, calendar
+from backend.api import discovery, feedback, promo, dashboard, workflow, ocr, dms, settings, calendar, vera_chat
 from backend.services.update_client import init_update_client, get_update_client
 from backend.services.telemetry_client import init_telemetry_client, get_telemetry_client
 
@@ -435,6 +435,77 @@ app.include_router(ocr.router)  # /api/ocr/jobs + /api/ocr/upload (Bug #1178)
 app.include_router(dms.router, prefix="/api/dms", tags=["DMS"])  # Bug #1177: /api/dms/files (GET+PATCH)
 app.include_router(settings.router, prefix="/api", tags=["Settings"])  # Bug #1182: GET /api/settings
 app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])  # Bug #1181: /api/calendar/events
+app.include_router(vera_chat.router)  # Bug #1189: /api/chat/messages (prefix im Router: /api/chat)
+
+
+# Bug #1180: GET /api/qm/status — Frontend erwartet diesen Endpunkt (ModuleView.tsx:469)
+# Adapter-Route: liest QM-Daten und gibt { metrics, last_audit } zurück
+@app.get("/api/qm/status", tags=["QM"])
+async def qm_status(db=Depends(get_db)):
+    """
+    QM-Status für ModuleView.tsx (Frontend).
+
+    Gibt { metrics: QmMetric[], last_audit: str } zurück.
+    Aggregiert Daten aus den QM-Modellen (Dashboard-äquivalent).
+    """
+    from backend.modules.qm.models import (
+        QMDocument, Audit, HygieneProtocol, ComplianceCheck,
+        AuditStatus, ProtocolStatus
+    )
+
+    total_docs = db.query(QMDocument).count()
+
+    open_audits = db.query(Audit).filter(Audit.status == AuditStatus.IN_BEARBEITUNG).count()
+    total_audits = db.query(Audit).count()
+
+    open_hygiene = db.query(HygieneProtocol).filter(HygieneProtocol.status == ProtocolStatus.OFFEN).count()
+    total_hygiene = db.query(HygieneProtocol).count()
+
+    total_compliance = db.query(ComplianceCheck).count()
+    fulfilled_compliance = db.query(ComplianceCheck).filter(ComplianceCheck.fulfilled == True).count()
+    compliance_rate = round((fulfilled_compliance / total_compliance * 100), 1) if total_compliance > 0 else 0.0
+
+    # Letztes abgeschlossenes Audit
+    last_audit_obj = (
+        db.query(Audit)
+        .filter(Audit.status == AuditStatus.ABGESCHLOSSEN)
+        .order_by(Audit.finalized_at.desc())
+        .first()
+    )
+    last_audit = last_audit_obj.finalized_at.strftime("%d.%m.%Y") if last_audit_obj and last_audit_obj.finalized_at else "Kein Audit"
+
+    metrics = [
+        {
+            "label": "Dokumente",
+            "value": total_docs,
+            "unit": "gesamt",
+            "trend": "stable",
+            "status": "ok"
+        },
+        {
+            "label": "Offene Audits",
+            "value": open_audits,
+            "unit": f"von {total_audits}",
+            "trend": "stable",
+            "status": "warning" if open_audits > 0 else "ok"
+        },
+        {
+            "label": "Hygiene offen",
+            "value": open_hygiene,
+            "unit": f"von {total_hygiene}",
+            "trend": "stable",
+            "status": "warning" if open_hygiene > 0 else "ok"
+        },
+        {
+            "label": "Compliance-Rate",
+            "value": compliance_rate,
+            "unit": "%",
+            "trend": "stable",
+            "status": "ok" if compliance_rate >= 80 else "warning"
+        },
+    ]
+
+    return {"metrics": metrics, "last_audit": last_audit}
 
 
 # Frontend dist path

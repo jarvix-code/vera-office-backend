@@ -48,6 +48,14 @@ class ChatHistoryItem(BaseModel):
     created_at: datetime
 
 
+class ChatMessageItem(BaseModel):
+    id: str
+    sender: str
+    content: str
+    timestamp: str
+    read: bool
+
+
 @router.post("", response_model=ChatResponse)
 async def chat(
     request: ChatRequest,
@@ -187,6 +195,38 @@ async def get_history(
     
     except Exception as e:
         logger.error(f"Failed to retrieve chat history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/messages")
+async def get_messages(
+    limit: int = 50,
+    current_user = Depends(get_current_user)
+):
+    """
+    GET /api/chat/messages
+    Liefert Chat-Nachrichten im Format, das KommunikationView (ModuleView.tsx) erwartet.
+
+    Response: { messages: [{ id, sender, content, timestamp, read }] }
+    """
+    try:
+        history = await get_chat_history(user_id=current_user.id, limit=limit)
+
+        messages = [
+            ChatMessageItem(
+                id=str(msg['id']),
+                sender="Du" if msg['role'] == "user" else "VERA",
+                content=msg['content'],
+                timestamp=msg['created_at'].strftime("%H:%M") if isinstance(msg['created_at'], datetime) else str(msg['created_at']),
+                read=True
+            )
+            for msg in history
+        ]
+
+        return {"messages": messages}
+
+    except Exception as e:
+        logger.error(f"Failed to retrieve chat messages: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
