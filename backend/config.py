@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     # FastAPI
     APP_NAME: str = "VERA Office"
     APP_VERSION: str = "1.0.0-alpha"
-    DEBUG: bool = True
+    DEBUG: bool = False
     HOST: str = "0.0.0.0"
     PORT: int = 8080  # Standard HTTP alternate port (no admin rights needed)
     HTTPS_PORT: int = 8443  # Caddy HTTPS frontend (Self-Signed Cert für iPad)

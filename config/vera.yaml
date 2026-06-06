@@ -4,7 +4,7 @@
 # FastAPI Server
 app_name: "VERA Office"
 app_version: "1.0.0-alpha"
-debug: true  # Auf false in Produktion setzen
+debug: false  # Auf false in Produktion setzen
 host: "0.0.0.0"
 port: 8081
 
@@ -72,7 +72,7 @@ retention_defaults:
   behoerde: 10
 
 # Logging
-log_level: "DEBUG"  # DEBUG, INFO, WARNING, ERROR
+log_level: "INFO"  # DEBUG, INFO, WARNING, ERROR
 log_format: "detailed"  # simple, detailed, json
 
 # Netzwerk (wird aus Onboarding überschrieben)
