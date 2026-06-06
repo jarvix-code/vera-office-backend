@@ -24,7 +24,7 @@ from backend.core.auth_middleware import AuthMiddleware
 from backend.modules.setup import setup_modules
 from backend.api import documents, documents_ai, documents_download, onboarding, onboarding_admin, system, scanner, agent, folders, auth
 from backend.api import discovery, feedback, promo, dashboard, workflow
-from backend.api import vera_chat
+from backend.api import ocr, dms, settings, calendar, vera_chat
 from backend.services.update_client import init_update_client, get_update_client
 from backend.services.telemetry_client import init_telemetry_client, get_telemetry_client
 
@@ -291,10 +291,12 @@ async def lifespan(app: FastAPI):
             hotfolder_scanner = HotfolderScanner(callback=process_new_document)
             hotfolder_scanner.start()
     
-    # TEMPORARY DISABLED FOR BUG #10 DEBUG
-    # mDNS Service registrieren
-    # mdns_service.register(port=config.PORT, service_name="vera-office")
-    logger.info("mDNS Service registration SKIPPED (DEBUG)")
+    # mDNS Service registrieren (Produktionsmodus)
+    try:
+        mdns_service.register(port=config.PORT, service_name="vera-office")
+        logger.info("mDNS Service registriert")
+    except Exception as e:
+        logger.warning(f"mDNS Service konnte nicht registriert werden: {e}")
     
     # Update-Client initialisieren und starten (prÃ¼ft periodisch auf Updates)
     config_dict = {
@@ -325,10 +327,13 @@ async def lifespan(app: FastAPI):
         }
     }
     
-    # TEMPORARY DISABLED FOR BUG #10 DEBUG
-    # telemetry_client = init_telemetry_client(telemetry_config)
-    # await telemetry_client.start()
-    logger.info("✅ Telemetrie-Client gestartet (DEAKTIVIERT - DEBUG)")
+    # Telemetrie-Client starten (Produktionsmodus)
+    try:
+        telemetry_client = init_telemetry_client(telemetry_config)
+        await telemetry_client.start()
+        logger.info("Telemetrie-Client gestartet")
+    except Exception as e:
+        logger.warning(f"Telemetrie-Client konnte nicht gestartet werden: {e}")
     
     # Telegram Bot starten (falls konfiguriert)
     try:
@@ -440,6 +445,10 @@ app.include_router(promo.router, prefix="/api", tags=["Promo"])
 app.include_router(dashboard.router, prefix="/api", tags=["Dashboard"])
 app.include_router(workflow.router, prefix="/api", tags=["Workflow"])
 app.include_router(vera_chat.router)  # Chat API: POST /api/chat, GET/DELETE /api/chat/history
+app.include_router(ocr.router)  # /api/ocr/jobs + /api/ocr/upload
+app.include_router(dms.router, prefix="/api/dms", tags=["DMS"])  # /api/dms/files
+app.include_router(settings.router, prefix="/api", tags=["Settings"])  # GET /api/settings
+app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])  # /api/calendar/events
 
 
 

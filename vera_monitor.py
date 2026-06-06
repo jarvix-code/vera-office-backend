@@ -99,7 +99,8 @@ def start_backend():
                 "0.0.0.0",
                 "--port",
                 "8000",
-                "--reload"
+                "--log-level",
+                "info"
             ],
             cwd=BASE_DIR,
             stdout=subprocess.DEVNULL,
