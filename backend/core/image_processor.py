@@ -9,6 +9,12 @@ from typing import Tuple, Optional
 from loguru import logger
 from backend.config import config
 
+try:
+    import fitz  # PyMuPDF
+    HAS_FITZ = True
+except ImportError:
+    HAS_FITZ = False
+
 
 class ImageProcessor:
     """
@@ -65,7 +71,57 @@ class ImageProcessor:
         except Exception as e:
             logger.error(f"[ERROR] Fehler bei Bildverarbeitung: {e}")
             return False
-    
+
+    def process_pdf(self, pdf_path, output_dir):
+        """
+        Konvertiert PDF-Seiten zu Bildern und verarbeitet sie durch die Bild-Pipeline.
+        Nutzt PyMuPDF (fitz) fuer die PDF-zu-Bild-Konvertierung.
+
+        Args:
+            pdf_path:   Pfad zur PDF-Datei
+            output_dir: Zielverzeichnis fuer verarbeitete Seitenbilder
+
+        Returns:
+            Liste der verarbeiteten Bild-Pfade (leer bei Fehler)
+        """
+        if not HAS_FITZ:
+            logger.error("[ERROR] PyMuPDF (fitz) nicht verfuegbar — PDF-Verarbeitung nicht moeglich")
+            return []
+
+        try:
+            logger.info(f"PDF-Verarbeitung: {pdf_path.name}")
+            output_dir.mkdir(parents=True, exist_ok=True)
+
+            doc = fitz.open(str(pdf_path))
+            processed_paths = []
+
+            for page_num in range(len(doc)):
+                page = doc[page_num]
+                # 150 DPI = gute OCR-Qualitaet ohne zu viel RAM
+                mat = fitz.Matrix(150 / 72, 150 / 72)
+                pix = page.get_pixmap(matrix=mat, colorspace=fitz.csRGB)
+
+                # Temporaeres Rohbild speichern
+                raw_path = output_dir / f"raw_{pdf_path.stem}_p{page_num + 1}.jpg"
+                pix.save(str(raw_path))
+
+                # Durch Bild-Pipeline (Perspektive, Kontrast, Rauschen)
+                out_path = output_dir / f"processed_{pdf_path.stem}_p{page_num + 1}.jpg"
+                if self.process(raw_path, out_path):
+                    processed_paths.append(out_path)
+                    raw_path.unlink(missing_ok=True)
+                else:
+                    logger.warning(f"  Bild-Pipeline fehlgeschlagen fuer Seite {page_num + 1}, nutze Rohbild")
+                    processed_paths.append(raw_path)
+
+            doc.close()
+            logger.success(f"[OK] PDF verarbeitet: {len(processed_paths)}/{len(doc)} Seiten")
+            return processed_paths
+
+        except Exception as e:
+            logger.error(f"[ERROR] Fehler bei PDF-Verarbeitung: {e}")
+            return []
+
     def _resize_if_needed(self, image: np.ndarray) -> np.ndarray:
         """
         Skaliert Bild runter falls zu groß (Performance + Speicher)

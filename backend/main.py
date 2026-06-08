@@ -24,7 +24,7 @@ from backend.core.auth_middleware import AuthMiddleware
 from backend.modules.setup import setup_modules
 from backend.api import documents, documents_ai, documents_download, onboarding, onboarding_admin, system, scanner, agent, folders, auth
 from backend.api import discovery, feedback, promo, dashboard, workflow
-from backend.api import ocr, dms, settings, calendar, vera_chat
+from backend.api import ocr, dms, settings, calendar, vera_chat, inbox_processor
 from backend.services.update_client import init_update_client, get_update_client
 from backend.services.telemetry_client import init_telemetry_client, get_telemetry_client
 
@@ -72,22 +72,41 @@ async def process_new_document(file_path):
     try:
         logger.info(f"ðŸ”„ Verarbeite neues Dokument: {file_path.name}")
         
-        # 1. Bildverarbeitung (Kantenerkennung, Perspektivkorrektur, Kontrast)
-        logger.debug("  ðŸ“ Schritt 1: Bildverarbeitung...")
+        # 1. Bildverarbeitung / PDF-Konvertierung
+        logger.debug("  Schritt 1: Bildverarbeitung / PDF-Konvertierung...")
         processor = ImageProcessor()
         temp_dir = config.DATA_DIR / "temp"
         temp_dir.mkdir(exist_ok=True)
-        processed_path = temp_dir / f"processed_{file_path.stem}.jpg"
+
+        # PDF-Dateien brauchen einen eigenen Pfad (fitz -> Seiten -> Bilder)
+        if file_path.suffix.lower() == ".pdf":
+            logger.info(f"  PDF erkannt: {file_path.name} — nutze process_pdf()")
+            processed_pages = processor.process_pdf(file_path, temp_dir)
+            if not processed_pages:
+                logger.error(f"  PDF-Verarbeitung fehlgeschlagen: {file_path.name}")
+                return
+            # processed_path zeigt auf erste Seite (fuer OCR-Kompatibilitaet)
+            processed_path = processed_pages[0]
+        else:
+            processed_path = temp_dir / f"processed_{file_path.stem}.jpg"
+            if not processor.process(file_path, processed_path):
+                logger.error(f"  Bildverarbeitung fehlgeschlagen: {file_path.name}")
+                return
+            processed_pages = [processed_path]
         
-        if not processor.process(file_path, processed_path):
-            logger.error(f"  âŒ Bildverarbeitung fehlgeschlagen: {file_path.name}")
-            return
-        
-        # 2. OCR-Texterkennung
+        # 2. OCR-Texterkennung (alle Seiten)
         logger.debug("  Schritt 2: OCR-Texterkennung...")
         ocr = OCREngine()
         ocr_start = time.time()
-        ocr_text = ocr.extract_text(processed_path)
+        if len(processed_pages) > 1:
+            page_texts = []
+            for pg in processed_pages:
+                t = ocr.extract_text(pg)
+                if t:
+                    page_texts.append(t)
+            ocr_text = (chr(10) + chr(10)).join(page_texts) if page_texts else ""
+        else:
+            ocr_text = ocr.extract_text(processed_path) or ""
         ocr_duration = int((time.time() - ocr_start) * 1000)
         
         if not ocr_text:
@@ -100,7 +119,7 @@ async def process_new_document(file_path):
         initial_filename = f"{file_path.stem}.pdf"
         initial_pdf = config.DOCUMENTS_DIR / initial_filename
         
-        if not pdf_gen.create_pdf_from_images([processed_path], initial_pdf, ocr_text):
+        if not pdf_gen.create_pdf_from_images(processed_pages, initial_pdf, ocr_text):
             logger.error(f"  âŒ PDF-Erstellung fehlgeschlagen: {file_path.name}")
             return
         
@@ -228,10 +247,11 @@ async def process_new_document(file_path):
         finally:
             db.close()
         
-        # 5. Cleanup: LÃ¶sche Original aus Inbox + Temp-Datei
+        # 5. Cleanup: LÃ¶sche Original aus Inbox + Temp-Dateien
         logger.debug("  ðŸ§¹ Schritt 5: Cleanup...")
         file_path.unlink(missing_ok=True)
-        processed_path.unlink(missing_ok=True)
+        for pg in processed_pages:
+            pg.unlink(missing_ok=True)
         
     except Exception as e:
         logger.error(f"âŒ Fehler bei Dokumentverarbeitung von {file_path.name}: {e}")
@@ -449,6 +469,7 @@ app.include_router(ocr.router)  # /api/ocr/jobs + /api/ocr/upload
 app.include_router(dms.router, prefix="/api/dms", tags=["DMS"])  # /api/dms/files
 app.include_router(settings.router, prefix="/api", tags=["Settings"])  # GET /api/settings
 app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])  # /api/calendar/events
+app.include_router(inbox_processor.router)  # /api/inbox/unprocessed + /api/inbox/stats
 
 
 
