@@ -29,6 +29,8 @@ from backend.core.ai.template_knowledge import sync_categories_to_db
 from backend.core.folder_manager import folder_manager
 from backend.config import config
 from loguru import logger
+from backend.api.auth import get_current_user
+from backend.models.user import User
 
 router = APIRouter()
 
@@ -429,7 +431,8 @@ async def list_documents(
     limit: int = Query(50, ge=1, le=100),
     category_id: Optional[int] = None,
     search: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Listet Dokumente auf (mit Pagination, Filter, Suche)
@@ -472,8 +475,22 @@ async def list_documents(
     return DocumentListResponse(total=total, items=items)
 
 
+@router.get("/dashboard-stats")
+async def get_dashboard_stats(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """Dashboard-Statistiken fuer Dokumente"""
+    try:
+        from datetime import date
+        total = db.query(Document).filter(Document.deleted == False).count()
+        today = date.today().isoformat()
+        today_count = db.query(Document).filter(Document.deleted == False, Document.created_at >= today).count()
+        categories = db.query(Document.category_id).filter(Document.deleted == False).distinct().count()
+        return {"total_documents": total, "documents_today": today_count, "categories": categories, "storage_used": "--"}
+    except Exception:
+        return {"total_documents": 0, "documents_today": 0, "categories": 0, "storage_used": "--"}
+
+
 @router.get("/{document_id}", response_model=DocumentResponse)
-async def get_document(document_id: int, db: Session = Depends(get_db)):
+async def get_document(document_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Holt ein einzelnes Dokument nach ID
     """
