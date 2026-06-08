@@ -34,7 +34,7 @@ app = FastAPI(
 )
 
 # Model Configuration
-MODEL_PATH = Path("C:/Jarvix/vera-office/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf")
+MODEL_PATH = Path("/opt/vera-office/models/mistral-7b-instruct-v0.2.Q4_K_M.gguf")
 MODEL_NAME = "mistral-7b-instruct-v0.2"
 CONTEXT_WINDOW = 8192
 CPU_THREADS = 8
