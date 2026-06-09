@@ -127,7 +127,7 @@ class PDFProcessor:
                 page_text = ocr_engine.extract_text(temp_image)
                 text_parts.append(page_text)
                 
-                logger.debug(f"    [OK] Seite {page_num + 1}/{doc.page_count}: {len(page_text)} Zeichen")
+                logger.debug(f"    [OK] Seite {page_num + 1}/{doc.page_count}: {len(page_text or '')} Zeichen")
             
             page_count = doc.page_count  # save before close
             doc.close()
