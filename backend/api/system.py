@@ -359,6 +359,17 @@ async def seed_brain():
     return {"status": "ok", "message": "Domänenwissen geladen"}
 
 
+@router.post("/categories-seed")
+async def seed_categories(db: Session = Depends(get_db)):
+    """Bug #1255 Fix: Seeded Dokumentkategorien aus YAML-Templates in DB.
+    POST /api/system/categories-seed — idempotent, sicher mehrfach aufrufbar."""
+    from backend.core.ai.template_knowledge import sync_categories_to_db
+    created = sync_categories_to_db(db)
+    total = db.query(Category).count()
+    return {"status": "ok", "created": created, "total": total,
+            "message": f"{created} neue Kategorien angelegt, {total} gesamt"}
+
+
 @router.get("/version")
 async def get_version():
     """Gibt aktuelle VERA-Version zurueck."""

@@ -119,6 +119,42 @@ def _run_migrations():
             if needs_commit:
                 conn.commit()
 
+
+    # Bug #1258: documents-Tabelle - fehlende Spalten nachträglich hinzufügen
+    # Hintergrund: SQLAlchemy create_all() ändert keine bestehenden Tabellen.
+    # Neue Spalten im Document-Model (document.py) müssen hier explizit migriert werden.
+    if "documents" in inspector.get_table_names():
+        doc_columns = {col["name"] for col in inspector.get_columns("documents")}
+        doc_migrations = [
+            # (column_name, DDL_definition)
+            ("classification_reasoning",  "TEXT"),
+            ("classification_status",     "VARCHAR(50) DEFAULT 'pending'"),
+            ("user_explanation",          "TEXT"),
+            ("classified_at",             "DATETIME"),
+            ("confidence",                "FLOAT"),
+            ("user_comment",              "TEXT"),
+            ("escalated_at",              "DATETIME"),
+            ("escalated_by",              "VARCHAR(128)"),
+            ("reviewed_at",               "DATETIME"),
+            ("dev_notes",                 "TEXT"),
+            ("original_image_path",       "VARCHAR(1024)"),
+            ("quality_score",             "FLOAT"),
+            ("quality_issues",            "TEXT"),
+            ("invoice_validation",        "VARCHAR(50)"),
+            ("deleted",                   "BOOLEAN DEFAULT 0"),
+            ("deleted_at",                "DATETIME"),
+        ]
+        doc_needs_commit = False
+        with engine.connect() as conn:
+            for col_name, col_def in doc_migrations:
+                if col_name not in doc_columns:
+                    conn.execute(text(f"ALTER TABLE documents ADD COLUMN {col_name} {col_def}"))
+                    doc_needs_commit = True
+                    logger.info(f"Migration Bug#1258: 'documents.{col_name}' Spalte hinzugefügt")
+            if doc_needs_commit:
+                conn.commit()
+                logger.info("Migration Bug#1258: documents-Schema aktualisiert")
+
     # Bug #257: Datumsformat-Migration DD.MM.YYYY -> ISO 8601
     if "documents" in inspector.get_table_names():
         _migrate_german_dates()

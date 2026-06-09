@@ -637,7 +637,35 @@ def start_bot_background() -> threading.Thread:
         _bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
         logger.info("Telegram Bot bereit — polling...")
-        _bot_app.run_polling(drop_pending_updates=True)
+        # Fix: run_polling() can't be called from background thread (signal handler restriction)
+        # Use manual asyncio event loop with full error isolation
+        import time
+        retry = 0
+        max_retries = 3
+        while retry < max_retries:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(_bot_app.initialize())
+                loop.run_until_complete(_bot_app.updater.start_polling(drop_pending_updates=True))
+                loop.run_until_complete(_bot_app.start())
+                loop.run_forever()
+                break  # clean exit
+            except Exception as e:
+                logger.error(f"Telegram Bot loop error (retry {retry+1}/{max_retries}): {e}")
+                retry += 1
+                try:
+                    loop.close()
+                except Exception:
+                    pass
+                time.sleep(5 * retry)  # backoff
+            finally:
+                try:
+                    loop.close()
+                except Exception:
+                    pass
+        if retry >= max_retries:
+            logger.warning("Telegram Bot: max retries reached, giving up")
 
     thread = threading.Thread(target=_run, name="vera-telegram-bot", daemon=True)
     thread.start()

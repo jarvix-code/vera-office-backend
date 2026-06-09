@@ -2,7 +2,11 @@
 Inbox Batch Processor API
 Verarbeitet alle existierenden Dateien in Inbox (manuelle Trigger-Alternative zu Hotfolder-Scanner)
 """
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
+from sqlalchemy.orm import Session
+from backend.db.database import get_db
+from backend.api.auth import get_current_user
+from backend.models.user import User
 from pydantic import BaseModel
 from typing import List
 from pathlib import Path
@@ -50,7 +54,16 @@ async def _process_inbox_batch(job_id: str):
     for i, file_path in enumerate(files):
         job["current_file"] = file_path.name
         try:
-            await process_new_document(file_path)
+            # Bug #1251/#1254 Fix: PDFs use DocumentProcessor (OCR-aware).
+            # process_new_document() is image-only; PDFs were silently broken.
+            if file_path.suffix.lower() == '.pdf':
+                from backend.core.document_processor import DocumentProcessor
+                doc_proc = DocumentProcessor()
+                doc = await doc_proc.process_document(file_path)
+                if doc is None:
+                    raise RuntimeError(f"DocumentProcessor returned None for {file_path.name}")
+            else:
+                await process_new_document(file_path)
             job["done"] = i + 1
             logger.debug(f"  [{i+1}/{len(files)}] {file_path.name} verarbeitet")
         except Exception as e:
@@ -63,7 +76,7 @@ async def _process_inbox_batch(job_id: str):
     logger.success(f"[OK] Batch {job_id} abgeschlossen: {job['done']}/{job['total']} ({job['errors']} Fehler)")
 
 @router.post("/process-all", response_model=InboxProcessResponse, dependencies=[])
-async def process_all_inbox(background_tasks: BackgroundTasks):
+async def process_all_inbox(background_tasks: BackgroundTasks, current_user: User = Depends(get_current_user)):
     """
     Verarbeitet alle existierenden Dateien in Inbox (PDF, JPG, PNG)
     Alternative zum Hotfolder-Scanner für bereits vorliegende Dateien
@@ -112,3 +125,42 @@ async def get_process_progress(job_id: str):
     
     job = _jobs[job_id]
     return InboxProcessProgress(job_id=job_id, **job)
+
+
+@router.get("/unprocessed")
+async def get_unprocessed(current_user: User = Depends(get_current_user)):
+    """Gibt unverarbeitete Dateien in inbox zurück"""
+    inbox_path = config.INBOX_DIR
+    allowed_extensions = {".pdf", ".jpg", ".jpeg", ".png", ".tiff", ".tif"}
+    try:
+        files = [
+            {"filename": f.name, "size": f.stat().st_size, "modified": f.stat().st_mtime}
+            for f in inbox_path.iterdir()
+            if f.is_file() and f.suffix.lower() in allowed_extensions
+        ]
+    except Exception:
+        files = []
+    return {"files": files, "count": len(files)}
+
+
+@router.get("/stats")
+async def get_inbox_stats(current_user: User = Depends(get_current_user)):
+    """Gibt Inbox-Statistiken zurück"""
+    inbox_path = config.INBOX_DIR
+    allowed_extensions = {".pdf", ".jpg", ".jpeg", ".png", ".tiff", ".tif"}
+    try:
+        files = [f for f in inbox_path.iterdir() if f.is_file() and f.suffix.lower() in allowed_extensions]
+        pending = len(files)
+    except Exception:
+        pending = 0
+    try:
+        from backend.db.database import SessionLocal
+        from backend.models.document import Document
+        from datetime import date
+        db = SessionLocal()
+        today = date.today().isoformat()
+        processed_today = db.query(Document).filter(Document.created_at >= today).count()
+        db.close()
+    except Exception:
+        processed_today = 0
+    return {"pending": pending, "processed_today": processed_today, "total_processed": processed_today}

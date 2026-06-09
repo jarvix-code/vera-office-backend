@@ -13,6 +13,7 @@ from backend.models.document import Document
 from backend.models.category import Category
 from backend.core.ai.classifier import classifier
 from backend.core.ai.feedback_store import feedback_store
+from backend.core.ai.template_knowledge import sync_categories_to_db
 from loguru import logger
 
 router = APIRouter()
@@ -55,8 +56,12 @@ async def classify_document(
     if not document.ocr_text:
         raise HTTPException(status_code=400, detail="No OCR text available for classification")
     
-    # Get available categories
+    # Get available categories — auto-seed from YAML templates if DB is empty
     categories = db.query(Category).all()
+    if not categories:
+        seeded = sync_categories_to_db(db)
+        logger.info(f"Auto-seeded {seeded} categories from YAML templates")
+        categories = db.query(Category).all()
     if not categories:
         raise HTTPException(status_code=400, detail="No categories configured")
     
@@ -252,4 +257,117 @@ async def check_invoice(document_id: int, db: Session = Depends(get_db)):
         missing=missing,
         validation_result=validation_result,
         checks=checks,
+    )
+
+
+# ─── Bug #1254 Fix: Retro-OCR Endpoint ──────────────────────────────────────
+# Root cause: Documents uploaded via hotfolder/inbox-batch had ocr_text=NULL
+# because process_new_document() in main.py only handles images, not PDFs.
+# This endpoint retrospectively runs OCR on all docs with ocr_text IS NULL.
+
+class RetroOcrResponse(BaseModel):
+    """Retro-OCR batch result"""
+    total_without_ocr: int
+    processed: int
+    succeeded: int
+    failed: int
+    skipped: int
+
+
+@router.post("/retro-ocr", response_model=RetroOcrResponse)
+async def retro_ocr_all(db: Session = Depends(get_db)):
+    """
+    Bug #1254 Fix: Retrospective OCR for documents with ocr_text IS NULL.
+    Uses existing PDFProcessor (PyMuPDF text-layer) + OCREngine (PaddleOCR fallback).
+    Safe to re-run: skips docs that already have ocr_text.
+    """
+    from pathlib import Path as _Path
+    from backend.config import config as _config
+    from backend.core.pdf_processor import PDFProcessor
+    from backend.core.ocr_engine import OCREngine as _OCREngine
+
+    docs_without_ocr = db.query(Document).filter(
+        Document.deleted == False,
+        (Document.ocr_text == None) | (Document.ocr_text == "")
+    ).all()
+
+    total = len(docs_without_ocr)
+    succeeded = 0
+    failed = 0
+    skipped = 0
+
+    pdf_proc = PDFProcessor()
+    ocr_engine = _OCREngine()
+
+    for doc in docs_without_ocr:
+        if not doc.file_path:
+            skipped += 1
+            continue
+
+        # Resolve absolute path (file_path may be relative to DATA_DIR)
+        file_path_str = doc.file_path
+        abs_path = _Path(file_path_str)
+        if not abs_path.is_absolute():
+            abs_path = _config.DATA_DIR / file_path_str
+
+        if not abs_path.exists():
+            logger.warning(f"[retro-ocr] File not found for doc {doc.id}: {abs_path}")
+            skipped += 1
+            continue
+
+        suffix = abs_path.suffix.lower()
+        if suffix not in (".pdf", ".jpg", ".jpeg", ".png", ".tiff", ".tif"):
+            skipped += 1
+            continue
+
+        ocr_text = None
+
+        try:
+            if suffix == ".pdf":
+                # Method 1: PyMuPDF native text extraction (fast, works on Windows)
+                if pdf_proc.has_ocr_text(abs_path):
+                    extracted = pdf_proc.extract_text(abs_path)
+                    if extracted and len(extracted.strip()) > 20:
+                        ocr_text = extracted
+                        logger.info(f"[retro-ocr] doc {doc.id}: text-layer {len(ocr_text)} chars")
+
+                # Method 2: PaddleOCR for scan-PDFs (no embedded text)
+                if not ocr_text:
+                    ocr_raw, temp_imgs = pdf_proc.ocr_pdf(abs_path)
+                    for img in temp_imgs:
+                        try:
+                            img.unlink()
+                        except Exception:
+                            pass
+                    if ocr_raw and len(ocr_raw.strip()) > 10:
+                        ocr_text = ocr_raw
+                        logger.info(f"[retro-ocr] doc {doc.id}: paddle-pdf-ocr {len(ocr_text)} chars")
+            else:
+                # Image: use PaddleOCR engine directly
+                ocr_text = ocr_engine.extract_text(abs_path)
+                if ocr_text:
+                    logger.info(f"[retro-ocr] doc {doc.id}: paddle-ocr {len(ocr_text)} chars")
+        except Exception as e:
+            logger.warning(f"[retro-ocr] OCR failed for doc {doc.id}: {e}")
+
+        if ocr_text and len(ocr_text.strip()) > 0:
+            try:
+                doc.ocr_text = ocr_text[:50000]
+                db.commit()
+                succeeded += 1
+            except Exception as e:
+                db.rollback()
+                logger.error(f"[retro-ocr] DB write failed for doc {doc.id}: {e}")
+                failed += 1
+        else:
+            failed += 1
+            logger.warning(f"[retro-ocr] No text for doc {doc.id} ({abs_path.name})")
+
+    logger.info(f"[retro-ocr] Done: {succeeded} ok, {failed} failed, {skipped} skipped / {total} total")
+    return RetroOcrResponse(
+        total_without_ocr=total,
+        processed=succeeded + failed,
+        succeeded=succeeded,
+        failed=failed,
+        skipped=skipped,
     )

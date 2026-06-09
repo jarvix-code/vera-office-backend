@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 from loguru import logger
 
 from backend.db.database import get_db
+from backend.api.auth import get_current_user
+from backend.models.user import User
 from backend.models.document import Document
 from backend.models.category import Category
 
@@ -64,7 +66,7 @@ class DashboardData(BaseModel):
 
 
 @router.get("", response_model=DashboardData)
-async def get_dashboard_data(db: Session = Depends(get_db)):
+async def get_dashboard_data(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Get all dashboard data in one call.
     

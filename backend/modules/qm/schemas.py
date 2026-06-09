@@ -66,12 +66,21 @@ class QMDocumentOut(BaseModel):
     status: DocumentStatus
     approved_by: Optional[str] = None
     approved_at: Optional[datetime] = None
-    grundelemente: List[QMGrundelement]
-    tags: List[str]
+    grundelemente: Optional[List[QMGrundelement]] = []
+    tags: Optional[List[str]] = []
     created_at: datetime
     updated_at: datetime
     revisions: List[QMDocumentRevisionOut] = []
-    
+
+    @classmethod
+    def from_orm(cls, obj):
+        # Normalize None JSON fields to empty lists before validation (Bug #1258 fix)
+        if obj.grundelemente is None:
+            obj.grundelemente = []
+        if obj.tags is None:
+            obj.tags = []
+        return super().from_orm(obj)
+
     class Config:
         from_attributes = True
 
