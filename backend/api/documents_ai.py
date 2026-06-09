@@ -371,3 +371,102 @@ async def retro_ocr_all(db: Session = Depends(get_db)):
         failed=failed,
         skipped=skipped,
     )
+
+
+# ─── Bug #1257 Fix: Approval workflow endpoints ──────────────────────────────
+# Root cause: POST /api/documents/{id}/approve and /submit-review were defined
+# in OpenAPI spec but never implemented in the backend.
+# Document.classification_status was null for doc 749 (and older docs),
+# causing the QA test to get 404 on both endpoints.
+#
+# Fix: Implement both endpoints. They operate on classification_status (the
+# actual workflow field on Document). No pre-condition check on current status —
+# any non-deleted document can be submitted for review or approved.
+# Status mapping:
+#   submit-review: → "needs_dev_review"  (DRAFT→IN_REVIEW)
+#   approve:       → "user_confirmed"    (IN_REVIEW→APPROVED)
+
+
+class WorkflowActionResponse(BaseModel):
+    """Response for workflow status transitions"""
+    document_id: int
+    previous_status: Optional[str]
+    new_status: str
+    message: str
+
+
+@router.post("/{document_id}/submit-review", response_model=WorkflowActionResponse)
+async def submit_document_for_review(
+    document_id: int,
+    db: Session = Depends(get_db),
+):
+    """
+    Bug #1257 Fix: Submit a document for review (DRAFT -> IN_REVIEW).
+    Sets classification_status = 'needs_dev_review'.
+    Accepts any non-deleted document regardless of current status.
+    """
+    from sqlalchemy import and_
+    from datetime import datetime as _dt
+
+    doc = db.query(Document).filter(
+        and_(Document.id == document_id, Document.deleted == False)
+    ).first()
+
+    if not doc:
+        raise HTTPException(status_code=404, detail=f"Dokument {document_id} nicht gefunden")
+
+    prev_status = doc.classification_status
+    doc.classification_status = "needs_dev_review"
+    doc.updated_at = _dt.utcnow()
+    db.commit()
+    db.refresh(doc)
+
+    logger.info(
+        f"[submit-review] doc={document_id} "
+        f"{prev_status!r} -> 'needs_dev_review'"
+    )
+    return WorkflowActionResponse(
+        document_id=document_id,
+        previous_status=prev_status,
+        new_status="needs_dev_review",
+        message="Dokument zur Prüfung eingereicht",
+    )
+
+
+@router.post("/{document_id}/approve", response_model=WorkflowActionResponse)
+async def approve_document(
+    document_id: int,
+    db: Session = Depends(get_db),
+):
+    """
+    Bug #1257 Fix: Approve a document (IN_REVIEW -> APPROVED).
+    Sets classification_status = 'user_confirmed'.
+    Accepts any non-deleted document regardless of current status.
+    """
+    from sqlalchemy import and_
+    from datetime import datetime as _dt
+
+    doc = db.query(Document).filter(
+        and_(Document.id == document_id, Document.deleted == False)
+    ).first()
+
+    if not doc:
+        raise HTTPException(status_code=404, detail=f"Dokument {document_id} nicht gefunden")
+
+    prev_status = doc.classification_status
+    doc.classification_status = "user_confirmed"
+    doc.classified_at = _dt.utcnow()
+    doc.updated_at = _dt.utcnow()
+    db.commit()
+    db.refresh(doc)
+
+    logger.info(
+        f"[approve] doc={document_id} "
+        f"{prev_status!r} -> 'user_confirmed'"
+    )
+    return WorkflowActionResponse(
+        document_id=document_id,
+        previous_status=prev_status,
+        new_status="user_confirmed",
+        message="Dokument freigegeben",
+    )
