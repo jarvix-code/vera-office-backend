@@ -24,6 +24,7 @@ from backend.core.auth_middleware import AuthMiddleware
 from backend.modules.setup import setup_modules
 from backend.api import documents, documents_ai, onboarding, onboarding_admin, system, scanner, agent, folders, auth
 from backend.api import discovery, feedback, promo, dashboard, workflow, vera_chat, calendar, settings, dms, ocr
+from backend.api import active_learning
 from backend.services.update_client import init_update_client, get_update_client
 from backend.services.telemetry_client import init_telemetry_client, get_telemetry_client
 
@@ -464,6 +465,7 @@ app.include_router(ocr.router)  # /api/ocr/jobs + /api/ocr/upload
 app.include_router(dms.router, prefix="/api/dms", tags=["DMS"])  # /api/dms/files
 app.include_router(settings.router, prefix="/api", tags=["Settings"])  # /api/settings
 app.include_router(calendar.router, prefix="/api/calendar", tags=["Calendar"])  # /api/calendar/events
+app.include_router(active_learning.router, prefix="/api", tags=["Active Learning"])  # /api/active-learning/*
 
 # Bug #1252: /api/qm/* Alias — QM router ist nur unter /api/modules/qm/ gemountet,
 # aber auth_middleware schützt /api/qm/ und Frontend + QA testen dort.
